@@ -1,8 +1,5 @@
 from crossnumbersolvertools import *
 import copy
-length = 1
-extra = 0
-order = None
 
 
 
@@ -68,6 +65,14 @@ d2 = Number('d2', [(1,0),(1,1),(1,2)], 3)
 d4 = Number('d4', [(2,1),(2,2)], 2)
 
 clues = [a1, a3, a5, d1, d2, d4]
+
+clueDict = {a1:[],
+            a3:[],
+            a5:[],
+            d1:[],
+            d2:[],
+            d4:[]}
+
 ##
 
 
@@ -81,7 +86,6 @@ def inputHandler(cross, clue, clueType, extra, order, remove):
     return clue, cross
 
 
-#a1, cross = inputHandler(cross, a1, clueType='p', extra=-2, order=None, #remove=False)
 
 
 ##All the normal number Stuff, not the difficult clue operation stuff

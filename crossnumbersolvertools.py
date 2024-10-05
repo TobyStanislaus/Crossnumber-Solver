@@ -70,7 +70,8 @@ def findOrder(numList, order):
 
 def refreshDict(length, extra, order):
     choiceDict = {
-        'p' : findPrimes(length, extra, order)
+        'pr' : findPrimes(length, extra, order),
+        'po': findPowers(length, extra, order)
         }
     return choiceDict
 ###
