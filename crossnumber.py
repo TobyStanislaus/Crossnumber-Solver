@@ -73,11 +73,13 @@ clues = [a1, a3, a5, d1, d2, d4]
 
 def inputHandler(cross, clue, clues):
     clue.findNumbers()
+    clueNums =[]
     clueDict = refreshClueDict(clues)
     for instruction in clueDict[clue]:
         choiceDict = refreshChoiceDict(clue.length, instruction)
         mainVal, clueType, extra, remove, order, proper, ofItself = instruction
-        clue.possi = comparePossi(clue.possi, choiceDict[clueType], remove)
+        clueNums += choiceDict[clueType]
+    clue.possi = comparePossi(clue.possi, clueNums, remove)
 
         
     updateDigits(clue, cross)
@@ -102,15 +104,9 @@ while compareNewAndOld(cross, prev):
     d2, cross = inputHandler(cross, d2, clues)
  
     
-    d4.findNumbers()
-
-    clueNums = findPrimes(length=d4.length, extra=0, order=None)
-    clueNums += findPowers(length=d4.length, extra=0, power=2, order=None)
-    clueNums += findMultiples(length=d4.length, extra=0, multi=2, order=None)
-
-    d4.possi = comparePossi(d4.possi, clueNums, True)
-    updateDigits(d4, cross)
+    d4, cross = inputHandler(cross, d4, clues)
     
+  
 
 
 ###

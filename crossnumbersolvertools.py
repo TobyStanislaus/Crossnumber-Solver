@@ -78,7 +78,7 @@ def refreshClueDict(clues):
         d1:[[4, 'po', 0, None, None, None, None]],
         d2:[[3, 'po', 0, None, None, None, None]],
         d4:[[1, 'pr', 0, True, None, None, None],
-            [1, 'po', 0, True, None, None, None],
+            [2, 'po', 0, True, None, None, None],
             [2, 'm', 0, True, None, None, None]]}
     return clueDict
 
