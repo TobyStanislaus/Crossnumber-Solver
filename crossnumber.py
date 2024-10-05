@@ -67,39 +67,4 @@ clues = [a1, a3, a5, d1, d2, d4]
 
 ##All the normal number Stuff, not the difficult clue operation stuff
 while compareNewAndOld(cross, prev):
-    prev = copy.deepcopy(cross)
-
-    a1.findNumbers()
-    a1.possi = comparePossi(a1.possi, findFactors(a1.length, extra=-4, product=105))
-    updateDigits(a1, cross)
-
-    a3.findNumbers()
-    a3.possi = comparePossi(a3.possi, findPalidrome(a3.length, extra=1))
-    updateDigits(a3, cross)
-
-    d1.findNumbers()
-    d1.possi = comparePossi(d1.possi, findPowers(d1.length, extra=-2, power=2))
-    updateDigits(d1, cross)
-
-    d2.findNumbers()
-    d2.possi = comparePossi(d2.possi, findPowers(d2.length, extra=-400, power=3))
-    updateDigits(d2, cross)
-###
-
-
-##All the disgusting clue operation stuff that took me a day to code up
-d4.findNumbers()
-clueSums = obtainClueSums(clues, extra=-6, amount=2, length=d4.length)
-correctClueList = removeDupes(clueSums, 2)
-
-
-correctCluesList = compareQ(d4.possi, clueSums)
-correctClueList = removeDupes(correctCluesList, 2)
-item, newClues = correctClueList[0]
-implementClues(clues, newClues, cross)
-
-d4.possi = [item]
-updateDigits(d4, cross)
-
-###Yippee!
-displayCross(cross)
+    pass

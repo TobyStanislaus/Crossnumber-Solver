@@ -51,7 +51,6 @@ def compareNewAndOld(new, old):
                 return True
     return False
         
-
 ###
 
 ### Fetching Numbers - simple normal numbers calculations
@@ -243,8 +242,6 @@ def compareQ(curr, checking):
         i+=1
     return result
 ###
-
-
 
 def clueMulti(resClue, clueCalc, amount):
     results = []
