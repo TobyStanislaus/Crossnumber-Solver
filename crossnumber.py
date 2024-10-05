@@ -80,6 +80,7 @@ d4.findNumbers()
 
 clueSums = obtainClueSums(clues, extra=-6, amount=2, length=d4.length)
 
+displayCross(cross)
 
 correctCluesList = compareQ(d4.possi, clueSums)
 correctClueList = removeDupes(correctCluesList, 2)
