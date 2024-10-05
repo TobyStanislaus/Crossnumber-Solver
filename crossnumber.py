@@ -6,7 +6,7 @@ class GridDigit():
         if not val:
             self.possi = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
         else:
-            self.possi = val
+            self.possi = [val]
         self.decided = False
 
 
@@ -73,12 +73,12 @@ while compareNewAndOld(cross, prev):
     a1.possi = comparePossi(a1.possi, findPrimes(a1.length, extra=-2))
     updateDigits(a1, cross)
 
-    '''
-    a3.findNumbers()##??
-    a3.possi = comparePossi(a3.possi, findFactors(a3.length, extra=-2))
+  
+    a3.findNumbers()
+    a3.possi = comparePossi(a3.possi, findFactors(a3.length, extra=100, product=a3.possi, proper=True))
     updateDigits(a3, cross)
-    '''
     
+
     a5.findNumbers()
     a5.possi = comparePossi(a5.possi, findMultiples(a5.length, extra=0, multi=13))
     updateDigits(a5, cross)

@@ -20,6 +20,7 @@ def comparePossi(curr, checking):
             curr.pop(i)
         else:
             i+=1
+    curr.sort()
     return curr
 
 
@@ -122,8 +123,15 @@ def findMultiples(length, extra, multi):
     return result
 
 
-def findFactors(length, extra, product):
+def findFactors(length, extra, product, proper):
     result = []
+    if type(product) == list:
+        for num in product:
+            result += findFactors(length, extra, int(num), proper)
+        return result
+
+    if not proper:
+        product+=1
     for i in range(10**(length-1), product):
         if product%i == 0 and len(str(i+extra)) == length:
             result.append(str(i+extra))
@@ -243,6 +251,7 @@ def compareQ(curr, checking):
     return result
 ###
 
+###Clues Multiplied
 def clueMulti(resClue, clueCalc, amount):
     results = []
     clueCalc.findNumbers()
@@ -252,3 +261,5 @@ def clueMulti(resClue, clueCalc, amount):
             results.append(val)
     return results
 
+
+###
