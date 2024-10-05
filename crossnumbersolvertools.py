@@ -13,13 +13,20 @@ def displayCross(cross):
         print(printRow)
             
                 
-def comparePossi(curr, checking):
+def comparePossi(curr, checking, remove):
     i = 0
     while i<len(curr):
-        if curr[i] not in checking:
-            curr.pop(i)
+        if remove:
+            if curr[i] in checking:
+                curr.pop(i)
+            else:
+                i+=1
         else:
-            i+=1
+            if curr[i] not in checking:
+                curr.pop(i)
+            else:
+                i+=1
+    curr.sort()
     return curr
 
 
@@ -41,7 +48,7 @@ def updateDigits(clue, cross):
     i = 0
     for i in range(clue.length):
         x, y = clue.pos[i][0], clue.pos[i][1]
-        cross[y][x].possi = comparePossi(cross[y][x].possi, numPossi[i])
+        cross[y][x].possi = comparePossi(cross[y][x].possi, numPossi[i], False)
 
 
 def compareNewAndOld(new, old):
@@ -50,8 +57,22 @@ def compareNewAndOld(new, old):
             if new[i][j].possi != old[i][j].possi:
                 return True
     return False
-        
 
+
+def findOrder(numList, order):
+    numList.sort()
+    if order and numList:
+        if order<0:
+            return [numList[order]]
+        return [numList[order-1]]
+    return numList
+
+
+def refreshDict(length, extra, order):
+    choiceDict = {
+        'p' : findPrimes(length, extra, order)
+        }
+    return choiceDict
 ###
 
 ### Fetching Numbers - simple normal numbers calculations
@@ -65,16 +86,17 @@ def checkPrime(num):
     return False
 
 
-def findPrimes(length, extra):
+def findPrimes(length, extra, order):
     primes = []
     for i in range(10**(length-1), 10**(length)):
         val = i+extra
         if checkPrime(i):
             primes.append(str(val))
+    primes = findOrder(primes, order)
     return primes
 
 
-def findPowers(length, extra, power):
+def findPowers(length, extra, power, order):
     result = []
     powerLength = 0
     n = 1
@@ -86,11 +108,11 @@ def findPowers(length, extra, power):
             if powerLength == length:
                 result.append(str(val))
         n+=1
-
+    result = findOrder(result, order)
     return result
 
      
-def findTriangle(length, extra):
+def findTriangle(length, extra, order):
     result = []
     triLength = 0
     n = 0
@@ -105,10 +127,11 @@ def findTriangle(length, extra):
                 result.append(str(val))
         adding += 1
 
+    result = findOrder(result, order)
     return result
 
 
-def findMultiples(length, extra, multi):
+def findMultiples(length, extra, multi, order):
     result = []
     multiLength = 0
     n = 0
@@ -120,19 +143,46 @@ def findMultiples(length, extra, multi):
                 result.append(str(val))
         n+=1
 
+    result = findOrder(result, order)
     return result
 
-
-def findFactors(length, extra, product):
+###Factors
+def findFactors(length, extra, product, proper, order, ofItself):
     result = []
-    for i in range(10**(length-1), product):
+    if type(product) == list:
+        for num in product:
+            partResult = findFactors(length, extra, int(num), proper, order, ofItself)
+            partResult = findOrder(partResult, order)
+            result+=partResult  
+
+        return result
+
+    botNum, topNum = findBotTop(product, proper)
+
+    for i in range(botNum, topNum):
         if product%i == 0 and len(str(i+extra)) == length:
             result.append(str(i+extra))
     
-    return result
+    result = findOrder(result, order)
+    if ofItself:
+        if result == [str(product)]:
+            return result
+        return []
+    else:
+        return result
 
 
-def findPalidrome(length, extra):
+def findBotTop(product, proper):
+    topNum = product
+    botNum = 2
+    if not proper:
+        topNum+=1
+        botNum-=1
+    return botNum, topNum
+####
+
+
+def findPalidrome(length, extra, order):
     palis = []
     for i in range(10**(length-1), 10**(length)):
         val = i
@@ -140,6 +190,8 @@ def findPalidrome(length, extra):
         
         if i == i[::-1] and len(str(val+extra)) == length:
             palis.append(str(val+extra))
+    
+    palis = findOrder(palis, order)
     return palis
 
 ###
@@ -244,8 +296,7 @@ def compareQ(curr, checking):
     return result
 ###
 
-
-
+###Clues Multiplied
 def clueMulti(resClue, clueCalc, amount):
     results = []
     clueCalc.findNumbers()
@@ -255,3 +306,5 @@ def clueMulti(resClue, clueCalc, amount):
             results.append(val)
     return results
 
+
+###
