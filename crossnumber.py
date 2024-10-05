@@ -67,4 +67,39 @@ clues = [a1, a3, a5, d1, d2, d4]
 
 ##All the normal number Stuff, not the difficult clue operation stuff
 while compareNewAndOld(cross, prev):
-    pass
+    prev = copy.deepcopy(cross)
+
+    a1.findNumbers()
+    a1.possi = comparePossi(a1.possi, findPrimes(a1.length, extra=-2))
+    updateDigits(a1, cross)
+
+    '''
+    a3.findNumbers()##??
+    a3.possi = comparePossi(a3.possi, findFactors(a3.length, extra=-2))
+    updateDigits(a3, cross)
+    '''
+    
+    a5.findNumbers()
+    a5.possi = comparePossi(a5.possi, findMultiples(a5.length, extra=0, multi=13))
+    updateDigits(a5, cross)
+
+
+    d1.findNumbers()
+    d1.possi = comparePossi(d1.possi, findPowers(d1.length, extra=0, power=4))
+    updateDigits(d1, cross)
+
+    d2.findNumbers()
+    d2.possi = comparePossi(d2.possi, findPowers(d2.length, extra=0, power=3))
+    updateDigits(d2, cross)
+
+    '''
+    d4.findNumbers()##Not prime, not square, not even?
+    d4.possi = comparePossi(d4.possi, findMultiples(d4.length, extra=0, multi=13))
+    updateDigits(d4, cross)
+    '''
+
+
+###
+
+###Yippee!
+displayCross(cross)
