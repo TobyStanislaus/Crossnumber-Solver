@@ -68,12 +68,27 @@ def findOrder(numList, order):
     return numList
 
 
-def refreshDict(length, extra, order):
+def refreshDict(length, info, clue, clues):
+    a1,a3,a5,d1,d2,d4 = clues
+    #[mainVal, clueType, extra, remove, order, proper, ofItself]
+    clueDict = {
+        a1:[1, 'pr', -2, None, None, None, None],
+        a3:[a3.possi,'f', 100, False, -1, True, True],
+        a5:[13, 'm', 0, None, None, None, None],
+        d1:['', '', '', '', '', '', ''],
+        d2:['', '', '', '', '', '', ''],
+        d4:['', '', '', '', '', '', '']}
+
+    mainVal, clueType, extra, remove, order, proper, ofItself = clueDict[clue]
     choiceDict = {
         'pr' : findPrimes(length, extra, order),
-        'po': findPowers(length, extra, order)
+        'po': findPowers(length, extra, order, mainVal),
+        't':findTriangle(length, extra, order),
+        'm':findMultiples(length, extra, order, mainVal),
+        ##
+        'f': findFactors(length, extra, order, mainVal, proper, ofItself)
         }
-    return choiceDict
+    return clueDict, choiceDict
 ###
 
 ### Fetching Numbers - simple normal numbers calculations
@@ -97,7 +112,10 @@ def findPrimes(length, extra, order):
     return primes
 
 
-def findPowers(length, extra, power, order):
+def findPowers(length, extra, order, power):
+    if type(power)!=int:
+        return
+     
     result = []
     powerLength = 0
     n = 1
@@ -132,7 +150,10 @@ def findTriangle(length, extra, order):
     return result
 
 
-def findMultiples(length, extra, multi, order):
+def findMultiples(length, extra, order, multi):
+    if type(multi)!=int:
+        return
+    
     result = []
     multiLength = 0
     n = 0
@@ -148,7 +169,7 @@ def findMultiples(length, extra, multi, order):
     return result
 
 ###Factors
-def findFactors(length, extra, product, proper, order, ofItself):
+def findFactors(length, extra, order, product, proper, ofItself):
     result = []
     if type(product) == list:
         for num in product:

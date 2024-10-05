@@ -66,34 +66,37 @@ d4 = Number('d4', [(2,1),(2,2)], 2)
 
 clues = [a1, a3, a5, d1, d2, d4]
 
-clueDict = {a1:[],
-            a3:[],
-            a5:[],
-            d1:[],
-            d2:[],
-            d4:[]}
+
 
 ##
 
 
-def inputHandler(cross, clue, clueType, extra, order, remove):
+def inputHandler(cross, clue, clues):
     length = clue.length
 
     clue.findNumbers()
-    choiceDict = refreshDict(length, extra, order)
+    clueDict, choiceDict = refreshDict(length, info, clue, clues)
+    mainVal, clueType, extra, remove, order, proper, ofItself = clueDict[clue]
     clue.possi = comparePossi(clue.possi, choiceDict[clueType], remove)
     updateDigits(clue, cross)
     return clue, cross
 
 
-
+info = []
 
 ##All the normal number Stuff, not the difficult clue operation stuff
 while compareNewAndOld(cross, prev):
     prev = copy.deepcopy(cross)
 
-    a1, cross = inputHandler(cross, a1, clueType='p', extra=-2, order=None, remove=False)
+    a1, cross = inputHandler(cross, a1, clues)
     
+    a5, cross = inputHandler(cross, a5, clues)
+
+
+    a3, cross = inputHandler(cross, a3, clues)
+
+
+
     a3.findNumbers()
     clueNums = findPrimes(length=d4.length, extra=0, order=None)
     clueNums = findFactors(a3.length, extra=100, product=a3.possi, proper=True, order=-1, ofItself=True)
@@ -105,12 +108,11 @@ while compareNewAndOld(cross, prev):
     clueNums = findMultiples(a5.length, extra=0, multi=13, order=None)
     a5.possi = comparePossi(a5.possi, clueNums, remove=False)
     updateDigits(a5, cross)
+ 
 
 
-    d1.findNumbers()
-    clueNums = findPowers(d1.length, extra=0, power=4, order=None)
-    d1.possi = comparePossi(d1.possi, clueNums, remove=False)
-    updateDigits(d1, cross)
+    #d1, cross = inputHandler(cross, d1, clueType='po', extra=0, order=None, remove=False)
+
 
     d2.findNumbers()
     clueNums = findPowers(d2.length, extra=0, power=3, order=None)
