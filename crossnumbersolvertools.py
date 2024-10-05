@@ -68,18 +68,23 @@ def findOrder(numList, order):
     return numList
 
 
-def refreshDict(length, info, clue, clues):
-    a1,a3,a5,d1,d2,d4 = clues
+def refreshClueDict(clues):
+    a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, remove, order, proper, ofItself]
     clueDict = {
-        a1:[1, 'pr', -2, None, None, None, None],
-        a3:[a3.possi,'f', 100, False, -1, True, True],
-        a5:[13, 'm', 0, None, None, None, None],
-        d1:['', '', '', '', '', '', ''],
-        d2:['', '', '', '', '', '', ''],
-        d4:['', '', '', '', '', '', '']}
+        a1:[[1, 'pr', -2, None, None, None, None]],
+        a3:[[a3.possi,'f', 100, False, -1, True, True]],
+        a5:[[13, 'm', 0, None, None, None, None]],
+        d1:[[4, 'po', 0, None, None, None, None]],
+        d2:[[3, 'po', 0, None, None, None, None]],
+        d4:[[1, 'pr', 0, True, None, None, None],
+            [1, 'po', 0, True, None, None, None],
+            [2, 'm', 0, True, None, None, None]]}
+    return clueDict
 
-    mainVal, clueType, extra, remove, order, proper, ofItself = clueDict[clue]
+
+def refreshChoiceDict(length, instruction):
+    mainVal, clueType, extra, remove, order, proper, ofItself = instruction
     choiceDict = {
         'pr' : findPrimes(length, extra, order),
         'po': findPowers(length, extra, order, mainVal),
@@ -88,7 +93,7 @@ def refreshDict(length, info, clue, clues):
         ##
         'f': findFactors(length, extra, order, mainVal, proper, ofItself)
         }
-    return clueDict, choiceDict
+    return choiceDict
 ###
 
 ### Fetching Numbers - simple normal numbers calculations
@@ -173,7 +178,7 @@ def findFactors(length, extra, order, product, proper, ofItself):
     result = []
     if type(product) == list:
         for num in product:
-            partResult = findFactors(length, extra, int(num), proper, order, ofItself)
+            partResult = findFactors(length, extra, order, int(num), proper, ofItself)
             partResult = findOrder(partResult, order)
             result+=partResult  
 

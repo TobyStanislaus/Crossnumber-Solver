@@ -72,12 +72,14 @@ clues = [a1, a3, a5, d1, d2, d4]
 
 
 def inputHandler(cross, clue, clues):
-    length = clue.length
-
     clue.findNumbers()
-    clueDict, choiceDict = refreshDict(length, info, clue, clues)
-    mainVal, clueType, extra, remove, order, proper, ofItself = clueDict[clue]
-    clue.possi = comparePossi(clue.possi, choiceDict[clueType], remove)
+    clueDict = refreshClueDict(clues)
+    for instruction in clueDict[clue]:
+        choiceDict = refreshChoiceDict(clue.length, instruction)
+        mainVal, clueType, extra, remove, order, proper, ofItself = instruction
+        clue.possi = comparePossi(clue.possi, choiceDict[clueType], remove)
+
+        
     updateDigits(clue, cross)
     return clue, cross
 
@@ -90,36 +92,15 @@ while compareNewAndOld(cross, prev):
 
     a1, cross = inputHandler(cross, a1, clues)
     
-    a5, cross = inputHandler(cross, a5, clues)
-
-
     a3, cross = inputHandler(cross, a3, clues)
 
-
-
-    a3.findNumbers()
-    clueNums = findPrimes(length=d4.length, extra=0, order=None)
-    clueNums = findFactors(a3.length, extra=100, product=a3.possi, proper=True, order=-1, ofItself=True)
-    a3.possi = comparePossi(a3.possi, clueNums, remove=False)
-    updateDigits(a3, cross)
-    
-
-    a5.findNumbers()
-    clueNums = findMultiples(a5.length, extra=0, multi=13, order=None)
-    a5.possi = comparePossi(a5.possi, clueNums, remove=False)
-    updateDigits(a5, cross)
+    a5, cross = inputHandler(cross, a5, clues)
  
 
+    d1, cross = inputHandler(cross, d1, clues)
 
-    #d1, cross = inputHandler(cross, d1, clueType='po', extra=0, order=None, remove=False)
-
-
-    d2.findNumbers()
-    clueNums = findPowers(d2.length, extra=0, power=3, order=None)
-    d2.possi = comparePossi(d2.possi, clueNums, remove=False)
-    updateDigits(d2, cross)
-
-
+    d2, cross = inputHandler(cross, d2, clues)
+ 
     
     d4.findNumbers()
 
