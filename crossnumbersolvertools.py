@@ -51,7 +51,16 @@ def compareNewAndOld(new, old):
             if new[i][j].possi != old[i][j].possi:
                 return True
     return False
-        
+
+
+def findOrder(numList, order):
+    if order:
+        if order<0:
+            return [numList[order]]
+        return [numList[order-1]]
+    return numList
+
+
 ###
 
 ### Fetching Numbers - simple normal numbers calculations
@@ -65,16 +74,17 @@ def checkPrime(num):
     return False
 
 
-def findPrimes(length, extra):
+def findPrimes(length, extra, order):
     primes = []
     for i in range(10**(length-1), 10**(length)):
         val = i+extra
         if checkPrime(i):
             primes.append(str(val))
+    primes = findOrder(primes, order)
     return primes
 
 
-def findPowers(length, extra, power):
+def findPowers(length, extra, power, order):
     result = []
     powerLength = 0
     n = 1
@@ -86,11 +96,11 @@ def findPowers(length, extra, power):
             if powerLength == length:
                 result.append(str(val))
         n+=1
-
+    result = findOrder(result, order)
     return result
 
      
-def findTriangle(length, extra):
+def findTriangle(length, extra, order):
     result = []
     triLength = 0
     n = 0
@@ -105,10 +115,11 @@ def findTriangle(length, extra):
                 result.append(str(val))
         adding += 1
 
+    result = findOrder(result, order)
     return result
 
 
-def findMultiples(length, extra, multi):
+def findMultiples(length, extra, multi, order):
     result = []
     multiLength = 0
     n = 0
@@ -120,14 +131,17 @@ def findMultiples(length, extra, multi):
                 result.append(str(val))
         n+=1
 
+    result = findOrder(result, order)
     return result
 
 
-def findFactors(length, extra, product, proper):
+def findFactors(length, extra, product, proper, order):
     result = []
     if type(product) == list:
         for num in product:
-            result += findFactors(length, extra, int(num), proper)
+            result += findFactors(length, extra, int(num), proper, order)
+        
+        result = findOrder(result, order)
         return result
 
     if not proper:
@@ -136,10 +150,11 @@ def findFactors(length, extra, product, proper):
         if product%i == 0 and len(str(i+extra)) == length:
             result.append(str(i+extra))
     
+    result = findOrder(result, order)
     return result
 
 
-def findPalidrome(length, extra):
+def findPalidrome(length, extra, order):
     palis = []
     for i in range(10**(length-1), 10**(length)):
         val = i
@@ -147,6 +162,8 @@ def findPalidrome(length, extra):
         
         if i == i[::-1] and len(str(val+extra)) == length:
             palis.append(str(val+extra))
+    
+    palis = findOrder(palis, order)
     return palis
 
 ###
