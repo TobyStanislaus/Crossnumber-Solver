@@ -68,6 +68,11 @@ def findOrder(numList, order):
     return numList
 
 
+def refreshDict(length, extra, order):
+    choiceDict = {
+        'p' : findPrimes(length, extra, order)
+        }
+    return choiceDict
 ###
 
 ### Fetching Numbers - simple normal numbers calculations

@@ -1,5 +1,10 @@
 from crossnumbersolvertools import *
 import copy
+length = 1
+extra = 0
+order = None
+
+
 
 class GridDigit():
     def __init__(self, val) -> None:
@@ -7,7 +12,7 @@ class GridDigit():
             self.possi = ['1', '2', '3', '4', '5', '6', '7', '8', '9', ]
         else:
             self.possi = [val]
-        self.decided = False
+        
 
 
 
@@ -66,18 +71,27 @@ clues = [a1, a3, a5, d1, d2, d4]
 ##
 
 
+def inputHandler(cross, clue, clueType, extra, order, remove):
+    length = clue.length
+
+    clue.findNumbers()
+    choiceDict = refreshDict(length, extra, order)
+    clue.possi = comparePossi(clue.possi, choiceDict[clueType], remove)
+    updateDigits(clue, cross)
+    return clue, cross
+
+
+#a1, cross = inputHandler(cross, a1, clueType='p', extra=-2, order=None, #remove=False)
+
 
 ##All the normal number Stuff, not the difficult clue operation stuff
 while compareNewAndOld(cross, prev):
     prev = copy.deepcopy(cross)
 
-    a1.findNumbers()
-    clueNums = findPrimes(a1.length, extra=-2, order=None)
-    a1.possi = comparePossi(a1.possi, clueNums, remove=False)
-    updateDigits(a1, cross)
-
-  
+    a1, cross = inputHandler(cross, a1, clueType='p', extra=-2, order=None, remove=False)
+    
     a3.findNumbers()
+    clueNums = findPrimes(length=d4.length, extra=0, order=None)
     clueNums = findFactors(a3.length, extra=100, product=a3.possi, proper=True, order=-1, ofItself=True)
     a3.possi = comparePossi(a3.possi, clueNums, remove=False)
     updateDigits(a3, cross)
