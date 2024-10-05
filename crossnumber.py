@@ -51,7 +51,7 @@ finalCross = [['-','-','-'],
               ['-','-','-'],
               ['-','-','-']]
 
-
+###
 
 ## Initializing all clues
 a1 = Number('a1', [(0,0),(1,0)], 2)
@@ -78,7 +78,7 @@ while compareNewAndOld(cross, prev):
 
   
     a3.findNumbers()
-    clueNums = findFactors(a3.length, extra=100, product=a3.possi, proper=True,order=-1)
+    clueNums = findFactors(a3.length, extra=100, product=a3.possi, proper=True, order=-1, ofItself=True)
     a3.possi = comparePossi(a3.possi, clueNums)
     updateDigits(a3, cross)
     

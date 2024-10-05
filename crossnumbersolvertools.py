@@ -54,7 +54,8 @@ def compareNewAndOld(new, old):
 
 
 def findOrder(numList, order):
-    if order:
+    numList.sort()
+    if order and numList:
         if order<0:
             return [numList[order]]
         return [numList[order-1]]
@@ -134,24 +135,40 @@ def findMultiples(length, extra, multi, order):
     result = findOrder(result, order)
     return result
 
-
-def findFactors(length, extra, product, proper, order):
+###Factors
+def findFactors(length, extra, product, proper, order, ofItself):
     result = []
     if type(product) == list:
         for num in product:
-            result += findFactors(length, extra, int(num), proper, order)
-        
-        result = findOrder(result, order)
+            partResult = findFactors(length, extra, int(num), proper, order, ofItself)
+            partResult = findOrder(partResult, order)
+            result+=partResult  
+
         return result
 
-    if not proper:
-        product+=1
-    for i in range(10**(length-1), product):
+    botNum, topNum = findBotTop(product, proper)
+
+    for i in range(botNum, topNum):
         if product%i == 0 and len(str(i+extra)) == length:
             result.append(str(i+extra))
     
     result = findOrder(result, order)
-    return result
+    if ofItself:
+        if result == [str(product)]:
+            return result
+        return []
+    else:
+        return result
+
+
+def findBotTop(product, proper):
+    topNum = product
+    botNum = 2
+    if not proper:
+        topNum+=1
+        botNum-=1
+    return botNum, topNum
+####
 
 
 def findPalidrome(length, extra, order):
