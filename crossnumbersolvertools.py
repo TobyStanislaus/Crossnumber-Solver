@@ -1,5 +1,37 @@
 from itertools import permutations
 import copy
+##Master function
+def inputHandler(cross, clue, clues):
+    '''
+    Give it a clue, it will process all its possible numbers and put it on the cross
+    '''
+    clue.findNumbers()
+    clueNums =[]
+    clueDict = refreshClueDict(clues)
+    for instruction in clueDict[clue]:
+        choiceDict = refreshChoiceDict(clue.length, instruction)
+        mainVal, clueType, extra, remove, order, proper, ofItself = instruction
+        clueNums += choiceDict[clueType]
+
+    if clueNums[0]!=-40:
+        clue.possi = comparePossi(clue.possi, clueNums, remove)
+        updateDigits(clue, cross)
+
+    return clue, cross
+
+##The one you must change each time (currently)
+def refreshClueDict(clues):
+    a1, a3, a5, d1, d2, d4 = clues
+    #[mainVal, clueType, extra, removeNot, order, proper, ofItself]
+    clueDict = {
+        a1:[[105, 'f', -4, None, None, True, None]],
+        a3:[[1,'p', 1, None, None, None, None]],
+        a5:[[1, '', 0, None, None, None, None]],
+        d1:[[2, 'po', -2, None, None, None, None]],
+        d2:[[3, 'po', -400, None, None, None, None]],
+        d4:[[1, '', 0, None, None, None, None]]
+        }
+    return clueDict
 
 ##Comparison/Cross UI
 def displayCross(cross):
@@ -68,30 +100,18 @@ def findOrder(numList, order):
     return numList
 
 
-def refreshClueDict(clues):
-    a1, a3, a5, d1, d2, d4 = clues
-    #[mainVal, clueType, extra, remove, order, proper, ofItself]
-    clueDict = {
-        a1:[[1, 'pr', -2, None, None, None, None]],
-        a3:[[a3.possi,'f', 100, False, -1, True, True]],
-        a5:[[13, 'm', 0, None, None, None, None]],
-        d1:[[4, 'po', 0, None, None, None, None]],
-        d2:[[3, 'po', 0, None, None, None, None]],
-        d4:[[1, 'pr', 0, True, None, None, None],
-            [2, 'po', 0, True, None, None, None],
-            [2, 'm', 0, True, None, None, None]]}
-    return clueDict
-
 
 def refreshChoiceDict(length, instruction):
     mainVal, clueType, extra, remove, order, proper, ofItself = instruction
     choiceDict = {
-        'pr' : findPrimes(length, extra, order),
-        'po': findPowers(length, extra, order, mainVal),
+        'pr':findPrimes(length, extra, order),
+        'po':findPowers(length, extra, order, mainVal),
         't':findTriangle(length, extra, order),
         'm':findMultiples(length, extra, order, mainVal),
-        ##
-        'f': findFactors(length, extra, order, mainVal, proper, ofItself)
+        'p':findPalidrome(length, extra, order),
+
+        'f': findFactors(length, extra, order, mainVal, proper, ofItself),
+        '':[-40]
         }
     return choiceDict
 ###
@@ -199,16 +219,6 @@ def findFactors(length, extra, order, product, proper, ofItself):
         return result
 
 
-def findBotTop(product, proper):
-    topNum = product
-    botNum = 2
-    if not proper:
-        topNum+=1
-        botNum-=1
-    return botNum, topNum
-####
-
-
 def findPalidrome(length, extra, order):
     palis = []
     for i in range(10**(length-1), 10**(length)):
@@ -220,6 +230,17 @@ def findPalidrome(length, extra, order):
     
     palis = findOrder(palis, order)
     return palis
+
+
+def findBotTop(product, proper):
+    topNum = product
+    botNum = 2
+    if not proper:
+        topNum+=1
+        botNum-=1
+    return botNum, topNum
+####
+
 
 ###
 

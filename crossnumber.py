@@ -6,7 +6,7 @@ import copy
 class GridDigit():
     def __init__(self, val) -> None:
         if not val:
-            self.possi = ['1', '2', '3', '4', '5', '6', '7', '8', '9', ]
+            self.possi = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
         else:
             self.possi = [val]
         
@@ -68,48 +68,27 @@ clues = [a1, a3, a5, d1, d2, d4]
 
 
 
-##
-
-
-def inputHandler(cross, clue, clues):
-    clue.findNumbers()
-    clueNums =[]
-    clueDict = refreshClueDict(clues)
-    for instruction in clueDict[clue]:
-        choiceDict = refreshChoiceDict(clue.length, instruction)
-        mainVal, clueType, extra, remove, order, proper, ofItself = instruction
-        clueNums += choiceDict[clueType]
-    clue.possi = comparePossi(clue.possi, clueNums, remove)
-
-        
-    updateDigits(clue, cross)
-    return clue, cross
-
-
-info = []
-
 ##All the normal number Stuff, not the difficult clue operation stuff
 while compareNewAndOld(cross, prev):
     prev = copy.deepcopy(cross)
 
-    a1, cross = inputHandler(cross, a1, clues)
+    for clue in clues:
+        clue, cross = inputHandler(cross, clue, clues)
     
-    a3, cross = inputHandler(cross, a3, clues)
+##All the disgusting clue operation stuff that took me a day to code up
+d4.findNumbers()
 
-    a5, cross = inputHandler(cross, a5, clues)
- 
-
-    d1, cross = inputHandler(cross, d1, clues)
-
-    d2, cross = inputHandler(cross, d2, clues)
- 
-    
-    d4, cross = inputHandler(cross, d4, clues)
-    
-  
+clueSums = obtainClueSums(clues, extra=-6, amount=2, length=d4.length)
 
 
-###
+correctCluesList = compareQ(d4.possi, clueSums)
+correctClueList = removeDupes(correctCluesList, 2)
+item, newClues = correctClueList[0]
+implementClues(clues, newClues, cross)
+
+d4.possi = [item]
+updateDigits(d4, cross)
+
 
 ###Yippee!
 displayCross(cross)

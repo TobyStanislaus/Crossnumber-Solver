@@ -1,0 +1,14 @@
+2023
+
+
+
+2022
+clueDict = {
+    a1:[[1, 'pr', -2, None, None, None, None]],
+    a3:[[a3.possi,'f', 100, False, -1, True, True]],
+    a5:[[13, 'm', 0, None, None, None, None]],
+    d1:[[4, 'po', 0, None, None, None, None]],
+    d2:[[3, 'po', 0, None, None, None, None]],
+    d4:[[1, 'pr', 0, True, None, None, None],
+        [2, 'po', 0, True, None, None, None],
+        [2, 'm', 0, True, None, None, None]]}
