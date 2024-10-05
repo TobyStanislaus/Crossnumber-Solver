@@ -4,7 +4,7 @@ import copy
 class GridDigit():
     def __init__(self, val) -> None:
         if not val:
-            self.possi = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+            self.possi = ['1', '2', '3', '4', '5', '6', '7', '8', '9', ]
         else:
             self.possi = [val]
         self.decided = False
@@ -73,38 +73,43 @@ while compareNewAndOld(cross, prev):
 
     a1.findNumbers()
     clueNums = findPrimes(a1.length, extra=-2, order=None)
-    a1.possi = comparePossi(a1.possi, clueNums)
+    a1.possi = comparePossi(a1.possi, clueNums, remove=False)
     updateDigits(a1, cross)
 
   
     a3.findNumbers()
     clueNums = findFactors(a3.length, extra=100, product=a3.possi, proper=True, order=-1, ofItself=True)
-    a3.possi = comparePossi(a3.possi, clueNums)
+    a3.possi = comparePossi(a3.possi, clueNums, remove=False)
     updateDigits(a3, cross)
     
 
     a5.findNumbers()
     clueNums = findMultiples(a5.length, extra=0, multi=13, order=None)
-    a5.possi = comparePossi(a5.possi, clueNums)
+    a5.possi = comparePossi(a5.possi, clueNums, remove=False)
     updateDigits(a5, cross)
 
 
     d1.findNumbers()
     clueNums = findPowers(d1.length, extra=0, power=4, order=None)
-    d1.possi = comparePossi(d1.possi, clueNums)
+    d1.possi = comparePossi(d1.possi, clueNums, remove=False)
     updateDigits(d1, cross)
 
     d2.findNumbers()
     clueNums = findPowers(d2.length, extra=0, power=3, order=None)
-    d2.possi = comparePossi(d2.possi, clueNums)
+    d2.possi = comparePossi(d2.possi, clueNums, remove=False)
     updateDigits(d2, cross)
 
 
-    '''
-    d4.findNumbers()##Not prime, not square, not even?
-    d4.possi = comparePossi(d4.possi, findMultiples(d4.length, extra=0, multi=13))
+    
+    d4.findNumbers()
+
+    clueNums = findPrimes(length=d4.length, extra=0, order=None)
+    clueNums += findPowers(length=d4.length, extra=0, power=2, order=None)
+    clueNums += findMultiples(length=d4.length, extra=0, multi=2, order=None)
+
+    d4.possi = comparePossi(d4.possi, clueNums, True)
     updateDigits(d4, cross)
-    '''
+    
 
 
 ###

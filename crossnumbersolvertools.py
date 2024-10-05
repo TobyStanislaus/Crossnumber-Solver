@@ -13,13 +13,19 @@ def displayCross(cross):
         print(printRow)
             
                 
-def comparePossi(curr, checking):
+def comparePossi(curr, checking, remove):
     i = 0
     while i<len(curr):
-        if curr[i] not in checking:
-            curr.pop(i)
+        if remove:
+            if curr[i] in checking:
+                curr.pop(i)
+            else:
+                i+=1
         else:
-            i+=1
+            if curr[i] not in checking:
+                curr.pop(i)
+            else:
+                i+=1
     curr.sort()
     return curr
 
@@ -42,7 +48,7 @@ def updateDigits(clue, cross):
     i = 0
     for i in range(clue.length):
         x, y = clue.pos[i][0], clue.pos[i][1]
-        cross[y][x].possi = comparePossi(cross[y][x].possi, numPossi[i])
+        cross[y][x].possi = comparePossi(cross[y][x].possi, numPossi[i], False)
 
 
 def compareNewAndOld(new, old):
