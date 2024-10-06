@@ -342,17 +342,19 @@ def compareQ(curr, checking):
             result.append(checking[i])
         i+=1
     return result
+
+
+def tryClue(cluesNew, cluesCopy, crossCopy):
+    for i in range(0,len(cluesNew)):
+        for j in range(0,len(cluesCopy)):
+            if cluesNew[i].name == cluesCopy[j].name:
+                cluesCopy[j]= cluesNew[i]
+        print(cluesNew[i])
+    
+    
+    for clue in cluesCopy:
+        updateDigits(clue, crossCopy)
+    
+    displayCross(crossCopy)
 ###
 
-###Clues Multiplied
-def clueMulti(resClue, clueCalc, amount):
-    results = []
-    clueCalc.findNumbers()
-    for num in clueCalc.possi:
-        val = str(int(num)*amount)
-        if len(val) == resClue.length:
-            results.append(val)
-    return results
-
-
-###
