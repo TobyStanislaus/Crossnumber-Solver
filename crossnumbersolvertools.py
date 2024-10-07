@@ -15,10 +15,19 @@ def inputHandler(cross, clue, clues):
 
     if clueNums[0]!=-40:
         clue.possi = comparePossi(clue.possi, clueNums, remove)
-        updateDigits(clue, cross)
+        cross = updateDigits(clue, cross)
 
     return clue, cross
 
+
+def possiCruncher(cross, prev, clues):
+    while compareNewAndOld(cross, prev):
+        prev = copy.deepcopy(cross)
+
+        for clue in clues:
+            clue, cross = inputHandler(cross, clue, clues)
+
+    return cross, clues
 ##The one you must change each time (currently)
 def refreshClueDict(clues):
     a1, a3, a5, d1, d2, d4 = clues
@@ -81,6 +90,7 @@ def updateDigits(clue, cross):
     for i in range(clue.length):
         x, y = clue.pos[i][0], clue.pos[i][1]
         cross[y][x].possi = comparePossi(cross[y][x].possi, numPossi[i], False)
+    return cross
 
 
 def compareNewAndOld(new, old):
@@ -242,7 +252,27 @@ def findBotTop(product, proper):
 ####
 
 
-###
+### 1 down, 1 across
+
+
+def checkCross(cross):
+    for row in cross:
+        for digit in row:
+            if digit.possi == []:
+                return False
+    return True
+
+
+def findCombos(coords, newCross):
+    co1, co2 = coords
+    x1, y1 = co1
+    x2, y2 = co2
+    result = []
+    for num1 in newCross[y1][x1].possi:
+        for num2 in newCross[y2][x2].possi:
+            result.append(num1+num2)
+    
+    return result
 
 ### Clues Adding
 def clueAdd(resClue, clueCalc, amount):
@@ -255,106 +285,46 @@ def clueAdd(resClue, clueCalc, amount):
     return results
 
 
-def checkCluesLength(maxLength, cluesList):
-    for clue in cluesList:
-        if clue.length>maxLength:
-            return False
-    return True
-
-
-def findAllPossi(perm, newClues, currVal, i):
+def findAllPossi(perm, mockCross, coords, extra, newClues, currVal, i):
     if i == len(perm):
-        return [(str(currVal), newClues)]
+        targetNums = []
+        
+        if checkCross(mockCross):
+            targetNums = findCombos(coords, mockCross)
+
+        if str(currVal + extra) in targetNums:
+            return [(str(currVal + extra), newClues)]
+        return []
     
     possiNums = []
     for val in perm[i].possi:
         decidingPerm = copy.deepcopy(perm[i])
         decidingPerm.possi = [val]
-        possiNums+=findAllPossi(perm,  newClues+[decidingPerm], int(val)+currVal, i+1)
+        changedCross = copy.deepcopy(mockCross)
+
+        changedCross = updateDigits(decidingPerm, changedCross)
+
+        possiNums+=findAllPossi(perm, changedCross, coords, extra, newClues+[decidingPerm], int(val)+currVal, i+1)
+        print()
+
     return possiNums
 
 
-def findAllClueSums(clues, amount):
+def findAllClueSums(clues, mockCross, coords, amount):
     result = []
     allLists = permutations(clues, amount)
     for perm in list(allLists):
-        permPossi = findAllPossi(perm, newClues=[], currVal=0, i=0)
-        if permPossi:
-            result += permPossi
+        result += findAllPossi(perm, mockCross, coords, newClues=[], currVal=0, i=0)
 
     return result
 
 
-def checkClueSums(allClueSums, length, extra):
-    result = []
-    for clueSum in allClueSums:
-        if len(str(int(clueSum[0])+extra)) == length:
-            clueSum = list(clueSum)
-            clueSum[0] = str(int(clueSum[0])+extra)
-            clueSum = tuple(clueSum)
-            result.append(clueSum)
-    return result
-
-
-def obtainClueSums(clues, extra, amount, length):
-    allClueSums = findAllClueSums(clues, amount)
-    return checkClueSums(allClueSums, length, extra)
-
-   
-def implementClues(clues, newClues, cross):
-    for clue in newClues:
-        for currClue in clues:
-            if currClue.name == clue.name:
-                currClue = clue
-                updateDigits(currClue, cross)
+def useNewClues(cross, clues, newClues):
+    for i in range(0,len(newClues)):
+        for j in range(0,len(clues)):
+            if clues[j].name == newClues[i].name:
+                clues[j] = newClues[i]
     
-
-
-def removeDupes(rawClueList, amount):
-    i = 0
-    groupsOfNames = set()
-
-    while i<len(rawClueList):
-        groupOfNames = makeGroupOfNames(rawClueList, amount, i)
-
-        if groupOfNames in groupsOfNames:
-            rawClueList.pop(i)
-        else:
-            groupsOfNames.add(groupOfNames)
-            i+=1
-
-    return rawClueList
-
-
-def makeGroupOfNames(rawClueList, amount, i):
-    groupOfNames = []
-    for j in range(amount):
-        groupOfNames+=rawClueList[i][1][j].possi
-    groupOfNames.sort()
-    return tuple(groupOfNames)
-
-
-def compareQ(curr, checking):
-    i = 0
-    result = []
-    while i<len(checking):
-        if checking[i][0] in curr:
-            result.append(checking[i])
-        i+=1
-    return result
-
-
-def tryClue(cluesNew, cluesCopy, crossCopy):
-    for i in range(0,len(cluesNew)):
-        for j in range(0,len(cluesCopy)):
-            if cluesNew[i].name == cluesCopy[j].name:
-                cluesCopy[j]= cluesNew[i]
-        print(cluesNew[i])
-    
-    
-    for clue in cluesCopy:
-        updateDigits(clue, crossCopy)
-    
-    displayCross(crossCopy)
-###
-
+    for clue in clues:
+        cross = updateDigits(clue, cross)
+    return cross

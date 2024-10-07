@@ -69,30 +69,20 @@ clues = [a1, a3, a5, d1, d2, d4]
 
 
 ##All the normal number Stuff, not the difficult clue operation stuff
-while compareNewAndOld(cross, prev):
-    prev = copy.deepcopy(cross)
-
-    for clue in clues:
-        clue, cross = inputHandler(cross, clue, clues)
-    
-##All the disgusting clue operation stuff that took me a day to code up
-d4.findNumbers()
-
-clueSums = obtainClueSums(clues, extra=-6, amount=2, length=d4.length)
-
-#displayCross(cross)
-
-correctCluesList = compareQ(d4.possi, clueSums)
-correctClueList = removeDupes(correctCluesList, 2)
-
-for clue in correctClueList:
-    tryClue(clue[1], clues, cross)
-
-implementClues(clues, newClues, cross)
-
-d4.possi = [item]
-updateDigits(d4, cross)
+possiCruncher(cross, prev, clues)
 
 
-###Yippee!
+
+mockCross = copy.deepcopy(cross)
+res = findAllPossi([a1, d1], mockCross, d4.pos, extra=-6, newClues=[], currVal=0, i=0)
+
+
+
+cross = useNewClues(cross, clues, res[0][1])
+d4.possi = [res[0][0]]
+cross = updateDigits(d4, cross)
 displayCross(cross)
+
+
+clueSums = findAllClueSums(clues, cross, d4.pos, 2)
+print()

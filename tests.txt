@@ -12,3 +12,111 @@ clueDict = {
     d4:[[1, 'pr', 0, True, None, None, None],
         [2, 'po', 0, True, None, None, None],
         [2, 'm', 0, True, None, None, None]]}
+
+
+
+
+
+def checkCluesLength(maxLength, cluesList):
+    for clue in cluesList:
+        if clue.length>maxLength:
+            return False
+    return True
+
+
+def findAllPossi(perm, newClues, currVal, i):
+    if i == len(perm):
+        return [(str(currVal), newClues)]
+    
+    possiNums = []
+    for val in perm[i].possi:
+        decidingPerm = copy.deepcopy(perm[i])
+        decidingPerm.possi = [val]
+        possiNums+=findAllPossi(perm,  newClues+[decidingPerm], int(val)+currVal, i+1)
+    return possiNums
+
+
+def findAllClueSums(clues, amount):
+    result = []
+    allLists = permutations(clues, amount)
+    for perm in list(allLists):
+        permPossi = findAllPossi(perm, newClues=[], currVal=0, i=0)
+        if permPossi:
+            result += permPossi
+
+    return result
+
+
+def checkClueSums(allClueSums, length, extra):
+    result = []
+    for clueSum in allClueSums:
+        if len(str(int(clueSum[0])+extra)) == length:
+            clueSum = list(clueSum)
+            clueSum[0] = str(int(clueSum[0])+extra)
+            clueSum = tuple(clueSum)
+            result.append(clueSum)
+    return result
+
+
+def obtainClueSums(clues, extra, amount, length):
+    allClueSums = findAllClueSums(clues, amount)
+    return checkClueSums(allClueSums, length, extra)
+
+   
+def implementClues(clues, newClues, cross):
+    for clue in newClues:
+        for currClue in clues:
+            if currClue.name == clue.name:
+                currClue = clue
+                updateDigits(currClue, cross)
+    
+
+
+def removeDupes(rawClueList, amount):
+    i = 0
+    groupsOfNames = set()
+
+    while i<len(rawClueList):
+        groupOfNames = makeGroupOfNames(rawClueList, amount, i)
+
+        if groupOfNames in groupsOfNames:
+            rawClueList.pop(i)
+        else:
+            groupsOfNames.add(groupOfNames)
+            i+=1
+
+    return rawClueList
+
+
+def makeGroupOfNames(rawClueList, amount, i):
+    groupOfNames = []
+    for j in range(amount):
+        groupOfNames+=rawClueList[i][1][j].possi
+    groupOfNames.sort()
+    return tuple(groupOfNames)
+
+
+def compareQ(curr, checking):
+    i = 0
+    result = []
+    while i<len(checking):
+        if checking[i][0] in curr:
+            result.append(checking[i])
+        i+=1
+    return result
+
+
+def tryClue(cluesNew, cluesCopy, crossCopy):
+    for i in range(0,len(cluesNew)):
+        for j in range(0,len(cluesCopy)):
+            if cluesNew[i].name == cluesCopy[j].name:
+                cluesCopy[j]= cluesNew[i]
+        print(cluesNew[i])
+    
+    
+    for clue in cluesCopy:
+        updateDigits(clue, crossCopy)
+    
+    displayCross(crossCopy)
+###
+
