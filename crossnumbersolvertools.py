@@ -293,7 +293,7 @@ def findAllPossi(perm, mockCross, coords, extra, newClues, currVal, i):
             targetNums = findCombos(coords, mockCross)
 
         if str(currVal + extra) in targetNums:
-            return [(str(currVal + extra), newClues)]
+            return [(str(currVal + extra), mockCross)]
         return []
     
     possiNums = []
@@ -305,16 +305,21 @@ def findAllPossi(perm, mockCross, coords, extra, newClues, currVal, i):
         changedCross = updateDigits(decidingPerm, changedCross)
 
         possiNums+=findAllPossi(perm, changedCross, coords, extra, newClues+[decidingPerm], int(val)+currVal, i+1)
-        print()
+        
 
     return possiNums
 
 
-def findAllClueSums(clues, mockCross, coords, amount):
+def findAllClueSums(clues, cross, coords, amount, extra):
     result = []
     allLists = permutations(clues, amount)
     for perm in list(allLists):
-        result += findAllPossi(perm, mockCross, coords, newClues=[], currVal=0, i=0)
+        mockCross = copy.deepcopy(cross)
+        res = findAllPossi(perm, mockCross, 
+                       coords, extra=extra, 
+                       newClues=[], currVal=0, i=0)
+    
+        result+=res
 
     return result
 

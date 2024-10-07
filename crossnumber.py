@@ -71,18 +71,12 @@ clues = [a1, a3, a5, d1, d2, d4]
 ##All the normal number Stuff, not the difficult clue operation stuff
 possiCruncher(cross, prev, clues)
 
+clueSums = findAllClueSums(clues, cross, d4.pos, amount=2, extra=-6)
+
+for possi in clueSums:
+
+    d4.possi = [possi[0]]
+    cross = updateDigits(d4, possi[1])
+    displayCross(cross)
 
 
-mockCross = copy.deepcopy(cross)
-res = findAllPossi([a1, d1], mockCross, d4.pos, extra=-6, newClues=[], currVal=0, i=0)
-
-
-
-cross = useNewClues(cross, clues, res[0][1])
-d4.possi = [res[0][0]]
-cross = updateDigits(d4, cross)
-displayCross(cross)
-
-
-clueSums = findAllClueSums(clues, cross, d4.pos, 2)
-print()
