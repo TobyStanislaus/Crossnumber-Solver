@@ -11,35 +11,49 @@ def inputHandler(cross, clue, clues):
     for instruction in clueDict[clue]:
         choiceDict = refreshChoiceDict(clue.length, instruction)
         mainVal, clueType, extra, remove, order, proper, ofItself = instruction
-        clueNums += choiceDict[clueType]
+        if clueType in choiceDict:
+            clueNums += choiceDict[clueType]
 
-    if clueNums[0]!=-40:
+    if clueNums and clueNums[0]!=-40:
         clue.possi = comparePossi(clue.possi, clueNums, remove)
         cross = updateDigits(clue, cross)
 
     return clue, cross
 
 
-def possiCruncher(cross, prev, clues):
+def numberCruncher(cross, prev, clues):
     while compareNewAndOld(cross, prev):
         prev = copy.deepcopy(cross)
-
         for clue in clues:
             clue, cross = inputHandler(cross, clue, clues)
 
     return cross, clues
+
+
+def possiCruncher(cross, clues, clue):
+    
+    clueDict = refreshClueDict(clues)
+    for instruction in clueDict[clue]:
+        mainVal, clueType, extra, removeNot, order, proper, ofItself = instruction
+
+        possiCrosses = findPossiCrossesFromSums(cross, clues, clue, mainVal, extra)
+        cross = addToCross(cross, possiCrosses)
+    return cross
+
 ##The one you must change each time (currently)
 def refreshClueDict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself]
     clueDict = {
-        a1:[[105, 'f', -4, None, None, True, None]],
-        a3:[[1,'p', 1, None, None, None, None]],
-        a5:[[1, '', 0, None, None, None, None]],
-        d1:[[2, 'po', -2, None, None, None, None]],
-        d2:[[3, 'po', -400, None, None, None, None]],
-        d4:[[1, '', 0, None, None, None, None]]
-        }
+        a1:[[1, 'pr', -2, None, None, None, None]],
+        a3:[[a3.possi,'f', 100, False, -1, True, True]],
+        a5:[[13, 'm', 0, None, None, None, None]],
+        d1:[[4, 'po', 0, None, None, None, None]],
+        d2:[[3, 'po', 0, None, None, None, None]],
+        d4:[[1, 'pr', 0, True, None, None, None],
+            [2, 'po', 0, True, None, None, None],
+            [2, 'm', 0, True, None, None, None]]}
+
     return clueDict
 
 ##Comparison/Cross UI
@@ -110,7 +124,6 @@ def findOrder(numList, order):
     return numList
 
 
-
 def refreshChoiceDict(length, instruction):
     mainVal, clueType, extra, remove, order, proper, ofItself = instruction
     choiceDict = {
@@ -159,7 +172,7 @@ def findPowers(length, extra, order, power):
         val = (n**power)+extra
         if val>0:
             powerLength = len(str(val))
-            if powerLength == length:
+            if powerLength == length and val>0:
                 result.append(str(val))
         n+=1
     result = findOrder(result, order)
@@ -177,7 +190,7 @@ def findTriangle(length, extra, order):
         val = n + extra
         if val>0:
             triLength = len(str(val))
-            if triLength == length:
+            if triLength == length and val>0:
                 result.append(str(val))
         adding += 1
 
@@ -196,7 +209,7 @@ def findMultiples(length, extra, order, multi):
         val = (n*multi)+extra
         if val>0:
             multiLength = len(str(val))
-            if multiLength == length:
+            if multiLength == length and val>0:
                 result.append(str(val))
         n+=1
 
@@ -217,7 +230,7 @@ def findFactors(length, extra, order, product, proper, ofItself):
     botNum, topNum = findBotTop(product, proper)
 
     for i in range(botNum, topNum):
-        if product%i == 0 and len(str(i+extra)) == length:
+        if product%i == 0 and len(str(i+extra)) == length and i+extra>0:
             result.append(str(i+extra))
     
     result = findOrder(result, order)
@@ -235,7 +248,7 @@ def findPalidrome(length, extra, order):
         val = i
         i = str(i)
         
-        if i == i[::-1] and len(str(val+extra)) == length:
+        if i == i[::-1] and len(str(val+extra)) == length and val+extra > 0:
             palis.append(str(val+extra))
     
     palis = findOrder(palis, order)
@@ -310,7 +323,20 @@ def findAllPossi(perm, mockCross, coords, extra, newClues, currVal, i):
     return possiNums
 
 
-def findAllClueSums(clues, cross, coords, amount, extra):
+def findPossiCrossesFromSums(cross, clues, clue, amount, extra):
+    clueSums = findAllClueSums(cross, clues, clue.pos, amount, extra)
+
+    possiCrosses = []
+
+    for possi in clueSums:
+        clue.possi = [possi[0]]
+        possiCross = updateDigits(clue, possi[1])
+        possiCrosses.append(possiCross)
+        
+    return possiCrosses
+        
+
+def findAllClueSums(cross, clues, coords, amount, extra):
     result = []
     allLists = permutations(clues, amount)
     for perm in list(allLists):
@@ -333,3 +359,20 @@ def useNewClues(cross, clues, newClues):
     for clue in clues:
         cross = updateDigits(clue, cross)
     return cross
+
+
+def addToCross(cross, newCrosses):
+    if newCrosses == []:
+        return
+    
+    cross = newCrosses[0]
+    for newCross in newCrosses:
+        for y in range(0,3):
+            for x in range(0,3):
+                if newCross[y][x].possi[0] not in cross[y][x].possi:
+                    cross[y][x].possi.append(newCross[y][x].possi[0])
+    
+    return cross
+
+
+        

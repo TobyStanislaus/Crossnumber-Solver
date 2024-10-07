@@ -1,6 +1,4 @@
 from crossnumbersolvertools import *
-import copy
-
 
 
 class GridDigit():
@@ -69,14 +67,6 @@ clues = [a1, a3, a5, d1, d2, d4]
 
 
 ##All the normal number Stuff, not the difficult clue operation stuff
-possiCruncher(cross, prev, clues)
-
-clueSums = findAllClueSums(clues, cross, d4.pos, amount=2, extra=-6)
-
-for possi in clueSums:
-
-    d4.possi = [possi[0]]
-    cross = updateDigits(d4, possi[1])
-    displayCross(cross)
-
-
+cross, clues = numberCruncher(cross, prev, clues)
+#cross = possiCruncher(cross, clues, d4)
+displayCross(cross)
