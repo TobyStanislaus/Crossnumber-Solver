@@ -1,5 +1,5 @@
 from crossnumbersolvertools import *
-
+import os
 
 class GridDigit():
     def __init__(self, val) -> None:
@@ -64,15 +64,56 @@ d4 = Number('d4', [(2,1),(2,2)], 2)
 
 clues = [a1, a3, a5, d1, d2, d4]
 
+def outputCurrClues(clueDict):
+    for clue in clueDict:
+        print(clue.name, clueDict[clue])
 
 
-#a3, d2 = multiplyClue(a3, d2, amount=2)
-#d4, a5 = multiplyClue(d4, a5, amount=0.6)
+def findClue(clues, clueName):
+    for clue in clues:
+        if clue.name == clueName:
+            return clue
+    return -1
 
-print()
+
+clueDict = {}
+for clue in clues:
+    clueDict[clue] = [1, '', 0, False, None, None, None]
+
+cont = True
+while cont:
+    os.system('cls')
+    outputCurrClues(clueDict)
+    clueName = input('What clue do you want to fill in? ')
+    clue  = findClue(clues, clueName)
+
+    if clue == -1:
+        print('Invalid clue name')
+    clueConfig = generateClueConfig(clue, clueDict[clue])
+    clueDict[clue].append(clueConfig)
+    os.system('cls')
+    again = input('Do you have another clue to input (y/n)? ')
+    if again == 'n':
+        cont == False
+
+
+a3.findNumbers()
+
+clueDict = {
+    a1:[[1, 'pr', -2, None, None, None, None]],
+    a3:[[a3.possi,'f', 100, False, -1, True, True]],
+    a5:[[13, 'm', 0, None, None, None, None]],
+    d1:[[4, 'po', 0, None, None, None, None]],
+    d2:[[3, 'po', 0, None, None, None, None]],
+    d4:[[1, 'pr', 0, True, None, None, None],
+        [2, 'po', 0, True, None, None, None],
+        [2, 'm', 0, True, None, None, None]]}
+
+
+
 
 
 ##All the normal number Stuff, not the difficult clue operation stuff
-cross, clues = numberCruncher(cross, prev, clues)
+cross, clues = numberCruncher(cross, prev, clues, clueDict)
 #cross = possiCruncher(cross, clues, d4)
 displayCross(cross)

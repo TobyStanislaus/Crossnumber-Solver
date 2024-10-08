@@ -1,5 +1,78 @@
 from itertools import permutations
 import copy
+import os
+
+#Inputs function
+
+####Input options for the config of one clue
+def generateClueConfig(clue, clueConfig):
+    '''
+    Input options for the config of one clue
+    '''
+    os.system('cls')
+    containsClues = input('Does the clue contain other clues within (y/n)? ');os.system('cls')
+    clueConfig[2] = int(input('Does the clue have an extra amount added to it?\nFor example - "2 more than a palidrome"\nInput 0 if there is nothing '));os.system('cls')
+    clueConfig[3] = input('Do I want to exclude these numbers (y/n)?\nFor example - "Not prime, not square, not even"\n');os.system('cls')
+    clueConfig[4] = input('Do I want a certain number - such as the smallest or largest?\nFor the largest, use programming indexing (-1 for largest, -2 for 2nd largest etc etc)\nInput nothing if there is no order ');os.system('cls')
+    
+    clueConfig = cleanUpConfig(clueConfig)
+    if containsClues == 'y':
+        pass
+    elif containsClues.lower() == 'n':
+        clueConfig = normNums(clue, clueConfig)
+
+    return clueConfig
+
+
+def normNums(clue, clueConfig):
+    listOptions()
+    clueType  = input('Which type of number is it? ')
+    clueType = clueType.lower()
+    clueConfig[1] = clueType
+    if clueType == 'pr' or clueType == 't':
+        return clueConfig
+    return otherNums(clue, clueConfig)
+
+
+def otherNums(clue, clueConfig):
+    if clueConfig[1] == 'm' or clueConfig[1] == 'po':
+        listOptions()
+        clueConfig[0] = int(input('What is the main value?\nFor example 13 in the clue "A multiple of 13"\n'))
+        return clueConfig
+    return factorNums(clue, clueConfig)
+
+
+def factorNums(clue, clueConfig):
+    os.system('cls')
+    proper =  input('Is it a proper factor? ')
+    ofItself = input('Is it of itself? ')
+    clueConfig[5] = checkYesNo(proper)
+    clueConfig[6] = checkYesNo(ofItself)
+    if clueConfig[6]:
+        clue.findNumbers()
+        clueConfig[0] = clue.possi
+    return clueConfig
+
+
+def cleanUpConfig(clueConfig):
+    clueConfig[3] = checkYesNo(clueConfig[3])
+    try:
+        clueConfig[4] = int(clueConfig[4])
+    except:
+        clueConfig[4] = None
+    return clueConfig
+
+def checkYesNo(result):
+    if result == 'y':
+        return True
+    else:
+        return False
+####
+
+def listOptions():
+    os.system('cls')
+    print('Options:\npr = Prime Number\nt = Triangle Number\nm = Multiples\npo = Powers\nf = Factors')
+
 ##Master function
 def inputHandler(cross, clue, clues):
     '''
@@ -40,7 +113,7 @@ def possiCruncher(cross, clues, clue):
         cross = addToCross(cross, possiCrosses)
     return cross
 
-##The one you must change each time (currently)
+
 def refreshClueDict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself]
@@ -265,8 +338,6 @@ def findBotTop(product, proper):
     return botNum, topNum
 ####
 
-
-### 1 down, 1 across
 
 
 def checkCross(cross):
