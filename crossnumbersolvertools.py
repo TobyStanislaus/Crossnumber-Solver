@@ -54,6 +54,7 @@ def refreshClueDict(clues):
             [2, 'po', 0, True, None, None, None],
             [2, 'm', 0, True, None, None, None]]}
 
+
     return clueDict
 
 ##Comparison/Cross UI
@@ -286,6 +287,24 @@ def findCombos(coords, newCross):
             result.append(num1+num2)
     
     return result
+##One clue only
+
+def multiplyClue(clue, desiredClue, amount):
+    clue.findNumbers()
+    desiredClue.findNumbers()
+    cluePossi = []
+    desiredPossi = []
+    
+    for possiNum in desiredClue.possi:
+        num = float(possiNum) * amount  
+        if num.is_integer() and len(str(int(num))) == clue.length:  
+            cluePossi.append(int(num))
+            desiredPossi.append(int(possiNum))
+    
+    clue.possi = cluePossi
+    desiredClue.possi = desiredPossi
+    return clue, desiredClue
+
 
 ### Clues Adding
 def clueAdd(resClue, clueCalc, amount):
