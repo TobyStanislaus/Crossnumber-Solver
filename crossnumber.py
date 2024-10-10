@@ -69,7 +69,6 @@ clues = [a1, a3, a5, d1, d2, d4]
 #a3, d2 = multiplyClue(a3, d2, amount=2)
 #d4, a5 = multiplyClue(d4, a5, amount=0.6)
 
-print()
 
 
 ##All the normal number Stuff, not the difficult clue operation stuff
