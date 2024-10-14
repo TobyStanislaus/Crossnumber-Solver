@@ -1,3 +1,16 @@
+
+Maths Challenge:
+
+a1 = Number('a1', [(0,0),(1,0)])
+a3 = Number('a3', [(0,1),(1,1),(2,1)])
+a5 = Number('a5', [(1,2),(2,2)])
+
+d1 = Number('d1', [(0,0),(0,1)])
+d2 = Number('d2', [(1,0),(1,1),(1,2)])
+d4 = Number('d4', [(2,1),(2,2)])
+
+
+
 2023
 clueDict = {
     a1:[[105, 'f', -4, None, None, True, None]],
@@ -20,7 +33,27 @@ clueDict = {
         [2, 'po', 0, True, None, None, None],
         [2, 'm', 0, True, None, None, None]]}
 
-2021
 
 
 
+
+
+Ritangle:
+
+a1 = Number('a1', [(0,0),(1,0),(2,0)])
+a3 = Number('a3', [(1,1),(2,1)])
+a5 = Number('a5', [(0,2),(1,2),(2,2)])
+
+d1 = Number('d1', [(0,0),(0,1),(0,2)])
+d2 = Number('d2', [(1,0),(1,1)])
+d4 = Number('d4', [(2,1),(2,2)])
+
+Curr Ritangle clues -
+
+clueDict = {
+    a1:[[1, '', 0, None, None, None, None]],
+    a3:[[1, '', 0, None, None, None, None]],
+    a5:[[1, '', 0, None, None, None, None]],
+    d1:[[1, 'pr', 0, None, None, None, None]],
+    d2:[[1, '', 0, None, None, None, None]],
+    d4:[[1, '', 0, None, None, None, None]]}

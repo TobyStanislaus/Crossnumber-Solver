@@ -1,5 +1,6 @@
 from itertools import permutations
 import copy
+
 ##Master function
 def inputHandler(cross, clue, clues):
     '''
@@ -36,7 +37,7 @@ def possiCruncher(cross, clues, clue):
     for instruction in clueDict[clue]:
         mainVal, clueType, extra, removeNot, order, proper, ofItself = instruction
 
-        possiCrosses = findPossiCrossesFromSums(cross, clues, clue, mainVal, extra)
+        possiCrosses = findPossiCrossesFromSums(cross, clues, clue, mainVal, extra, operation = add)
         cross = addToCross(cross, possiCrosses)
     return cross
 
@@ -45,19 +46,23 @@ def refreshClueDict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself]
     clueDict = {
-        a1:[[1, 'pr', -2, None, None, None, None]],
-        a3:[[a3.possi,'f', 100, False, -1, True, True]],
-        a5:[[13, 'm', 0, None, None, None, None]],
-        d1:[[4, 'po', 0, None, None, None, None]],
-        d2:[[3, 'po', 0, None, None, None, None]],
-        d4:[[1, 'pr', 0, True, None, None, None],
-            [2, 'po', 0, True, None, None, None],
-            [2, 'm', 0, True, None, None, None]]}
+    a1:[[1, '', 0, None, None, None, None]],
+    a3:[[1, '', 0, None, None, None, None]],
+    a5:[[1, '', 0, None, None, None, None]],
+    d1:[[1, 'pr', 0, None, None, None, None]],
+    d2:[[1, '', 0, None, None, None, None]],
+    d4:[[1, '', 0, None, None, None, None]]}
+
 
 
     return clueDict
 
 ##Comparison/Cross UI
+def displayAllCross(cross):
+    print()
+
+
+
 def displayCross(cross):
     for row in cross:
         printRow = ''
@@ -317,7 +322,7 @@ def clueAdd(resClue, clueCalc, amount):
     return results
 
 
-def findAllPossi(perm, mockCross, coords, extra, newClues, currVal, i):
+def findAllPossi(perm, mockCross, coords, extra, operation, newClues, currVal, i):
     if i == len(perm):
         targetNums = []
         
@@ -335,15 +340,26 @@ def findAllPossi(perm, mockCross, coords, extra, newClues, currVal, i):
         changedCross = copy.deepcopy(mockCross)
 
         changedCross = updateDigits(decidingPerm, changedCross)
-
-        possiNums+=findAllPossi(perm, changedCross, coords, extra, newClues+[decidingPerm], int(val)+currVal, i+1)
+        nextVal = operation(int(val), currVal)
+        possiNums+=findAllPossi(perm, changedCross, coords, extra, operation, newClues+[decidingPerm],nextVal, i+1)
         
 
     return possiNums
 
+def add(num1, num2):
+    return num1+num2
 
-def findPossiCrossesFromSums(cross, clues, clue, amount, extra):
-    clueSums = findAllClueSums(cross, clues, clue.pos, amount, extra)
+def multi(num1, num2):
+    return num1*num2
+
+def subtract(num1, num2):
+    return num1 - num2
+
+def divide(num1, num2):
+    return num1/num2
+
+def findPossiCrossesFromSums(cross, clues, clue, amount, extra, operation):
+    clueSums = findAllClueSums(cross, clues, clue.pos, amount, extra, operation)
 
     possiCrosses = []
 
@@ -355,13 +371,13 @@ def findPossiCrossesFromSums(cross, clues, clue, amount, extra):
     return possiCrosses
         
 
-def findAllClueSums(cross, clues, coords, amount, extra):
+def findAllClueSums(cross, clues, coords, amount, extra, operation):
     result = []
     allLists = permutations(clues, amount)
     for perm in list(allLists):
         mockCross = copy.deepcopy(cross)
         res = findAllPossi(perm, mockCross, 
-                       coords, extra=extra, 
+                       coords, extra, operation, 
                        newClues=[], currVal=0, i=0)
     
         result+=res
