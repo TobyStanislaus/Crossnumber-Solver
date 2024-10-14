@@ -71,8 +71,8 @@ def displayAllCross(cross, clues, i):
         if i != len(clues)-1:
             displayAllCross(mockCross, mockClues, i+1)
         else:
-            #displayCross(mockCross)
-            pass
+            displayCross(mockCross)
+       
     
 
 def displayCross(cross):
