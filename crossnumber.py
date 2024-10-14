@@ -1,5 +1,5 @@
 from crossnumbersolvertools import *
-import os
+
 
 class GridDigit():
     def __init__(self, val) -> None:
@@ -54,13 +54,14 @@ finalCross = [['-','-','-'],
 
 
 ## Initializing all clues
-a1 = Number('a1', [(0,0),(1,0),(2,0)])
-a3 = Number('a3', [(1,1),(2,1)])
-a5 = Number('a5', [(0,2),(1,2),(2,2)])
+a1 = Number('a1', [(0,0),(1,0)])
+a3 = Number('a3', [(0,1),(1,1),(2,1)])
+a5 = Number('a5', [(1,2),(2,2)])
 
-d1 = Number('d1', [(0,0),(0,1),(0,2)])
-d2 = Number('d2', [(1,0),(1,1)])
+d1 = Number('d1', [(0,0),(0,1)])
+d2 = Number('d2', [(1,0),(1,1),(1,2)])
 d4 = Number('d4', [(2,1),(2,2)])
+
 
 
 clues = [a1, a3, a5, d1, d2, d4]
@@ -68,9 +69,11 @@ clues = [a1, a3, a5, d1, d2, d4]
 
 ##All the normal number Stuff, not the difficult clue operation stuff
 cross, clues = numberCruncher(cross, prev, clues)
-#cross = possiCruncher(cross, clues, d4)
+
 
 
 displayAllCross(cross, clues, i = 0)
-print()
-#displayCross(cross)
+
+cross = possiCruncher(cross, clues, d4)
+
+displayAllCross(cross, clues, i = 0)

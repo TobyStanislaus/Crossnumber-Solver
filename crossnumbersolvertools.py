@@ -47,12 +47,12 @@ def refreshClueDict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself]
     clueDict = {
-    a1:[[1, '', 0, None, None, None, None]],
-    a3:[[1, '', 0, None, None, None, None]],
+    a1:[[105, 'f', -4, None, None, True, None]],
+    a3:[[1,'p', 1, None, None, None, None]],
     a5:[[1, '', 0, None, None, None, None]],
-    d1:[[1, 'pr', 0, None, None, None, None]],
-    d2:[[1, '', 0, None, None, None, None]],
-    d4:[[1, '', 0, None, None, None, None]]}
+    d1:[[2, 'po', -2, None, None, None, None]],
+    d2:[[3, 'po', -400, None, None, None, None]],
+    d4:[[2, 'cA', -6, None, None, None, None]]}
 
 
 
@@ -71,6 +71,7 @@ def displayAllCross(cross, clues, i):
         if i != len(clues)-1:
             displayAllCross(mockCross, mockClues, i+1)
         else:
+        
             displayCross(mockCross)
        
     
@@ -395,4 +396,3 @@ def addToCross(cross, newCrosses):
     return cross
 
 
-        
