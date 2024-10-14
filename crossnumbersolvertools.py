@@ -2,83 +2,12 @@ from itertools import permutations
 import copy
 import os
 
-#Inputs function
-
-####Input options for the config of one clue
-def generateClueConfig(clue, clueConfig):
-    '''
-    Input options for the config of one clue
-    '''
-    os.system('cls')
-    containsClues = input('Does the clue contain other clues within (y/n)? ');os.system('cls')
-    clueConfig[2] = int(input('Does the clue have an extra amount added to it?\nFor example - "2 more than a palidrome"\nInput 0 if there is nothing '));os.system('cls')
-    clueConfig[3] = input('Do I want to exclude these numbers (y/n)?\nFor example - "Not prime, not square, not even"\n');os.system('cls')
-    clueConfig[4] = input('Do I want a certain number - such as the smallest or largest?\nFor the largest, use programming indexing (-1 for largest, -2 for 2nd largest etc etc)\nInput nothing if there is no order ');os.system('cls')
-    
-    clueConfig = cleanUpConfig(clueConfig)
-    if containsClues == 'y':
-        pass
-    elif containsClues.lower() == 'n':
-        clueConfig = normNums(clue, clueConfig)
-
-    return clueConfig
-
-
-def normNums(clue, clueConfig):
-    listOptions()
-    clueType  = input('Which type of number is it? ')
-    clueType = clueType.lower()
-    clueConfig[1] = clueType
-    if clueType == 'pr' or clueType == 't':
-        return clueConfig
-    return otherNums(clue, clueConfig)
-
-
-def otherNums(clue, clueConfig):
-    if clueConfig[1] == 'm' or clueConfig[1] == 'po':
-        listOptions()
-        clueConfig[0] = int(input('What is the main value?\nFor example 13 in the clue "A multiple of 13"\n'))
-        return clueConfig
-    return factorNums(clue, clueConfig)
-
-
-def factorNums(clue, clueConfig):
-    os.system('cls')
-    proper =  input('Is it a proper factor? ')
-    ofItself = input('Is it of itself? ')
-    clueConfig[5] = checkYesNo(proper)
-    clueConfig[6] = checkYesNo(ofItself)
-    if clueConfig[6]:
-        clue.findNumbers()
-        clueConfig[0] = clue.possi
-    return clueConfig
-
-
-def cleanUpConfig(clueConfig):
-    clueConfig[3] = checkYesNo(clueConfig[3])
-    try:
-        clueConfig[4] = int(clueConfig[4])
-    except:
-        clueConfig[4] = None
-    return clueConfig
-
-def checkYesNo(result):
-    if result == 'y':
-        return True
-    else:
-        return False
-####
-
-def listOptions():
-    os.system('cls')
-    print('Options:\npr = Prime Number\nt = Triangle Number\nm = Multiples\npo = Powers\nf = Factors')
-
 ##Master function
 def inputHandler(cross, clue, clues):
     '''
     Give it a clue, it will process all its possible numbers and put it on the cross
     '''
-    clue.findNumbers()
+    clue.findNumbers(cross)
     clueNums =[]
     clueDict = refreshClueDict(clues)
     for instruction in clueDict[clue]:
@@ -109,7 +38,7 @@ def possiCruncher(cross, clues, clue):
     for instruction in clueDict[clue]:
         mainVal, clueType, extra, removeNot, order, proper, ofItself = instruction
 
-        possiCrosses = findPossiCrossesFromSums(cross, clues, clue, mainVal, extra)
+        possiCrosses = findPossiCrossesFromSums(cross, clues, clue, mainVal, extra, operation = add)
         cross = addToCross(cross, possiCrosses)
     return cross
 
@@ -118,20 +47,37 @@ def refreshClueDict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself]
     clueDict = {
-        a1:[[1, 'pr', -2, None, None, None, None]],
-        a3:[[a3.possi,'f', 100, False, -1, True, True]],
-        a5:[[13, 'm', 0, None, None, None, None]],
-        d1:[[4, 'po', 0, None, None, None, None]],
-        d2:[[3, 'po', 0, None, None, None, None]],
-        d4:[[1, 'pr', 0, True, None, None, None],
-            [2, 'po', 0, True, None, None, None],
-            [2, 'm', 0, True, None, None, None]]}
+    a1:[[105, 'f', -4, None, None, True, None]],
+    a3:[[1,'p', 1, None, None, None, None]],
+    a5:[[1, '', 0, None, None, None, None]],
+    d1:[[2, 'po', -2, None, None, None, None]],
+    d2:[[3, 'po', -400, None, None, None, None]],
+    d4:[[2, 'cA', -6, None, None, None, None]]}
+
 
 
     return clueDict
 
 ##Comparison/Cross UI
+def displayAllCross(cross, clues, i):
+    mockClues = copy.deepcopy(clues)
+    mockClues[i].findNumbers(cross)
+    for val in mockClues[i].possi:
+        mockCross = copy.deepcopy(cross)
+        mockClues = copy.deepcopy(clues)
+        mockClues[i].possi = [val]
+        mockCross = updateDigits(mockClues[i], mockCross)
+
+        if i != len(clues)-1:
+            displayAllCross(mockCross, mockClues, i+1)
+        else:
+        
+            displayCross(mockCross)
+       
+    
+
 def displayCross(cross):
+    os.system('cls')
     for row in cross:
         printRow = ''
         for digit in row:
@@ -169,9 +115,7 @@ def updateDigits(clue, cross):
     #splitting into digits
     for num in nums:
         for i in range(0, len(num)):
-            if num[i] in numPossi[i]:
-                pass
-            else:
+            if num[i] not in numPossi[i]:
                 numPossi[i].append(num[i])
 
     i = 0
@@ -358,37 +302,13 @@ def findCombos(coords, newCross):
             result.append(num1+num2)
     
     return result
-##One clue only
 
-def multiplyClue(clue, desiredClue, amount):
-    clue.findNumbers()
-    desiredClue.findNumbers()
-    cluePossi = []
-    desiredPossi = []
-    
-    for possiNum in desiredClue.possi:
-        num = float(possiNum) * amount  
-        if num.is_integer() and len(str(int(num))) == clue.length:  
-            cluePossi.append(int(num))
-            desiredPossi.append(int(possiNum))
-    
-    clue.possi = cluePossi
-    desiredClue.possi = desiredPossi
-    return clue, desiredClue
+
 
 
 ### Clues Adding
-def clueAdd(resClue, clueCalc, amount):
-    results = []
-    clueCalc.findNumbers()
-    for num in clueCalc.possi:
-        val = str(int(num)+amount)
-        if len(val) == resClue.length:
-            results.append(val)
-    return results
 
-
-def findAllPossi(perm, mockCross, coords, extra, newClues, currVal, i):
+def findAllPossi(perm, mockCross, coords, extra, operation, newClues, currVal, i):
     if i == len(perm):
         targetNums = []
         
@@ -406,15 +326,26 @@ def findAllPossi(perm, mockCross, coords, extra, newClues, currVal, i):
         changedCross = copy.deepcopy(mockCross)
 
         changedCross = updateDigits(decidingPerm, changedCross)
-
-        possiNums+=findAllPossi(perm, changedCross, coords, extra, newClues+[decidingPerm], int(val)+currVal, i+1)
+        nextVal = operation(int(val), currVal)
+        possiNums+=findAllPossi(perm, changedCross, coords, extra, operation, newClues+[decidingPerm],nextVal, i+1)
         
 
     return possiNums
 
+def add(num1, num2):
+    return num1+num2
 
-def findPossiCrossesFromSums(cross, clues, clue, amount, extra):
-    clueSums = findAllClueSums(cross, clues, clue.pos, amount, extra)
+def multi(num1, num2):
+    return num1*num2
+
+def subtract(num1, num2):
+    return num1 - num2
+
+def divide(num1, num2):
+    return num1/num2
+
+def findPossiCrossesFromSums(cross, clues, clue, amount, extra, operation):
+    clueSums = findAllClueSums(cross, clues, clue.pos, amount, extra, operation)
 
     possiCrosses = []
 
@@ -426,13 +357,13 @@ def findPossiCrossesFromSums(cross, clues, clue, amount, extra):
     return possiCrosses
         
 
-def findAllClueSums(cross, clues, coords, amount, extra):
+def findAllClueSums(cross, clues, coords, amount, extra, operation):
     result = []
     allLists = permutations(clues, amount)
     for perm in list(allLists):
         mockCross = copy.deepcopy(cross)
         res = findAllPossi(perm, mockCross, 
-                       coords, extra=extra, 
+                       coords, extra, operation, 
                        newClues=[], currVal=0, i=0)
     
         result+=res
@@ -465,4 +396,3 @@ def addToCross(cross, newCrosses):
     return cross
 
 
-        
