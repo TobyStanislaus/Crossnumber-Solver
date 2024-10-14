@@ -42,7 +42,7 @@ def possiCruncher(cross, clues, clue):
         cross = addToCross(cross, possiCrosses)
     return cross
 
-##The one you must change each time (currently)
+
 def refreshClueDict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself]
@@ -281,8 +281,6 @@ def findBotTop(product, proper):
     return botNum, topNum
 ####
 
-
-### 1 down, 1 across
 
 
 def checkCross(cross):

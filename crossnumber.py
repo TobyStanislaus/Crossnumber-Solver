@@ -1,5 +1,5 @@
 from crossnumbersolvertools import *
-
+import os
 
 class GridDigit():
     def __init__(self, val) -> None:
