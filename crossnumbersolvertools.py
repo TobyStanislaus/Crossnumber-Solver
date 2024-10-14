@@ -1,12 +1,13 @@
 from itertools import permutations
 import copy
+import os
 
 ##Master function
 def inputHandler(cross, clue, clues):
     '''
     Give it a clue, it will process all its possible numbers and put it on the cross
     '''
-    clue.findNumbers()
+    clue.findNumbers(cross)
     clueNums =[]
     clueDict = refreshClueDict(clues)
     for instruction in clueDict[clue]:
@@ -58,12 +59,24 @@ def refreshClueDict(clues):
     return clueDict
 
 ##Comparison/Cross UI
-def displayAllCross(cross):
-    print()
+def displayAllCross(cross, clues, i):
+    mockClues = copy.deepcopy(clues)
+    mockClues[i].findNumbers(cross)
+    for val in mockClues[i].possi:
+        mockCross = copy.deepcopy(cross)
+        mockClues = copy.deepcopy(clues)
+        mockClues[i].possi = [val]
+        mockCross = updateDigits(mockClues[i], mockCross)
 
-
+        if i != len(clues)-1:
+            displayAllCross(mockCross, mockClues, i+1)
+        else:
+            #displayCross(mockCross)
+            pass
+    
 
 def displayCross(cross):
+    os.system('cls')
     for row in cross:
         printRow = ''
         for digit in row:
@@ -101,9 +114,7 @@ def updateDigits(clue, cross):
     #splitting into digits
     for num in nums:
         for i in range(0, len(num)):
-            if num[i] in numPossi[i]:
-                pass
-            else:
+            if num[i] not in numPossi[i]:
                 numPossi[i].append(num[i])
 
     i = 0
@@ -292,35 +303,11 @@ def findCombos(coords, newCross):
             result.append(num1+num2)
     
     return result
-##One clue only
 
-def multiplyClue(clue, desiredClue, amount):
-    clue.findNumbers()
-    desiredClue.findNumbers()
-    cluePossi = []
-    desiredPossi = []
-    
-    for possiNum in desiredClue.possi:
-        num = float(possiNum) * amount  
-        if num.is_integer() and len(str(int(num))) == clue.length:  
-            cluePossi.append(int(num))
-            desiredPossi.append(int(possiNum))
-    
-    clue.possi = cluePossi
-    desiredClue.possi = desiredPossi
-    return clue, desiredClue
+
 
 
 ### Clues Adding
-def clueAdd(resClue, clueCalc, amount):
-    results = []
-    clueCalc.findNumbers()
-    for num in clueCalc.possi:
-        val = str(int(num)+amount)
-        if len(val) == resClue.length:
-            results.append(val)
-    return results
-
 
 def findAllPossi(perm, mockCross, coords, extra, operation, newClues, currVal, i):
     if i == len(perm):

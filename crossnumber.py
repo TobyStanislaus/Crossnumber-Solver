@@ -5,6 +5,7 @@ class GridDigit():
     def __init__(self, val) -> None:
         if not val:
             self.possi = ['1', '2', '3', '4', '5', '6', '7', '8', '9', ]
+            #self.possi = ['1', '2']
         else:
             self.possi = [val]
         
@@ -18,13 +19,13 @@ class Number():
         self.pos = pos
         self.length = len(pos)
 
-    def findNumbers(self):
+    def findNumbers(self, findCross):
         nums = []
-        val1 = cross[self.pos[0][1]][self.pos[0][0]].possi
-        val2 = cross[self.pos[1][1]][self.pos[1][0]].possi
+        val1 = findCross[self.pos[0][1]][self.pos[0][0]].possi
+        val2 = findCross[self.pos[1][1]][self.pos[1][0]].possi
 
         if len(self.pos)>2:
-            val3 = cross[self.pos[2][1]][self.pos[2][0]].possi
+            val3 = findCross[self.pos[2][1]][self.pos[2][0]].possi
 
         for num1 in val1:
             for num2 in val2:
@@ -70,6 +71,6 @@ cross, clues = numberCruncher(cross, prev, clues)
 #cross = possiCruncher(cross, clues, d4)
 
 
-displayAllCross(cross)
-
+displayAllCross(cross, clues, i = 0)
+print()
 #displayCross(cross)
