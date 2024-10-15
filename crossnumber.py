@@ -4,8 +4,8 @@ from crossnumbersolvertools import *
 class GridDigit():
     def __init__(self, val) -> None:
         if not val:
-            self.possi = ['1', '2', '3', '4', '5', '6', '7', '8', '9', ]
-            #self.possi = ['1', '2']
+            #self.possi = ['1', '2', '3', '4', '5', '6', '7', '8', '9', ]
+            self.possi = ['1', '2']
         else:
             self.possi = [val]
         
@@ -54,12 +54,12 @@ finalCross = [['-','-','-'],
 
 
 ## Initializing all clues
-a1 = Number('a1', [(0,0),(1,0)])
-a3 = Number('a3', [(0,1),(1,1),(2,1)])
-a5 = Number('a5', [(1,2),(2,2)])
+a1 = Number('a1', [(0,0),(1,0),(2,0)])
+a3 = Number('a3', [(1,1),(2,1)])
+a5 = Number('a5', [(0,2),(1,2),(2,2)])
 
-d1 = Number('d1', [(0,0),(0,1)])
-d2 = Number('d2', [(1,0),(1,1),(1,2)])
+d1 = Number('d1', [(0,0),(0,1),(0,2)])
+d2 = Number('d2', [(1,0),(1,1)])
 d4 = Number('d4', [(2,1),(2,2)])
 
 
