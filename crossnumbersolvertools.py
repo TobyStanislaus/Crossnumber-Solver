@@ -60,8 +60,20 @@ def refreshClueDict(clues):
 ##Comparison/Cross UI
 def displayAllCross(cross, clues, i):
     mockClues = copy.deepcopy(clues)
-    mockClues[i].findNumbers(cross)
-    for val in mockClues[i].possi:
+    
+    
+    for possiVal, combos in clues[i].possi:
+        print(possiVal)
+        print(combos)
+        
+
+
+
+
+
+
+
+    for val in clues[i].possi:
         mockCross = copy.deepcopy(cross)
         mockClues = copy.deepcopy(clues)
         mockClues[i].possi = [val]
