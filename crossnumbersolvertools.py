@@ -230,10 +230,16 @@ def findPalidrome(length, extra, order):
 
 ###Factors
 def findMultiples(length, extra, order, multi):
-    if type(multi)!=int:
-        return
-    
     result = []
+    if type(multi) == list:
+        for num in multi:
+            partResult = findMultiples(length, extra, order, int(num))
+            #partResult = findOrder(partResult, order)
+            result.append(partResult)  
+
+        return result
+    
+    sub = []
     multiLength = 0
     n = 0
     while length >= multiLength:
@@ -241,10 +247,11 @@ def findMultiples(length, extra, order, multi):
         if val>0:
             multiLength = len(str(val))
             if multiLength == length and val>0:
-                result.append(str(val))
+                sub.append(str(val))
         n+=1
 
-    result = findOrder(result, order)
+    #sub = findOrder(sub, order)
+    result=(str(multi), sub)
     return result
 
 
