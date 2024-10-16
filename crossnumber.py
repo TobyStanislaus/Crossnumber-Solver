@@ -4,7 +4,7 @@ from crossnumbersolvertools import *
 class GridDigit():
     def __init__(self, val) -> None:
         if not val:
-            self.possi = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+            self.possi = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
         else:
             self.possi = [val]
         
