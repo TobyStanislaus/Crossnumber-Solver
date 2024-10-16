@@ -45,18 +45,20 @@ def refreshClueDict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself]
     clueDict = {
-    a1:[[105, 'f', -4, None, None, True, None]],
-    a3:[[1,'p', 1, None, None, None, None]],
+    a1:[[1, '', 0, None, None, None, None]],
+    a3:[[1, '', 0, None, None, None, None]],
     a5:[[1, '', 0, None, None, None, None]],
-    d1:[[2, 'po', -2, None, None, None, None]],
-    d2:[[3, 'po', -400, None, None, None, None]],
-    d4:[[2, 'cA', -6, None, None, None, None]]}
+    d1:[[1, '', 0, None, None, None, None]],
+    d2:[[1, '', 0, None, None, None, None]],
+    d4:[[1, 'pr', 0, None, None, None, None]]}
 
 
     return clueDict
 
 ##Comparison/Cross UI
 
+def displayCrosses(cross, clues):
+    pass
 
 
 def displayCross(cross):
@@ -201,8 +203,22 @@ def findTriangle(length, extra, order):
 
 
 def findMultiples(length, extra, order, multi):
-    if type(multi)!=int:
-        return
+    result = []
+    cont = []
+    if type(multi) == list:
+        for num in multi:
+            partCont = [num]
+            pCont, partResult = findMultiples(length, extra, order, int(num))
+            partResult = findOrder(partResult, order)
+            result+=partResult
+
+            if cont:
+                shift = cont[-1][1][1]
+                pCont[0]+=shift; pCont[1]+=shift
+            partCont.append(pCont)
+            cont.append(partCont)
+
+        return cont, result
     
     result = []
     multiLength = 0
@@ -215,8 +231,9 @@ def findMultiples(length, extra, order, multi):
                 result.append(str(val))
         n+=1
 
+    cont = [0, len(result)]
     result = findOrder(result, order)
-    return result
+    return cont, result
 
 ###Factors
 def findFactors(length, extra, order, product, proper, ofItself):

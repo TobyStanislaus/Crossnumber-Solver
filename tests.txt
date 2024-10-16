@@ -24,6 +24,16 @@ clueDict = {
 
 Ritangle
 
+a1 = Number('a1', [(0,0),(1,0),(2,0)])
+a3 = Number('a3', [(1,1),(2,1)])
+a5 = Number('a5', [(0,2),(1,2),(2,2)])
+
+d1 = Number('d1', [(0,0),(0,1),(0,2)])
+d2 = Number('d2', [(1,0),(1,1)])
+d4 = Number('d4', [(2,1),(2,2)])
+
+
+
 clueDict = {
 a1:[[1, '', 0, None, None, None, None]],
 a3:[[1, '', 0, None, None, None, None]],
@@ -31,3 +41,4 @@ a5:[[1, '', 0, None, None, None, None]],
 d1:[[1, '', 0, None, None, None, None]],
 d2:[[1, '', 0, None, None, None, None]],
 d4:[[1, 'pr', 0, None, None, None, None]]}
+
