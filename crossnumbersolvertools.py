@@ -69,22 +69,22 @@ def displayAllCross(cross, clues, i):
             handleCont(mockCross, mockClues, mockClues[i].cont, i)
             
         else:
-            displayCross(mockCross)
             mockClues[i].possi = [val]
             handleNorm(mockCross, mockClues, i, None)
+            
+        if checkCrossFinished(mockCross):
+            displayCross(mockCross)
+            break
 
 
 
 def handleNorm(mockCross, mockClues, i, j):
     mockCross = updateDigits(mockClues[i], mockCross)
-    displayCross(mockCross)
     if j:
         mockCross = updateDigits(mockClues[j], mockCross)
-    displayCross(mockCross)
     if i != len(mockClues)-1:
         displayAllCross(mockCross, mockClues, i+1)
-    else:
-        displayCross(mockCross)
+
 
 
 def handleCont(mockCross, mockClues, cont, i):
@@ -190,6 +190,17 @@ def refreshChoiceDict(length, instruction):
         '':[-40]
         }
     return choiceDict
+
+
+def checkCrossFinished(cross):
+    finished = True
+    for row in cross:
+        for val in row:
+            if len(val.possi) != 1:
+                finished = False
+    return finished
+
+
 ###
 
 
@@ -333,7 +344,7 @@ def findBotTop(product, proper):
     return botNum, topNum
 ####
 
-def checkCross(cross):
+def checkValid(cross):
     for row in cross:
         for digit in row:
             if digit.possi == []:
@@ -385,7 +396,7 @@ def findAllPossi(perm, mockCross, coords, extra, newClues, currVal, i):
     if i == len(perm):
         targetNums = []
         
-        if checkCross(mockCross):
+        if checkValid(mockCross):
             targetNums = findCombos(coords, mockCross)
 
         if str(currVal + extra) in targetNums:
