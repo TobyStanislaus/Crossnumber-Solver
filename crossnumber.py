@@ -19,7 +19,7 @@ class Number():
         self.length = len(pos)
         self.cont = ''
 
-    def findNumbers(self):
+    def findNumbers(self, cross):
         nums = []
         val1 = cross[self.pos[0][1]][self.pos[0][0]].possi
         val2 = cross[self.pos[1][1]][self.pos[1][0]].possi
@@ -35,6 +35,7 @@ class Number():
                 else:
                     nums.append(num1+num2)
         self.possi =  nums
+        
 
 
 ##The cross representing all the possibilities of each digit in the cross
@@ -63,7 +64,7 @@ d1 = Number('d1', [(0,0),(0,1),(0,2)])
 d2 = Number('d2', [(1,0),(1,1)])
 d4 = Number('d4', [(2,1),(2,2)])
 
-clues = [a1, a3, a5, d1, d2, d4]
+clues = [d1, a1, a3, a5, d2, d4]
 
 
 
@@ -77,6 +78,6 @@ cross, clues = numberCruncher(cross, prev, clues)
 
 cont, pos = findMultiples(2, 0, None, ['13', '15', '17'])
 d1.cont = ['d4']+cont
-
+displayAllCross(cross, clues, i = 0)
 print(d1.cont)
 #cross = possiCruncher(cross, clues, d4)

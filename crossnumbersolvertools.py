@@ -1,11 +1,12 @@
 from itertools import permutations
 import copy
+import os
 ##Master function
 def inputHandler(cross, clue, clues):
     '''
     Give it a clue, it will process all its possible numbers and put it on the cross
     '''
-    clue.findNumbers()
+    clue.findNumbers(cross)
     clueNums =[]
     clueDict = refreshClueDict(clues)
     for instruction in clueDict[clue]:
@@ -57,11 +58,40 @@ def refreshClueDict(clues):
 
 ##Comparison/Cross UI
 
-def displayCrosses(cross, clues):
-    pass
+def displayAllCross(cross, clues, i):
+    mockClues = copy.deepcopy(clues)
+    mockClues[i].findNumbers(cross)
+    for val in mockClues[i].possi:
+        mockCross = copy.deepcopy(cross)
+        mockClues = copy.deepcopy(clues)
 
+        if mockClues[i].cont:
+            handleCont(mockCross, mockClues, mockClues[i].cont, val, i)
+            
+        else:
+            handleNorm(mockCross, mockClues, val, i)
+
+
+
+def handleNorm(mockCross, mockClues, val, i):
+    mockClues[i].possi = [val]
+    mockCross = updateDigits(mockClues[i], mockCross)
+
+    if i != len(mockClues)-1:
+        displayAllCross(mockCross, mockClues, i+1)
+    else:
+        displayCross(mockCross)
+
+
+def handleCont(mockCross, mockClues, cont, val, i):
+    otherClue = cont[0]
+    print(otherClue)
+    for stuff in cont[1:]:
+        print(stuff)
+    
 
 def displayCross(cross):
+    os.system('cls')
     for row in cross:
         printRow = ''
         for digit in row:
@@ -142,6 +172,7 @@ def refreshChoiceDict(length, instruction):
         }
     return choiceDict
 ###
+
 
 ### Fetching Numbers - simple normal numbers calculations
 def checkPrime(num):
@@ -302,7 +333,7 @@ def findCombos(coords, newCross):
     
     return result
 ##One clue only
-
+'''
 def multiplyClue(clue, desiredClue, amount):
     clue.findNumbers()
     desiredClue.findNumbers()
@@ -329,7 +360,7 @@ def clueAdd(resClue, clueCalc, amount):
         if len(val) == resClue.length:
             results.append(val)
     return results
-
+'''
 
 def findAllPossi(perm, mockCross, coords, extra, newClues, currVal, i):
     if i == len(perm):
