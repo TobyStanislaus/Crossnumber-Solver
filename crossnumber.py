@@ -4,7 +4,7 @@ from crossnumbersolvertools import *
 class GridDigit():
     def __init__(self, val) -> None:
         if not val:
-            self.possi = ['1', '2', '3', '4', '5', '6', '7', '8', '9', ]
+            self.possi = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
         else:
             self.possi = [val]
         
@@ -76,8 +76,12 @@ clues = [d1, a1, a3, a5, d2, d4]
 ##All the normal number Stuff, not the difficult clue operation stuff
 cross, clues = numberCruncher(cross, prev, clues)
 
-cont, pos = findMultiples(2, 0, None, ['13', '15', '17'])
+cont, pos = findMultiples(3, 0, None, d4.possi)
 d1.cont = ['d4']+cont
+d1.possi = pos
+
+
 displayAllCross(cross, clues, i = 0)
 print(d1.cont)
+
 #cross = possiCruncher(cross, clues, d4)

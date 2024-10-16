@@ -66,29 +66,48 @@ def displayAllCross(cross, clues, i):
         mockClues = copy.deepcopy(clues)
 
         if mockClues[i].cont:
-            handleCont(mockCross, mockClues, mockClues[i].cont, val, i)
+            handleCont(mockCross, mockClues, mockClues[i].cont, i)
             
         else:
-            handleNorm(mockCross, mockClues, val, i)
+            displayCross(mockCross)
+            mockClues[i].possi = [val]
+            handleNorm(mockCross, mockClues, i, None)
 
 
 
-def handleNorm(mockCross, mockClues, val, i):
-    mockClues[i].possi = [val]
+def handleNorm(mockCross, mockClues, i, j):
     mockCross = updateDigits(mockClues[i], mockCross)
-
+    displayCross(mockCross)
+    if j:
+        mockCross = updateDigits(mockClues[j], mockCross)
+    displayCross(mockCross)
     if i != len(mockClues)-1:
         displayAllCross(mockCross, mockClues, i+1)
     else:
         displayCross(mockCross)
 
 
-def handleCont(mockCross, mockClues, cont, val, i):
-    otherClue = cont[0]
-    print(otherClue)
-    for stuff in cont[1:]:
-        print(stuff)
+def handleCont(mockCross, mockClues, cont, i):
+    j = findClueIndex(mockClues, cont[0])
     
+    for specClueVal, cluePossi in cont[1:]:
+        mClues = copy.deepcopy(mockClues)
+        mClues[j].possi = [specClueVal]
+        mClues[i].possi = mClues[i].possi[cluePossi[0]:cluePossi[1]]
+        
+        for val2 in mClues[i].possi:
+            m2Clues = copy.deepcopy(mClues)
+            m2Clues[i].possi = [val2]
+            handleNorm(mockCross, m2Clues, i, j) 
+    
+
+def findClueIndex(clues, clueName):
+    for j in range(0,len(clues)):
+        if clues[j].name == clueName:
+            return j
+        
+
+
 
 def displayCross(cross):
     os.system('cls')
