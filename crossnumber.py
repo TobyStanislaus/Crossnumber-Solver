@@ -12,11 +12,12 @@ class GridDigit():
 
 
 class Number():
-    def __init__(self, name, pos, length) -> None:
+    def __init__(self, name, pos) -> None:
         self.name = name
         self.possi = []
         self.pos = pos
-        self.length = length
+        self.length = len(pos)
+        self.cont = ''
 
     def findNumbers(self):
         nums = []
@@ -54,13 +55,13 @@ finalCross = [['-','-','-'],
 ###
 
 ## Initializing all clues
-a1 = Number('a1', [(0,0),(1,0)], 2)
-a3 = Number('a3', [(0,1),(1,1),(2,1)], 3)
-a5 = Number('a5', [(1,2),(2,2)], 2)
+a1 = Number('a1', [(0,0),(1,0)])
+a3 = Number('a3', [(0,1),(1,1),(2,1)])
+a5 = Number('a5', [(1,2),(2,2)])
 
-d1 = Number('d1', [(0,0),(0,1)], 2)
-d2 = Number('d2', [(1,0),(1,1),(1,2)], 3)
-d4 = Number('d4', [(2,1),(2,2)], 2)
+d1 = Number('d1', [(0,0),(0,1)])
+d2 = Number('d2', [(1,0),(1,1),(1,2)])
+d4 = Number('d4', [(2,1),(2,2)])
 
 clues = [a1, a3, a5, d1, d2, d4]
 
@@ -73,5 +74,6 @@ clues = [a1, a3, a5, d1, d2, d4]
 
 ##All the normal number Stuff, not the difficult clue operation stuff
 cross, clues = numberCruncher(cross, prev, clues)
-#cross = possiCruncher(cross, clues, d4)
+displayCross(cross)
+cross = possiCruncher(cross, clues, d4)
 displayCross(cross)
