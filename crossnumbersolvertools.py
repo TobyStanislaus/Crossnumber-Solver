@@ -46,12 +46,14 @@ def refreshClueDict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself]
     clueDict = {
-    a1:[[1, '', 0, None, None, None, None]],
-    a3:[[1, '', 0, None, None, None, None]],
-    a5:[[1, '', 0, None, None, None, None]],
-    d1:[[1, '', 0, None, None, None, None]],
-    d2:[[1, '', 0, None, None, None, None]],
-    d4:[[1, 'pr', 0, None, None, None, None]]}
+    a1:[[1, 'pr', -2, None, None, None, None]],
+    a3:[[a3.possi,'f', 100, False, -1, True, True]],
+    a5:[[13, 'm', 0, None, None, None, None]],
+    d1:[[4, 'po', 0, None, None, None, None]],
+    d2:[[3, 'po', 0, None, None, None, None]],
+    d4:[[1, 'pr', 0, True, None, None, None],
+        [2, 'po', 0, True, None, None, None],
+        [2, 'm', 0, True, None, None, None]]}
 
 
     return clueDict
@@ -77,8 +79,7 @@ def displayAllCross(cross, clues, i):
             
             if checkCrossFinished(mockCross):
                 displayCross(mockCross)
-                
-
+           
 
 def handleNorm(mockCross, mockClues, i, j):
     mockCross = updateDigits(mockClues[i], mockCross)
@@ -86,7 +87,6 @@ def handleNorm(mockCross, mockClues, i, j):
         mockCross = updateDigits(mockClues[j], mockCross)
     if i != len(mockClues)-1:
         displayAllCross(mockCross, mockClues, i+1)
-
 
 
 def handleCont(mockCross, mockClues, cont, i):
@@ -102,14 +102,14 @@ def handleCont(mockCross, mockClues, cont, i):
             m2Clues = copy.deepcopy(mClues)
             m2Clues[i].possi = [val2]
             handleNorm(m2Cross, m2Clues, i, j) 
-    
+
 
 def findClueIndex(clues, clueName):
     for j in range(0,len(clues)):
         if clues[j].name == clueName:
             return j
-        
 
+  
 def displayCross(cross):
     os.system('cls')
     for row in cross:

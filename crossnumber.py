@@ -56,32 +56,24 @@ finalCross = [['-','-','-'],
 ###
 
 ## Initializing all clues
-a1 = Number('a1', [(0,0),(1,0),(2,0)])
-a3 = Number('a3', [(1,1),(2,1)])
-a5 = Number('a5', [(0,2),(1,2),(2,2)])
+a1 = Number('a1', [(0,0),(1,0)])
+a3 = Number('a3', [(0,1),(1,1),(2,1)])
+a5 = Number('a5', [(1,2),(2,2)])
 
-d1 = Number('d1', [(0,0),(0,1),(0,2)])
-d2 = Number('d2', [(1,0),(1,1)])
+d1 = Number('d1', [(0,0),(0,1)])
+d2 = Number('d2', [(1,0),(1,1),(1,2)])
 d4 = Number('d4', [(2,1),(2,2)])
 
-clues = [d1, a1, a3, a5, d2, d4]
 
-cross[0][0].possi.remove('0')
-cross[0][1].possi.remove('0')
-cross[1][1].possi.remove('0')
-cross[1][2].possi.remove('0')
-cross[2][0].possi.remove('0')
-
-#a3, d2 = multiplyClue(a3, d2, amount=2)
-#d4, a5 = multiplyClue(d4, a5, amount=0.6)
+clues = [a1, a3, a5, d1, d2, d4]
 
 
 
 ##All the normal number Stuff, not the difficult clue operation stuff
 cross, clues = numberCruncher(cross, prev, clues)
+displayCross(cross)
 
-
-
+'''
 #### Contingency system
 cont, pos = findMultiples(3, 0, None, d4.possi)
 d1.cont = ['d4']+cont
@@ -90,5 +82,6 @@ d1.possi = pos
 
 displayAllCross(cross, clues, i = 0)
 print(d1.cont)
+'''
 
 #cross = possiCruncher(cross, clues, d4)
