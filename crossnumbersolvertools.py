@@ -52,7 +52,7 @@ def possiCruncher(cross, clues, clue):
 def refreshClueDict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself]
-    #Ritangle
+    '''#Ritangle
     clueDict = {
     a1:[[1, '', 0, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None]],
@@ -60,8 +60,8 @@ def refreshClueDict(clues):
     d1:[[1, '', 0, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None]]}
-    
-    '''#2022 - Difficult factor one
+    '''
+    #2022 - Difficult factor one
     clueDict = {
         a1:[[1, 'pr', -2, None, None, None, None]],
         a3:[[a3.possi,'f', 100, False, -1, True, True]],
@@ -71,7 +71,7 @@ def refreshClueDict(clues):
         d4:[[1, 'pr', 0, True, None, None, None],
             [2, 'po', 0, True, None, None, None],
             [2, 'm', 0, True, None, None, None]]}
-    '''
+    
     '''#2023 - Difficult Clue one
     clueDict = {
         a1:[[105, 'f', -4, None, None, True, None]],
@@ -90,7 +90,7 @@ def displayAllCross(cross, clues, i):
         return  
     mockClues = copy.deepcopy(clues)
     mockClues[i].possi = mockClues[i].findNumbers(cross)
-    #mockClues[i].possi, comparePossi(mockClues[i].possi, allPossi, remove = False)
+
     for val in mockClues[i].possi:
         mockCross = copy.deepcopy(cross)
         mockClues = copy.deepcopy(clues)
@@ -291,6 +291,20 @@ def findTriangle(length, extra, order):
     return result
 
 
+def findPalidrome(length, extra, order):
+    palis = []
+    for i in range(10**(length-1), 10**(length)):
+        val = i
+        i = str(i)
+        
+        if i == i[::-1] and len(str(val+extra)) == length and val+extra > 0:
+            palis.append(str(val+extra))
+    
+    palis = findOrder(palis, order)
+    return palis
+
+
+
 def findMultiples(length, extra, order, multi):
     if multi == 0:
         return [None, None]
@@ -310,33 +324,6 @@ def findMultiples(length, extra, order, multi):
     return cont, possi
 
 
-def handleLists(length, extra, order, nums):
-    result = []
-    cont = []
-    for num in nums:
-        partCont = [num]
-        pCont, partResult = findMultiples(length, extra, order, int(num))
-        if pCont != None:
-            partResult = findOrder(partResult, order)
-            result+=partResult
-
-            if cont:
-                shift = cont[-1][1][1]
-                pCont[0]+=shift; pCont[1]+=shift
-            partCont.append(pCont)
-            cont.append(partCont)
-
-    return cont, result
-
-
-def giveMultiples(length, extra, order, multi):
-    if type(multi) == list:
-        cont, possi = handleLists(length, extra, order, multi)
-    else:
-        cont, possi = findMultiples(length, extra, order, multi)
-    return cont, possi
-
-###Factors
 def findFactors(length, extra, order, product, proper, ofItself):
     result = []
     if type(product) == list:
@@ -362,17 +349,59 @@ def findFactors(length, extra, order, product, proper, ofItself):
         return result
 
 
-def findPalidrome(length, extra, order):
-    palis = []
-    for i in range(10**(length-1), 10**(length)):
-        val = i
-        i = str(i)
-        
-        if i == i[::-1] and len(str(val+extra)) == length and val+extra > 0:
-            palis.append(str(val+extra))
+def giveMultiples(length, extra, order, multi):
+    if type(multi) == list:
+        cont, possi = handleLists(findMultiples, length, extra, order, multi)
+    else:
+        cont, possi = findMultiples(length, extra, order, multi)
+    return cont, possi
+
+
+def findFactors(length, extra, order, product, proper, ofItself):
+    result = []
+    if type(product) == list:
+        for num in product:
+            partResult = findFactors(length, extra, order, int(num), proper, ofItself)
+            partResult = findOrder(partResult, order)
+            result+=partResult  
+
+        return result
+
+    botNum, topNum = findBotTop(product, proper)
+
+    for i in range(botNum, topNum):
+        if product%i == 0 and len(str(i+extra)) == length and i+extra>0:
+            result.append(str(i+extra))
     
-    palis = findOrder(palis, order)
-    return palis
+    result = findOrder(result, order)
+    if ofItself:
+        if result == [str(product)]:
+            return result
+        return []
+    else:
+        return result
+
+
+def handleLists(func, length, extra, order, nums):
+    result = []
+    cont = []
+    for num in nums:
+        partCont = [num]
+        pCont, partResult = func(length, extra, order, int(num))
+        if pCont != None:
+            partResult = findOrder(partResult, order)
+            result+=partResult
+
+            if cont:
+                shift = cont[-1][1][1]
+                pCont[0]+=shift; pCont[1]+=shift
+            partCont.append(pCont)
+            cont.append(partCont)
+
+    return cont, result
+
+
+
 
 
 def findBotTop(product, proper):
