@@ -197,6 +197,8 @@ def compareNewAndOld(new, old):
 
 
 def findOrder(numList, order):
+    if not numList or not numList[0]:
+        return numList
     numList.sort()
     if order and numList:
         if order<0:
@@ -211,10 +213,10 @@ def refreshChoiceDict(length, instruction):
         'pr':findPrimes(length, extra, order),
         'po':findPowers(length, extra, order, mainVal),
         't':findTriangle(length, extra, order),
-        'm':giveMultiples(length, extra, order, mainVal),
         'p':findPalidrome(length, extra, order),
 
-        'f': findFactors(length, extra, order, mainVal, proper, ofItself),
+        'm':giveMultiples(length, extra, order, mainVal),
+        'f': giveFactors(length, extra, order, mainVal, proper, ofItself),
         '':[-40]
         }
     return choiceDict
@@ -305,7 +307,7 @@ def findPalidrome(length, extra, order):
 
 
 
-def findMultiples(length, extra, order, multi):
+def findMultiples(length, extra, order, multi, proper, ofItself):
     if multi == 0:
         return [None, None]
     result = []
@@ -319,21 +321,12 @@ def findMultiples(length, extra, order, multi):
                 result.append(str(val))
         n+=1
 
-    cont = [0, len(result)]
     possi = findOrder(result, order)
-    return cont, possi
+    return possi
 
 
 def findFactors(length, extra, order, product, proper, ofItself):
     result = []
-    if type(product) == list:
-        for num in product:
-            partResult = findFactors(length, extra, order, int(num), proper, ofItself)
-            partResult = findOrder(partResult, order)
-            result+=partResult  
-
-        return result
-
     botNum, topNum = findBotTop(product, proper)
 
     for i in range(botNum, topNum):
@@ -351,44 +344,35 @@ def findFactors(length, extra, order, product, proper, ofItself):
 
 def giveMultiples(length, extra, order, multi):
     if type(multi) == list:
-        cont, possi = handleLists(findMultiples, length, extra, order, multi)
+        cont, possi = handleLists(findMultiples, length, extra, order, multi, proper = None, ofItself= None)
     else:
-        cont, possi = findMultiples(length, extra, order, multi)
+        possi = findMultiples(length, extra, order, multi, proper = None, ofItself= None)
+        cont = [0, len(possi)]
     return cont, possi
 
 
-def findFactors(length, extra, order, product, proper, ofItself):
-    result = []
+def giveFactors(length, extra, order, product, proper, ofItself):
     if type(product) == list:
-        for num in product:
-            partResult = findFactors(length, extra, order, int(num), proper, ofItself)
-            partResult = findOrder(partResult, order)
-            result+=partResult  
+        cont, possi = handleLists(findFactors, length, extra, order, product, proper, ofItself)
 
-        return result
-
-    botNum, topNum = findBotTop(product, proper)
-
-    for i in range(botNum, topNum):
-        if product%i == 0 and len(str(i+extra)) == length and i+extra>0:
-            result.append(str(i+extra))
-    
-    result = findOrder(result, order)
-    if ofItself:
-        if result == [str(product)]:
-            return result
-        return []
     else:
-        return result
+        possi = findFactors(length, extra, order, product, proper, ofItself)
+        cont = [0, len(possi)]
+    
+    return cont, possi
 
 
-def handleLists(func, length, extra, order, nums):
+
+
+
+def handleLists(func, length, extra, order, nums, proper, ofItself):
     result = []
     cont = []
     for num in nums:
         partCont = [num]
-        pCont, partResult = func(length, extra, order, int(num))
-        if pCont != None:
+        partResult = func(length, extra, order, int(num), proper, ofItself)
+        pCont = [0, len(partResult)]
+        if pCont and partResult:
             partResult = findOrder(partResult, order)
             result+=partResult
 

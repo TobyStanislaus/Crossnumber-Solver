@@ -98,6 +98,8 @@ cross, clues = numberCruncher(cross, prev, clues)
 #displayCross(cross)
 
 
+
+
 displayCross(cross)
 #### Contingency system
 cont, pos = giveMultiples(3, 0, None, d4.possi)
