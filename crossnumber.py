@@ -66,13 +66,14 @@ d1 = Number('d1', [(0,0),(0,1),(0,2)])
 d2 = Number('d2', [(1,0),(1,1)])
 d4 = Number('d4', [(2,1),(2,2)])
 
-'''
+
 cross[0][0].possi.remove('0')
 cross[0][1].possi.remove('0')
 cross[1][1].possi.remove('0')
 cross[1][2].possi.remove('0')
 cross[2][0].possi.remove('0')
-'''
+
+clues = [d1, a1, a3, a5, d2, d4]
 
 
 '''#Maths Challenge Setup
@@ -83,10 +84,12 @@ a5 = Number('a5', [(1,2),(2,2)])
 d1 = Number('d1', [(0,0),(0,1)])
 d2 = Number('d2', [(1,0),(1,1),(1,2)])
 d4 = Number('d4', [(2,1),(2,2)])
+
+clues = [a1, a3, a5, d1, d2, d4]
 '''
 
 
-clues = [a1, a3, a5, d1, d2, d4]
+
 
 ##All the normal number Stuff, not the difficult clue operation stuff
 cross, clues = numberCruncher(cross, prev, clues)

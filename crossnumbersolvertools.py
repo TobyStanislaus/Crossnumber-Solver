@@ -33,7 +33,7 @@ def numberCruncher(cross, prev, clues):
         prev = copy.deepcopy(cross)
         for clue in clues:
             clue, cross = inputHandler(cross, clue, clues)
-            displayCross(cross)
+    
 
     return cross, clues
 
