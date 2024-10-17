@@ -56,7 +56,7 @@ finalCross = [['-','-','-'],
 
 
 ## Initializing all clues
-
+print()
 #Ritangle Setup
 a1 = Number('a1', [(0,0),(1,0),(2,0)])
 a3 = Number('a3', [(1,1),(2,1)])
