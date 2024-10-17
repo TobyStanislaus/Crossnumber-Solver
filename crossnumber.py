@@ -21,11 +21,11 @@ class Number():
 
     def findNumbers(self, cross):
         nums = []
-        val1 = cross[self.pos[0][1]][self.pos[0][0]].possi
-        val2 = cross[self.pos[1][1]][self.pos[1][0]].possi
+        val1 = findCross[self.pos[0][1]][self.pos[0][0]].possi
+        val2 = findCross[self.pos[1][1]][self.pos[1][0]].possi
 
         if len(self.pos)>2:
-            val3 = cross[self.pos[2][1]][self.pos[2][0]].possi
+            val3 = findCross[self.pos[2][1]][self.pos[2][0]].possi
 
         for num1 in val1:
             for num2 in val2:
