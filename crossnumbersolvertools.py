@@ -46,14 +46,12 @@ def refreshClueDict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself]
     clueDict = {
-    a1:[[1, 'pr', -2, None, None, None, None]],
-    a3:[[a3.possi,'f', 100, False, -1, True, True]],
-    a5:[[13, 'm', 0, None, None, None, None]],
-    d1:[[4, 'po', 0, None, None, None, None]],
-    d2:[[3, 'po', 0, None, None, None, None]],
-    d4:[[1, 'pr', 0, True, None, None, None],
-        [2, 'po', 0, True, None, None, None],
-        [2, 'm', 0, True, None, None, None]]}
+    a1:[[105, 'f', -4, None, None, True, None]],
+    a3:[[1,'p', 1, None, None, None, None]],
+    a5:[[1, '', 0, None, None, None, None]],
+    d1:[[2, 'po', -2, None, None, None, None]],
+    d2:[[3, 'po', -400, None, None, None, None]],
+    d4:[[2, 'cA', -6, None, None, None, None]]}
 
 
     return clueDict
@@ -118,7 +116,8 @@ def displayCross(cross):
             if len(digit.possi) == 1:
                 printRow+= digit.possi[0]+' '
             else:
-                printRow+=str(digit.possi)+'  '
+                #printRow+=str(digit.possi)+'  '
+                printRow+='  '
         print(printRow)
             
                 
