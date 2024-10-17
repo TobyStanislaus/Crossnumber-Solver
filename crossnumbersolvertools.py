@@ -15,7 +15,7 @@ def inputHandler(cross, clue, clues):
         choiceDict = refreshChoiceDict(clue.length, instruction)
         mainVal, clueType, extra, remove, order, proper, ofItself = instruction
         if clueType in choiceDict:
-            if len(choiceDict[clueType]) == 2:
+            if len(choiceDict[clueType]) == 2 and type(choiceDict[clueType][0]) == list:
                 cont, possi = choiceDict[clueType]
             else:
                 possi = choiceDict[clueType]
@@ -52,7 +52,7 @@ def possiCruncher(cross, clues, clue):
 def refreshClueDict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself]
-    '''#Ritangle
+    #Ritangle
     clueDict = {
     a1:[[1, '', 0, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None]],
@@ -60,8 +60,8 @@ def refreshClueDict(clues):
     d1:[[1, '', 0, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None]]}
-    '''
-    #2022 - Difficult factor one
+    
+    '''#2022 - Difficult factor one
     clueDict = {
         a1:[[1, 'pr', -2, None, None, None, None]],
         a3:[[a3.possi,'f', 100, False, -1, True, True]],
@@ -71,7 +71,7 @@ def refreshClueDict(clues):
         d4:[[1, 'pr', 0, True, None, None, None],
             [2, 'po', 0, True, None, None, None],
             [2, 'm', 0, True, None, None, None]]}
-    
+    '''
     '''#2023 - Difficult Clue one
     clueDict = {
         a1:[[105, 'f', -4, None, None, True, None]],
@@ -144,7 +144,8 @@ def displayCross(cross):
             if len(digit.possi) == 1:
                 printRow+= digit.possi[0]+' '
             else:
-                printRow+=str(digit.possi)+'  '
+                #printRow+=str(digit.possi)+' '
+                printRow+='  '
         print(printRow)
             
                 
@@ -291,9 +292,11 @@ def findTriangle(length, extra, order):
 
 
 def findMultiples(length, extra, order, multi):
+    if multi == 0:
+        return [None, None]
     result = []
-    multiLength = 0
-    n = 0
+    multiLength, n = 0, 0
+   
     while length >= multiLength:
         val = (n*multi)+extra
         if val>0:
@@ -313,14 +316,15 @@ def handleLists(length, extra, order, nums):
     for num in nums:
         partCont = [num]
         pCont, partResult = findMultiples(length, extra, order, int(num))
-        partResult = findOrder(partResult, order)
-        result+=partResult
+        if pCont != None:
+            partResult = findOrder(partResult, order)
+            result+=partResult
 
-        if cont:
-            shift = cont[-1][1][1]
-            pCont[0]+=shift; pCont[1]+=shift
-        partCont.append(pCont)
-        cont.append(partCont)
+            if cont:
+                shift = cont[-1][1][1]
+                pCont[0]+=shift; pCont[1]+=shift
+            partCont.append(pCont)
+            cont.append(partCont)
 
     return cont, result
 
