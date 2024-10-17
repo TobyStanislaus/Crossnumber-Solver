@@ -34,7 +34,7 @@ class Number():
                         nums.append(num1+num2+num3)
                 else:
                     nums.append(num1+num2)
-        self.possi =  nums
+        return nums
         
 
 
@@ -66,7 +66,11 @@ d4 = Number('d4', [(2,1),(2,2)])
 
 clues = [d1, a1, a3, a5, d2, d4]
 
-
+cross[0][0].possi.remove('0')
+cross[0][1].possi.remove('0')
+cross[1][1].possi.remove('0')
+cross[1][2].possi.remove('0')
+cross[2][0].possi.remove('0')
 
 #a3, d2 = multiplyClue(a3, d2, amount=2)
 #d4, a5 = multiplyClue(d4, a5, amount=0.6)
@@ -76,10 +80,13 @@ clues = [d1, a1, a3, a5, d2, d4]
 ##All the normal number Stuff, not the difficult clue operation stuff
 cross, clues = numberCruncher(cross, prev, clues)
 
+
+
+#### Contingency system
 cont, pos = findMultiples(3, 0, None, d4.possi)
 d1.cont = ['d4']+cont
 d1.possi = pos
-
+###
 
 displayAllCross(cross, clues, i = 0)
 print(d1.cont)

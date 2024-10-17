@@ -6,7 +6,7 @@ def inputHandler(cross, clue, clues):
     '''
     Give it a clue, it will process all its possible numbers and put it on the cross
     '''
-    clue.findNumbers(cross)
+    clue.possi = clue.findNumbers(cross)
     clueNums =[]
     clueDict = refreshClueDict(clues)
     for instruction in clueDict[clue]:
@@ -61,11 +61,13 @@ def displayAllCross(cross, clues, i):
     if not checkValidCross(cross):
         return  
     mockClues = copy.deepcopy(clues)
-    mockClues[i].findNumbers(cross)
+    mockClues[i].possi = mockClues[i].findNumbers(cross)
+    #mockClues[i].possi, comparePossi(mockClues[i].possi, allPossi, remove = False)
     for val in mockClues[i].possi:
         mockCross = copy.deepcopy(cross)
         mockClues = copy.deepcopy(clues)
 
+        
         if mockClues[i].cont:
             handleCont(mockCross, mockClues, mockClues[i].cont, i)
             
@@ -75,7 +77,7 @@ def displayAllCross(cross, clues, i):
             
             if checkCrossFinished(mockCross):
                 displayCross(mockCross)
-                break
+                
 
 
 def handleNorm(mockCross, mockClues, i, j):
@@ -107,8 +109,6 @@ def findClueIndex(clues, clueName):
         if clues[j].name == clueName:
             return j
         
-
-
 
 def displayCross(cross):
     os.system('cls')
