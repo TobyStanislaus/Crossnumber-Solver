@@ -4,6 +4,7 @@ import os
 
 ##Master function
 def inputHandler(cross, clue, clues):
+    
     '''
     Give it a clue, it will process all its possible numbers and put it on the cross
     '''
@@ -14,8 +15,11 @@ def inputHandler(cross, clue, clues):
         choiceDict = refreshChoiceDict(clue.length, instruction)
         mainVal, clueType, extra, remove, order, proper, ofItself = instruction
         if clueType in choiceDict:
-            ## DIVIDE UP
-            clueNums += choiceDict[clueType]
+            if len(choiceDict[clueType]) == 2:
+                cont, possi = choiceDict[clueType]
+            else:
+                possi = choiceDict[clueType]
+            clueNums += possi
 
     if clueNums and clueNums[0]!=-40:
         clue.possi = comparePossi(clue.possi, clueNums, remove)
@@ -29,6 +33,7 @@ def numberCruncher(cross, prev, clues):
         prev = copy.deepcopy(cross)
         for clue in clues:
             clue, cross = inputHandler(cross, clue, clues)
+            displayCross(cross)
 
     return cross, clues
 
@@ -47,7 +52,7 @@ def possiCruncher(cross, clues, clue):
 def refreshClueDict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself]
-    #Ritangle
+    '''#Ritangle
     clueDict = {
     a1:[[1, '', 0, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None]],
@@ -55,8 +60,8 @@ def refreshClueDict(clues):
     d1:[[1, '', 0, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None]]}
-    
-    '''#2022 - Difficult factor one
+    '''
+    #2022 - Difficult factor one
     clueDict = {
         a1:[[1, 'pr', -2, None, None, None, None]],
         a3:[[a3.possi,'f', 100, False, -1, True, True]],
@@ -66,7 +71,7 @@ def refreshClueDict(clues):
         d4:[[1, 'pr', 0, True, None, None, None],
             [2, 'po', 0, True, None, None, None],
             [2, 'm', 0, True, None, None, None]]}
-    '''
+    
     '''#2023 - Difficult Clue one
     clueDict = {
         a1:[[105, 'f', -4, None, None, True, None]],
