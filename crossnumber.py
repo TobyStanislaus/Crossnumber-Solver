@@ -57,7 +57,7 @@ finalCross = [['-','-','-'],
 
 ## Initializing all clues
 
-'''#Ritangle Setup
+#Ritangle Setup
 a1 = Number('a1', [(0,0),(1,0),(2,0)])
 a3 = Number('a3', [(1,1),(2,1)])
 a5 = Number('a5', [(0,2),(1,2),(2,2)])
@@ -72,7 +72,7 @@ cross[0][1].possi.remove('0')
 cross[1][1].possi.remove('0')
 cross[1][2].possi.remove('0')
 cross[2][0].possi.remove('0')
-'''
+
 
 
 '''#Maths Challenge Setup
@@ -90,6 +90,7 @@ clues = [d1, a1, a3, a5, d2, d4]
 
 ##All the normal number Stuff, not the difficult clue operation stuff
 cross, clues = numberCruncher(cross, prev, clues)
+#cross = possiCruncher(cross, clues, d4)
 
 
 
@@ -100,6 +101,5 @@ d1.possi = pos
 ###
 
 displayAllCross(cross, clues, i = 0)
-print(d1.cont)
 
-#cross = possiCruncher(cross, clues, d4)
+

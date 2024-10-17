@@ -53,11 +53,12 @@ def refreshClueDict(clues):
     d1:[[1, '', 0, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None]]}
+    
     '''#2022 - Difficult factor one
     clueDict = {
         a1:[[1, 'pr', -2, None, None, None, None]],
         a3:[[a3.possi,'f', 100, False, -1, True, True]],
-        a5:[[13, 'm', 0, None, None, None, None]],
+        a5:[[13, 'm', 0, None, None, None, True]],
         d1:[[4, 'po', 0, None, None, None, None]],
         d2:[[3, 'po', 0, None, None, None, None]],
         d4:[[1, 'pr', 0, True, None, None, None],
@@ -106,7 +107,6 @@ def handleNorm(mockCross, mockClues, i, j):
         mockCross = updateDigits(mockClues[j], mockCross)
     if i != len(mockClues)-1:
         displayAllCross(mockCross, mockClues, i+1)
-
 
 
 def handleCont(mockCross, mockClues, cont, i):
