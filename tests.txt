@@ -19,8 +19,6 @@ clueDict = {
         [2, 'po', 0, True, None, None, None],
         [2, 'm', 0, True, None, None, None]]}
 
-2021
-
 
 Ritangle
 
@@ -42,3 +40,8 @@ d1:[[1, '', 0, None, None, None, None]],
 d2:[[1, '', 0, None, None, None, None]],
 d4:[[1, 'pr', 0, None, None, None, None]]}
 
+cross[0][0].possi.remove('0')
+cross[0][1].possi.remove('0')
+cross[1][1].possi.remove('0')
+cross[1][2].possi.remove('0')
+cross[2][0].possi.remove('0')
