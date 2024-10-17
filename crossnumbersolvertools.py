@@ -1,6 +1,7 @@
 from itertools import permutations
 import copy
 import os
+
 ##Master function
 def inputHandler(cross, clue, clues):
     '''
@@ -13,6 +14,7 @@ def inputHandler(cross, clue, clues):
         choiceDict = refreshChoiceDict(clue.length, instruction)
         mainVal, clueType, extra, remove, order, proper, ofItself = instruction
         if clueType in choiceDict:
+            ## DIVIDE UP
             clueNums += choiceDict[clueType]
 
     if clueNums and clueNums[0]!=-40:
@@ -99,7 +101,6 @@ def displayAllCross(cross, clues, i):
             if checkCrossFinished(mockCross):
                 displayCross(mockCross)
                 
-
 
 def handleNorm(mockCross, mockClues, i, j):
     mockCross = updateDigits(mockClues[i], mockCross)
@@ -204,7 +205,7 @@ def refreshChoiceDict(length, instruction):
         'pr':findPrimes(length, extra, order),
         'po':findPowers(length, extra, order, mainVal),
         't':findTriangle(length, extra, order),
-        'm':findMultiples(length, extra, order, mainVal),
+        'm':giveMultiples(length, extra, order, mainVal),
         'p':findPalidrome(length, extra, order),
 
         'f': findFactors(length, extra, order, mainVal, proper, ofItself),
@@ -286,23 +287,6 @@ def findTriangle(length, extra, order):
 
 def findMultiples(length, extra, order, multi):
     result = []
-    cont = []
-    if type(multi) == list:
-        for num in multi:
-            partCont = [num]
-            pCont, partResult = findMultiples(length, extra, order, int(num))
-            partResult = findOrder(partResult, order)
-            result+=partResult
-
-            if cont:
-                shift = cont[-1][1][1]
-                pCont[0]+=shift; pCont[1]+=shift
-            partCont.append(pCont)
-            cont.append(partCont)
-
-        return cont, result
-    
-    result = []
     multiLength = 0
     n = 0
     while length >= multiLength:
@@ -314,8 +298,34 @@ def findMultiples(length, extra, order, multi):
         n+=1
 
     cont = [0, len(result)]
-    result = findOrder(result, order)
+    possi = findOrder(result, order)
+    return cont, possi
+
+
+def handleLists(length, extra, order, nums):
+    result = []
+    cont = []
+    for num in nums:
+        partCont = [num]
+        pCont, partResult = findMultiples(length, extra, order, int(num))
+        partResult = findOrder(partResult, order)
+        result+=partResult
+
+        if cont:
+            shift = cont[-1][1][1]
+            pCont[0]+=shift; pCont[1]+=shift
+        partCont.append(pCont)
+        cont.append(partCont)
+
     return cont, result
+
+
+def giveMultiples(length, extra, order, multi):
+    if type(multi) == list:
+        cont, possi = handleLists(length, extra, order, multi)
+    else:
+        cont, possi = findMultiples(length, extra, order, multi)
+    return cont, possi
 
 ###Factors
 def findFactors(length, extra, order, product, proper, ofItself):

@@ -66,13 +66,13 @@ d1 = Number('d1', [(0,0),(0,1),(0,2)])
 d2 = Number('d2', [(1,0),(1,1)])
 d4 = Number('d4', [(2,1),(2,2)])
 
-
+'''
 cross[0][0].possi.remove('0')
 cross[0][1].possi.remove('0')
 cross[1][1].possi.remove('0')
 cross[1][2].possi.remove('0')
 cross[2][0].possi.remove('0')
-
+'''
 
 
 '''#Maths Challenge Setup
@@ -95,7 +95,7 @@ cross, clues = numberCruncher(cross, prev, clues)
 
 
 #### Contingency system
-cont, pos = findMultiples(3, 0, None, d4.possi)
+cont, pos = giveMultiples(3, 0, None, d4.possi)
 d1.cont = ['d4']+cont
 d1.possi = pos
 ###
