@@ -4,8 +4,7 @@ from crossnumbersolvertools import *
 class GridDigit():
     def __init__(self, val) -> None:
         if not val:
-            self.possi = ['1', '2', '3', '4', '5', '6', '7', '8', '9', ]
-            #self.possi = ['1', '2']
+            self.possi = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
         else:
             self.possi = [val]
         
@@ -18,8 +17,9 @@ class Number():
         self.possi = []
         self.pos = pos
         self.length = len(pos)
+        self.cont = ''
 
-    def findNumbers(self, findCross):
+    def findNumbers(self, cross):
         nums = []
         val1 = findCross[self.pos[0][1]][self.pos[0][0]].possi
         val2 = findCross[self.pos[1][1]][self.pos[1][0]].possi
@@ -34,7 +34,8 @@ class Number():
                         nums.append(num1+num2+num3)
                 else:
                     nums.append(num1+num2)
-        self.possi =  nums
+        return nums
+        
 
 
 ##The cross representing all the possibilities of each digit in the cross
@@ -53,7 +54,29 @@ finalCross = [['-','-','-'],
               ['-','-','-']]
 
 
+
 ## Initializing all clues
+
+#Ritangle Setup
+a1 = Number('a1', [(0,0),(1,0),(2,0)])
+a3 = Number('a3', [(1,1),(2,1)])
+a5 = Number('a5', [(0,2),(1,2),(2,2)])
+
+d1 = Number('d1', [(0,0),(0,1),(0,2)])
+d2 = Number('d2', [(1,0),(1,1)])
+d4 = Number('d4', [(2,1),(2,2)])
+
+
+cross[0][0].possi.remove('0')
+cross[0][1].possi.remove('0')
+cross[1][1].possi.remove('0')
+cross[1][2].possi.remove('0')
+cross[2][0].possi.remove('0')
+
+clues = [d1, a1, a3, a5, d2, d4]
+
+
+'''#Maths Challenge Setup
 a1 = Number('a1', [(0,0),(1,0)])
 a3 = Number('a3', [(0,1),(1,1),(2,1)])
 a5 = Number('a5', [(1,2),(2,2)])
@@ -62,18 +85,27 @@ d1 = Number('d1', [(0,0),(0,1)])
 d2 = Number('d2', [(1,0),(1,1),(1,2)])
 d4 = Number('d4', [(2,1),(2,2)])
 
-
-
 clues = [a1, a3, a5, d1, d2, d4]
+'''
+
+
 
 
 ##All the normal number Stuff, not the difficult clue operation stuff
 cross, clues = numberCruncher(cross, prev, clues)
 
-
-
-displayAllCross(cross, clues, i = 0)
-
+'''
 cross = possiCruncher(cross, clues, d4)
 
+displayCross(cross)
+'''
+
+#### Contingency system
+cont, pos = giveMultiples(3, 0, None, d4.possi)
+d1.cont = ['d4']+cont
+d1.possi = pos
+###
+
 displayAllCross(cross, clues, i = 0)
+
+
