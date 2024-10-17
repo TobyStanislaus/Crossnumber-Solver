@@ -2,7 +2,6 @@ from itertools import permutations
 import copy
 import os
 
-import os
 
 ##Master function
 def inputHandler(cross, clue, clues):

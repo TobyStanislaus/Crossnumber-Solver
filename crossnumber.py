@@ -19,7 +19,7 @@ class Number():
         self.length = len(pos)
         self.cont = ''
 
-    def findNumbers(self, cross):
+    def findNumbers(self, findCross):
         nums = []
         val1 = findCross[self.pos[0][1]][self.pos[0][0]].possi
         val2 = findCross[self.pos[1][1]][self.pos[1][0]].possi
