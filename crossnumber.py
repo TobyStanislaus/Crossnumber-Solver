@@ -91,19 +91,19 @@ clues = [a1, a3, a5, d1, d2, d4]
 
 
 ##All the normal number Stuff, not the difficult clue operation stuff
-cross, clues = numberCruncher(cross, prev, clues)
-#cross = possiCruncher(cross, clues, d4)
+cross, clues = number_cruncher(cross, prev, clues)
+#cross = possi_cruncher(cross, clues, d4)
 
 
-#displayCross(cross)
+
 #### Contingency system
-cont, pos = giveMultiples(3, 0, None, d4.possi)
+cont, pos = give_multiples(3, 0, None, d4.possi)
 d1.cont = ['d4']+cont
 d1.possi = pos
 ###
 
 
 
-displayAllCross(cross, clues, i = 0)
+display_all_crosses(cross, clues, i = 0)
 
 

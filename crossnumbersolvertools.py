@@ -3,54 +3,54 @@ import copy
 import os
 
 ##Master function
-def inputHandler(cross, clue, clues):
+def input_handler(cross, clue, clues):
     '''
     Give it a clue, it will process all its possible numbers and put it on the cross
     '''
     clue.possi = clue.findNumbers(cross)
     clueNums =[]
-    clueDict = refreshClueDict(clues)
+    clueDict = refresh_clue_dict(clues)
     for instruction in clueDict[clue]:
-        choiceDict = refreshChoiceDict(clue.length, instruction)
+        choiceDict = refresh_choice_dict(clue.length, instruction)
         mainVal, clueType, extra, remove, order, proper, ofItself = instruction
         if clueType in choiceDict:
             if len(choiceDict[clueType]) == 2 and type(choiceDict[clueType][0]) == list:
                 cont, possi = choiceDict[clueType]
             else:
                 possi = choiceDict[clueType]
-                cont = [0, len(possi)]
+                cont = [mainVal, [0, len(possi)]]
 
-            
+            #clue.cont = cont
             clueNums += possi
 
     if clueNums and clueNums[0]!=-40:
-        clue.possi = comparePossi(clue.possi, clueNums, remove)
-        cross = updateDigits(clue, cross)
+        clue.possi = compare_possi(clue.possi, clueNums, remove)
+        cross = update_digits(clue, cross)
 
     return clue, cross
 
 
-def numberCruncher(cross, prev, clues):
-    while compareNewAndOld(cross, prev):
+def number_cruncher(cross, prev, clues):
+    while compare_new_and_old(cross, prev):
         prev = copy.deepcopy(cross)
         for clue in clues:
-            clue, cross = inputHandler(cross, clue, clues)
+            clue, cross = input_handler(cross, clue, clues)
     
     return cross, clues
 
 
-def possiCruncher(cross, clues, clue):
+def possi_cruncher(cross, clues, clue):
     
-    clueDict = refreshClueDict(clues)
+    clueDict = refresh_clue_dict(clues)
     for instruction in clueDict[clue]:
         mainVal, clueType, extra, removeNot, order, proper, ofItself = instruction
 
-        possiCrosses = findPossiCrossesFromSums(cross, clues, clue, mainVal, extra)
-        cross = addToCross(cross, possiCrosses)
+        possiCrosses = find_possi_crosses_from_sums(cross, clues, clue, mainVal, extra)
+        cross = add_to_cross(cross, possiCrosses)
     return cross
 
 ##The one you must change each time (currently)
-def refreshClueDict(clues):
+def refresh_clue_dict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself]
     #Ritangle
@@ -61,7 +61,7 @@ def refreshClueDict(clues):
     d1:[[1, '', 0, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None]]}
-   
+    
     '''#2022 - Difficult factor one
     clueDict = {
         a1:[[1, 'pr', -2, None, None, None, None]],
@@ -86,8 +86,8 @@ def refreshClueDict(clues):
     return clueDict
 
 ##Comparison/Cross UI
-def displayAllCross(cross, clues, i):
-    if not checkValidCross(cross):
+def display_all_crosses(cross, clues, i):
+    if not check_valid_cross(cross):
         return  
     mockClues = copy.deepcopy(clues)
     mockClues[i].possi = mockClues[i].findNumbers(cross)
@@ -102,22 +102,22 @@ def displayAllCross(cross, clues, i):
             
         else:
             mockClues[i].possi = [val]
-            handleNorm(mockCross, mockClues, i, None)
+            handle_norm(mockCross, mockClues, i, None)
             
-            if checkCrossFinished(mockCross) and noDupes(mockClues):
-                displayCross(mockCross)
+            if check_cross_finished(mockCross) and no_dupes(mockClues):
+                display_cross(mockCross)
                 
 
-def handleNorm(mockCross, mockClues, i, j):
-    mockCross = updateDigits(mockClues[i], mockCross)
+def handle_norm(mockCross, mockClues, i, j):
+    mockCross = update_digits(mockClues[i], mockCross)
     if j:
-        mockCross = updateDigits(mockClues[j], mockCross)
+        mockCross = update_digits(mockClues[j], mockCross)
     if i != len(mockClues)-1:
-        displayAllCross(mockCross, mockClues, i+1)
+        display_all_crosses(mockCross, mockClues, i+1)
 
 
 def handleCont(mockCross, mockClues, cont, i):
-    j = findClueIndex(mockClues, cont[0])
+    j = find_clue_index(mockClues, cont[0])
     
     for specClueVal, cluePossi in cont[1:]:
         mClues = copy.deepcopy(mockClues)
@@ -128,16 +128,16 @@ def handleCont(mockCross, mockClues, cont, i):
             m2Cross = copy.deepcopy(mockCross)
             m2Clues = copy.deepcopy(mClues)
             m2Clues[i].possi = [val2]
-            handleNorm(m2Cross, m2Clues, i, j) 
+            handle_norm(m2Cross, m2Clues, i, j) 
     
 
-def findClueIndex(clues, clueName):
+def find_clue_index(clues, clueName):
     for j in range(0,len(clues)):
         if clues[j].name == clueName:
             return j
         
 
-def displayCross(cross):
+def display_cross(cross):
     os.system('cls')
     for row in cross:
         printRow = ''
@@ -150,7 +150,7 @@ def displayCross(cross):
         print(printRow)
             
                 
-def comparePossi(curr, checking, remove):
+def compare_possi(curr, checking, remove):
     i = 0
     while i<len(curr):
         if remove:
@@ -167,7 +167,7 @@ def comparePossi(curr, checking, remove):
     return curr
 
 
-def updateDigits(clue, cross):
+def update_digits(clue, cross):
     nums = clue.possi
     numPossi = []
 
@@ -185,11 +185,11 @@ def updateDigits(clue, cross):
     i = 0
     for i in range(clue.length):
         x, y = clue.pos[i][0], clue.pos[i][1]
-        cross[y][x].possi = comparePossi(cross[y][x].possi, numPossi[i], False)
+        cross[y][x].possi = compare_possi(cross[y][x].possi, numPossi[i], False)
     return cross
 
 
-def compareNewAndOld(new, old):
+def compare_new_and_old(new, old):
     for i in range(0,3):
         for j in range(0,3):
             if new[i][j].possi != old[i][j].possi:
@@ -197,7 +197,7 @@ def compareNewAndOld(new, old):
     return False
 
 
-def findOrder(numList, order):
+def find_order(numList, order):
     if not numList or not numList[0]:
         return numList
     numList.sort()
@@ -208,22 +208,22 @@ def findOrder(numList, order):
     return numList
 
 
-def refreshChoiceDict(length, instruction):
+def refresh_choice_dict(length, instruction):
     mainVal, clueType, extra, remove, order, proper, ofItself = instruction
     choiceDict = {
-        'pr':findPrimes(length, extra, order),
-        'po':findPowers(length, extra, order, mainVal),
-        't':findTriangle(length, extra, order),
-        'p':findPalidrome(length, extra, order),
+        'pr':find_primes(length, extra, order),
+        'po':find_powers(length, extra, order, mainVal),
+        't':find_triangle(length, extra, order),
+        'p':find_palidrome(length, extra, order),
 
-        'm':giveMultiples(length, extra, order, mainVal),
-        'f': giveFactors(length, extra, order, mainVal, proper, ofItself),
+        'm':give_multiples(length, extra, order, mainVal),
+        'f': give_factors(length, extra, order, mainVal, proper, ofItself),
         '':[-40]
         }
     return choiceDict
 
 
-def checkCrossFinished(cross):
+def check_cross_finished(cross):
     finished = True
     for row in cross:
         for val in row:
@@ -232,7 +232,7 @@ def checkCrossFinished(cross):
     return finished
 
 
-def noDupes(mockClues):
+def no_dupes(mockClues):
     answers = set(mockClues)
     for mockClue in mockClues:
         if mockClue.possi[0] in answers:
@@ -243,7 +243,7 @@ def noDupes(mockClues):
 
 
 ### Fetching Numbers - simple normal numbers calculations
-def checkPrime(num):
+def check_prime(num):
     if num > 1:
         for i in range(2, (num//2)+1):
             if (num % i) == 0:
@@ -253,17 +253,17 @@ def checkPrime(num):
     return False
 
 
-def findPrimes(length, extra, order):
+def find_primes(length, extra, order):
     primes = []
     for i in range(10**(length-1), 10**(length)):
         val = i+extra
-        if checkPrime(i):
+        if check_prime(i):
             primes.append(str(val))
-    primes = findOrder(primes, order)
+    primes = find_order(primes, order)
     return primes
 
 
-def findPowers(length, extra, order, power):
+def find_powers(length, extra, order, power):
     if type(power)!=int:
         return
      
@@ -278,11 +278,11 @@ def findPowers(length, extra, order, power):
             if powerLength == length and val>0:
                 result.append(str(val))
         n+=1
-    result = findOrder(result, order)
+    result = find_order(result, order)
     return result
 
      
-def findTriangle(length, extra, order):
+def find_triangle(length, extra, order):
     result = []
     triLength = 0
     n = 0
@@ -297,11 +297,11 @@ def findTriangle(length, extra, order):
                 result.append(str(val))
         adding += 1
 
-    result = findOrder(result, order)
+    result = find_order(result, order)
     return result
 
 
-def findPalidrome(length, extra, order):
+def find_palidrome(length, extra, order):
     palis = []
     for i in range(10**(length-1), 10**(length)):
         val = i
@@ -310,12 +310,12 @@ def findPalidrome(length, extra, order):
         if i == i[::-1] and len(str(val+extra)) == length and val+extra > 0:
             palis.append(str(val+extra))
     
-    palis = findOrder(palis, order)
+    palis = find_order(palis, order)
     return palis
 
 
 
-def findMultiples(length, extra, order, multi, proper, ofItself):
+def find_multiples(length, extra, order, multi, proper, ofItself):
     if multi == 0:
         return [None, None]
     result = []
@@ -329,19 +329,19 @@ def findMultiples(length, extra, order, multi, proper, ofItself):
                 result.append(str(val))
         n+=1
 
-    possi = findOrder(result, order)
+    possi = find_order(result, order)
     return possi
 
 
-def findFactors(length, extra, order, product, proper, ofItself):
+def find_factors(length, extra, order, product, proper, ofItself):
     result = []
-    botNum, topNum = findBotTop(product, proper)
+    botNum, topNum = find_bot_top(product, proper)
 
     for i in range(botNum, topNum):
         if product%i == 0 and len(str(i+extra)) == length and i+extra>0:
             result.append(str(i+extra))
     
-    result = findOrder(result, order)
+    result = find_order(result, order)
     if ofItself:
         if result == [str(product)]:
             return result
@@ -350,21 +350,21 @@ def findFactors(length, extra, order, product, proper, ofItself):
         return result
 
 
-def giveMultiples(length, extra, order, multi):
+def give_multiples(length, extra, order, multi):
     if type(multi) == list:
-        cont, possi = handleLists(findMultiples, length, extra, order, multi, proper = None, ofItself= None)
+        cont, possi = handle_lists(find_multiples, length, extra, order, multi, proper = None, ofItself= None)
     else:
-        possi = findMultiples(length, extra, order, multi, proper = None, ofItself= None)
+        possi = find_multiples(length, extra, order, multi, proper = None, ofItself= None)
         cont = [0, len(possi)]
     return cont, possi
 
 
-def giveFactors(length, extra, order, product, proper, ofItself):
+def give_factors(length, extra, order, product, proper, ofItself):
     if type(product) == list:
-        cont, possi = handleLists(findFactors, length, extra, order, product, proper, ofItself)
+        cont, possi = handle_lists(find_factors, length, extra, order, product, proper, ofItself)
 
     else:
-        possi = findFactors(length, extra, order, product, proper, ofItself)
+        possi = find_factors(length, extra, order, product, proper, ofItself)
         cont = [0, len(possi)]
     
     return cont, possi
@@ -373,7 +373,7 @@ def giveFactors(length, extra, order, product, proper, ofItself):
 
 
 
-def handleLists(func, length, extra, order, nums, proper, ofItself):
+def handle_lists(func, length, extra, order, nums, proper, ofItself):
     result = []
     cont = []
     for num in nums:
@@ -381,7 +381,7 @@ def handleLists(func, length, extra, order, nums, proper, ofItself):
         partResult = func(length, extra, order, int(num), proper, ofItself)
         pCont = [0, len(partResult)]
         if pCont and partResult:
-            partResult = findOrder(partResult, order)
+            partResult = find_order(partResult, order)
             result+=partResult
 
             if cont:
@@ -396,7 +396,7 @@ def handleLists(func, length, extra, order, nums, proper, ofItself):
 
 
 
-def findBotTop(product, proper):
+def find_bot_top(product, proper):
     topNum = product
     botNum = 2
     if not proper:
@@ -405,7 +405,7 @@ def findBotTop(product, proper):
     return botNum, topNum
 ####
 
-def checkValidCross(cross):
+def check_valid_cross(cross):
     for row in cross:
         for digit in row:
             if digit.possi == []:
@@ -413,7 +413,7 @@ def checkValidCross(cross):
     return True
 
 
-def findCombos(coords, newCross):
+def find_combos(coords, newCross):
     co1, co2 = coords
     x1, y1 = co1
     x2, y2 = co2
@@ -453,12 +453,12 @@ def clueAdd(resClue, clueCalc, amount):
     return results
 '''
 
-def findAllPossi(perm, mockCross, coords, extra, newClues, currVal, i):
+def find_all_possi(perm, mockCross, coords, extra, newClues, currVal, i):
     if i == len(perm):
         targetNums = []
         
-        if checkValidCross(mockCross):
-            targetNums = findCombos(coords, mockCross)
+        if check_valid_cross(mockCross):
+            targetNums = find_combos(coords, mockCross)
 
         if str(currVal + extra) in targetNums:
             return [(str(currVal + extra), mockCross)]
@@ -470,33 +470,33 @@ def findAllPossi(perm, mockCross, coords, extra, newClues, currVal, i):
         decidingPerm.possi = [val]
         changedCross = copy.deepcopy(mockCross)
 
-        changedCross = updateDigits(decidingPerm, changedCross)
+        changedCross = update_digits(decidingPerm, changedCross)
 
-        possiNums+=findAllPossi(perm, changedCross, coords, extra, newClues+[decidingPerm], int(val)+currVal, i+1)
+        possiNums+=find_all_possi(perm, changedCross, coords, extra, newClues+[decidingPerm], int(val)+currVal, i+1)
         
 
     return possiNums
 
 
-def findPossiCrossesFromSums(cross, clues, clue, amount, extra):
-    clueSums = findAllClueSums(cross, clues, clue.pos, amount, extra)
+def find_possi_crosses_from_sums(cross, clues, clue, amount, extra):
+    clueSums = find_all_clue_sums(cross, clues, clue.pos, amount, extra)
 
     possiCrosses = []
 
     for possi in clueSums:
         clue.possi = [possi[0]]
-        possiCross = updateDigits(clue, possi[1])
+        possiCross = update_digits(clue, possi[1])
         possiCrosses.append(possiCross)
         
     return possiCrosses
         
 
-def findAllClueSums(cross, clues, coords, amount, extra):
+def find_all_clue_sums(cross, clues, coords, amount, extra):
     result = []
     allLists = permutations(clues, amount)
     for perm in list(allLists):
         mockCross = copy.deepcopy(cross)
-        res = findAllPossi(perm, mockCross, 
+        res = find_all_possi(perm, mockCross, 
                        coords, extra=extra, 
                        newClues=[], currVal=0, i=0)
     
@@ -505,18 +505,29 @@ def findAllClueSums(cross, clues, coords, amount, extra):
     return result
 
 
-def useNewClues(cross, clues, newClues):
+def use_new_clues(cross, clues, newClues):
     for i in range(0,len(newClues)):
         for j in range(0,len(clues)):
             if clues[j].name == newClues[i].name:
                 clues[j] = newClues[i]
     
     for clue in clues:
-        cross = updateDigits(clue, cross)
+        cross = update_digits(clue, cross)
     return cross
 
 
-def addToCross(cross, newCrosses):
+def add_to_cross(cross, newCrosses):
+    if newCrosses == []:
+        return
+    
+    cross = newCrosses[0]
+    for newCross in newCrosses:
+        for y in range(0,3):
+            for x in range(0,3):
+                if newCross[y][x].possi[0] not in cross[y][x].possi:
+                    cross[y][x].possi.append(newCross[y][x].possi[0])
+    
+    return cross
     if newCrosses == []:
         return
     
