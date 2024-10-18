@@ -90,7 +90,6 @@ clues = [a1, a3, a5, d1, d2, d4]
 
 
 
-
 ##All the normal number Stuff, not the difficult clue operation stuff
 cross, clues = numberCruncher(cross, prev, clues)
 #cross = possiCruncher(cross, clues, d4)

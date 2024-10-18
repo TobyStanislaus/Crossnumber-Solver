@@ -4,7 +4,6 @@ import os
 
 ##Master function
 def inputHandler(cross, clue, clues):
-    
     '''
     Give it a clue, it will process all its possible numbers and put it on the cross
     '''
@@ -19,6 +18,9 @@ def inputHandler(cross, clue, clues):
                 cont, possi = choiceDict[clueType]
             else:
                 possi = choiceDict[clueType]
+                cont = [0, len(possi)]
+
+            
             clueNums += possi
 
     if clueNums and clueNums[0]!=-40:
@@ -34,7 +36,6 @@ def numberCruncher(cross, prev, clues):
         for clue in clues:
             clue, cross = inputHandler(cross, clue, clues)
     
-
     return cross, clues
 
 
@@ -60,7 +61,7 @@ def refreshClueDict(clues):
     d1:[[1, '', 0, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None]]}
-    
+   
     '''#2022 - Difficult factor one
     clueDict = {
         a1:[[1, 'pr', -2, None, None, None, None]],
@@ -103,7 +104,7 @@ def displayAllCross(cross, clues, i):
             mockClues[i].possi = [val]
             handleNorm(mockCross, mockClues, i, None)
             
-            if checkCrossFinished(mockCross):
+            if checkCrossFinished(mockCross) and noDupes(mockClues):
                 displayCross(mockCross)
                 
 
@@ -231,6 +232,13 @@ def checkCrossFinished(cross):
     return finished
 
 
+def noDupes(mockClues):
+    answers = set(mockClues)
+    for mockClue in mockClues:
+        if mockClue.possi[0] in answers:
+            return False
+        answers.add(mockClue.possi[0])
+    return True
 ###
 
 
