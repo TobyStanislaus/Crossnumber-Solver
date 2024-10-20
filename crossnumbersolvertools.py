@@ -12,10 +12,21 @@ def input_handler(cross, clue, clues):
     clueDict = refresh_clue_dict(clues)
     for instruction in clueDict[clue]:
         choiceDict = refresh_choice_dict(clue.length, instruction)
-        mainVal, clueType, extra, remove, order, proper, ofItself = instruction
+        mainVal, clueType, extra, remove, order, proper, ofItself, otherClue = instruction
         if clueType in choiceDict:
+            noCont = True
             if len(choiceDict[clueType]) == 2 and type(choiceDict[clueType][0]) == list:
+                #####
+                ####
+                ####
+                ###
+                ##
+                noCont = False
                 cont, possi = choiceDict[clueType]
+                clue.cont = [otherClue.name]+cont
+                clue.possi = possi
+                cross = update_digits(clue, cross)
+                
             else:
                 possi = choiceDict[clueType]
                 cont = [mainVal, [0, len(possi)]]
@@ -23,7 +34,7 @@ def input_handler(cross, clue, clues):
             #clue.cont = cont
             clueNums += possi
 
-    if clueNums and clueNums[0]!=-40:
+    if clueNums and clueNums[0]!=-40 and noCont:
         clue.possi = compare_possi(clue.possi, clueNums, remove)
         cross = update_digits(clue, cross)
 
@@ -51,37 +62,17 @@ def possi_cruncher(cross, clues, clue):
 
 ##The one you must change each time (currently)
 def refresh_clue_dict(clues):
-    a1, a3, a5, d1, d2, d4 = clues
-    #[mainVal, clueType, extra, removeNot, order, proper, ofItself]
+    d1, a1, a3, a5, d2, d4 = clues
+    #[mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue]
     #Ritangle
     clueDict = {
-    a1:[[1, '', 0, None, None, None, None]],
-    a3:[[1, '', 0, None, None, None, None]],
-    a5:[[1, '', 0, None, None, None, None]],
-    d1:[[1, '', 0, None, None, None, None]],
-    d2:[[1, '', 0, None, None, None, None]],
-    d4:[[1, 'pr', 0, None, None, None, None]]}
-    
-    '''#2022 - Difficult factor one
-    clueDict = {
-        a1:[[1, 'pr', -2, None, None, None, None]],
-        a3:[[a3.possi,'f', 100, False, -1, True, True]],
-        a5:[[13, 'm', 0, None, None, None, True]],
-        d1:[[4, 'po', 0, None, None, None, None]],
-        d2:[[3, 'po', 0, None, None, None, None]],
-        d4:[[1, 'pr', 0, True, None, None, None],
-            [2, 'po', 0, True, None, None, None],
-            [2, 'm', 0, True, None, None, None]]}
-    '''
-    '''#2023 - Difficult Clue one
-    clueDict = {
-        a1:[[105, 'f', -4, None, None, True, None]],
-        a3:[[1,'p', 1, None, None, None, None]],
-        a5:[[1, '', 0, None, None, None, None]],
-        d1:[[2, 'po', -2, None, None, None, None]],
-        d2:[[3, 'po', -400, None, None, None, None]],
-        d4:[[2, 'cA', -6, None, None, None, None]]}
-    '''
+    a1:[[1, '', 0, None, None, None, None, None]],
+    a3:[[1, '', 0, None, None, None, None, None]],
+    a5:[[1, '', 0, None, None, None, None, None]],
+    #d1:[[1, '', 0, None, None, None, None, None]],
+    d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
+    d2:[[1, '', 0, None, None, None, None, None]],
+    d4:[[1, 'pr', 0, None, None, None, None, None]]}
 
     return clueDict
 
@@ -209,7 +200,7 @@ def find_order(numList, order):
 
 
 def refresh_choice_dict(length, instruction):
-    mainVal, clueType, extra, remove, order, proper, ofItself = instruction
+    mainVal, clueType, extra, remove, order, proper, ofItself, otherClue = instruction
     choiceDict = {
         'pr':find_primes(length, extra, order),
         'po':find_powers(length, extra, order, mainVal),
@@ -315,6 +306,7 @@ def find_palidrome(length, extra, order):
 
 
 
+###
 def find_multiples(length, extra, order, multi, proper, ofItself):
     if multi == 0:
         return [None, None]
@@ -351,6 +343,8 @@ def find_factors(length, extra, order, product, proper, ofItself):
 
 
 def give_multiples(length, extra, order, multi):
+    
+
     if type(multi) == list:
         cont, possi = handle_lists(find_multiples, length, extra, order, multi, proper = None, ofItself= None)
     else:
@@ -424,8 +418,8 @@ def find_combos(coords, newCross):
     
     return result
 ##One clue only
-'''
-def multiplyClue(clue, desiredClue, amount):
+
+def multiply_clue(clue, desiredClue, amount):
     clue.findNumbers()
     desiredClue.findNumbers()
     cluePossi = []
@@ -443,7 +437,7 @@ def multiplyClue(clue, desiredClue, amount):
 
 
 ### Clues Adding
-def clueAdd(resClue, clueCalc, amount):
+def clue_add(resClue, clueCalc, amount):
     results = []
     clueCalc.findNumbers()
     for num in clueCalc.possi:
@@ -451,7 +445,9 @@ def clueAdd(resClue, clueCalc, amount):
         if len(val) == resClue.length:
             results.append(val)
     return results
-'''
+
+
+
 
 def find_all_possi(perm, mockCross, coords, extra, newClues, currVal, i):
     if i == len(perm):

@@ -76,33 +76,22 @@ cross[2][0].possi.remove('0')
 clues = [d1, a1, a3, a5, d2, d4]
 
 
-'''#Maths Challenge Setup
-a1 = Number('a1', [(0,0),(1,0)])
-a3 = Number('a3', [(0,1),(1,1),(2,1)])
-a5 = Number('a5', [(1,2),(2,2)])
 
-d1 = Number('d1', [(0,0),(0,1)])
-d2 = Number('d2', [(1,0),(1,1),(1,2)])
-d4 = Number('d4', [(2,1),(2,2)])
-
-clues = [a1, a3, a5, d1, d2, d4]
-'''
-
-
-
+for clue in clues:
+    clue.possi = clue.findNumbers(cross)
 ##All the normal number Stuff, not the difficult clue operation stuff
 cross, clues = number_cruncher(cross, prev, clues)
 #cross = possi_cruncher(cross, clues, d4)
 
 
 
+'''
 #### Contingency system P
 cont, pos = give_multiples(3, 0, None, d4.possi)
 d1.cont = ['d4']+cont
 d1.possi = pos
 ###
-
-
+'''
 
 display_all_crosses(cross, clues, i = 0)
 
