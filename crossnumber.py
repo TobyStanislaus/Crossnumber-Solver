@@ -96,7 +96,7 @@ cross, clues = number_cruncher(cross, prev, clues)
 
 
 
-#### Contingency system
+#### Contingency system P
 cont, pos = give_multiples(3, 0, None, d4.possi)
 d1.cont = ['d4']+cont
 d1.possi = pos
