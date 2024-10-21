@@ -18,9 +18,10 @@ def input_handler(cross, clue, clues):
 def handle_instruction(cross, clue, instruction):
     clueNums = []
     choiceDict = refresh_choice_dict(clue.length, instruction)
-    mainVal, clueType, extra, remove, order, proper, ofItself = instruction
+    mainVal, clueType, extra, remove, order, proper, ofItself, otherClue = instruction
+
     if clueType in choiceDict:
-        if len(choiceDict[clueType]) == 2 and type(choiceDict[clueType][0]) == list:
+        if is_cont(choiceDict, clueType):
             cont, possi = choiceDict[clueType]
         else:
             possi = choiceDict[clueType]
@@ -58,18 +59,19 @@ def possi_cruncher(cross, clues, clue):
 
 ##The one you must change each time (currently)
 def refresh_clue_dict(clues):
-    a1, a3, a5, d1, d2, d4 = clues
-    #[mainVal, clueType, extra, removeNot, order, proper, ofItself]
-    '''#Ritangle
+    d1, a1, a3, a5,  d2, d4 = clues
+    #[mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue]
+    #Ritangle P
     clueDict = {
-    a1:[[1, '', 0, None, None, None, None]],
-    a3:[[1, '', 0, None, None, None, None]],
-    a5:[[1, '', 0, None, None, None, None]],
-    d1:[[1, '', 0, None, None, None, None]],
-    d2:[[1, '', 0, None, None, None, None]],
-    d4:[[1, 'pr', 0, None, None, None, None]]}
-    '''
-    #2022 - Difficult factor one
+    a1:[[1, '', 0, None, None, None, None, None]],
+    a3:[[1, '', 0, None, None, None, None, None]],
+    a5:[[1, '', 0, None, None, None, None, None]],
+    d1:[[d4.possi, 'm', 0, None, None, None, None, None]],
+    d2:[[1, '', 0, None, None, None, None, None]],
+    d4:[[1, 'pr', 0, None, None, None, None, None]]}
+   
+    
+    '''#2022 - Difficult factor one
     clueDict = {
         a1:[[1, 'pr', -2, None, None, None, None]],
         a3:[[a3.possi,'f', 100, False, -1, True, True]],
@@ -79,7 +81,8 @@ def refresh_clue_dict(clues):
         d4:[[1, 'pr', 0, True, None, None, None],
             [2, 'po', 0, True, None, None, None],
             [2, 'm', 0, True, None, None, None]]}
-    
+    '''
+
     '''#2023 - Difficult Clue one
     clueDict = {
         a1:[[105, 'f', -4, None, None, True, None]],
@@ -217,7 +220,7 @@ def find_order(numList, order):
 
 
 def refresh_choice_dict(length, instruction):
-    mainVal, clueType, extra, remove, order, proper, ofItself = instruction
+    mainVal, clueType, extra, remove, order, proper, ofItself, otherClue = instruction
     choiceDict = {
         'pr':find_primes(length, extra, order),
         'po':find_powers(length, extra, order, mainVal),
@@ -247,6 +250,11 @@ def no_dupes(mockClues):
             return False
         answers.add(mockClue.possi[0])
     return True
+
+
+def is_cont(choiceDict, clueType):
+    return len(choiceDict[clueType]) == 2 and type(choiceDict[clueType][0]) == list
+
 ###
 
 
