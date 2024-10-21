@@ -49,10 +49,6 @@ prev = [[GridDigit(1), GridDigit(1), GridDigit(1)],
          [GridDigit(1), GridDigit(1), GridDigit(1)]]
 
 
-finalCross = [['-','-','-'],
-              ['-','-','-'],
-              ['-','-','-']]
-
 
 
 ## Initializing all clues
