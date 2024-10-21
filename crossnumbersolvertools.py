@@ -22,7 +22,9 @@ def handle_instruction(cross, clue, instruction):
     mainVal, clueType, extra, remove, order, proper, ofItself, otherClue = instruction
 
     if clueType in choiceDict:
-        if clueType  in complexOps:
+
+
+        if clueType in complexOps:
             cont, possi = choiceDict[clueType]
             if otherClue:
                 cont = [otherClue.name]+cont
@@ -53,7 +55,6 @@ def number_cruncher(cross, prev, clues):
 
 
 def possi_cruncher(cross, clues, clue):
-    
     clueDict = refresh_clue_dict(clues)
     for instruction in clueDict[clue]:
         mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue = instruction
@@ -65,13 +66,12 @@ def possi_cruncher(cross, clues, clue):
 '''##The one you must change each time (currently)'''
 def refresh_clue_dict(clues):
     a1, a3, a5, d1, d2, d4 = clues
-    #d1, a1, a3, a5, d2, d4 = clues
 
 
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue]
     
-    '''#Ritangle P
-    clueDict = {
+    #Ritangle P
+    '''clueDict = {
     a1:[[1, '', 0, None, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None, None]],
     a5:[[1, '', 0, None, None, None, None, None]],
@@ -286,6 +286,19 @@ def is_cont(choiceDict, clueType):
     except:
         return False
 
+
+def order_clue_list(clues):
+    '''
+    Properly orders the clues for display - Special First
+    '''
+    specOps = []
+    ops = []
+    for clue in clues:
+        if type(clue.cont[0]) == str:
+            specOps.append(clue)
+        else:
+            ops.append(clue)
+    return specOps+ops
 
 ###
 
