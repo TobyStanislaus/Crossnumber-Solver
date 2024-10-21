@@ -16,19 +16,24 @@ def input_handler(cross, clue, clues):
 
 
 def handle_instruction(cross, clue, instruction):
-    clueNums = []
+    
+    complexOps = set(['m','f'])
     choiceDict = refresh_choice_dict(clue.length, instruction)
     mainVal, clueType, extra, remove, order, proper, ofItself, otherClue = instruction
 
     if clueType in choiceDict:
-        if is_cont(choiceDict, clueType):
+        if clueType  in complexOps:
             cont, possi = choiceDict[clueType]
+            if otherClue:
+                cont = [otherClue.name]+cont
 
         else:
+          
             possi = choiceDict[clueType]
             cont = [mainVal, [0, len(possi)]]
 
-        #clue.cont = cont
+        
+        clue.cont = cont
     
 
         if possi and possi[0]!=-40:
@@ -59,26 +64,27 @@ def possi_cruncher(cross, clues, clue):
 
 ##The one you must change each time (currently)
 def refresh_clue_dict(clues):
-    a1, a3, a5, d1, d2, d4 = clues
-    #d1, a1, a3, a5, d2, d4 = clues
+    #a1, a3, a5, d1, d2, d4 = clues
+    d1, a1, a3, a5, d2, d4 = clues
 
 
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue]
-    '''#Ritangle P
+    
+    #Ritangle P
     clueDict = {
     a1:[[1, '', 0, None, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None, None]],
     a5:[[1, '', 0, None, None, None, None, None]],
-    d1:[[d4.possi, 'm', 0, None, None, None, None, None]],
+    d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
-    '''
+    
     
     '''#2022 - Difficult factor one
     clueDict = {
         a1:[[1, 'pr', -2, None, None, None, None, None]],
-        a3:[[a3.possi,'f', 100, False, -1, True, True, None]],
-        a5:[[13, 'm', 0, None, None, None, True, None]],
+        a3:[[a3.possi,'f', 100, False, -1, True, True, a3]],
+        a5:[[13, 'm', 0, None, None, None, None, None]],
         d1:[[4, 'po', 0, None, None, None, None, None]],
         d2:[[3, 'po', 0, None, None, None, None, None]],
         d4:[[1, 'pr', 0, True, None, None, None, None],
@@ -86,7 +92,7 @@ def refresh_clue_dict(clues):
             [2, 'm', 0, True, None, None, None, None]]}
     '''
 
-    #2023 - Difficult Clue one
+    '''#2023 - Difficult Clue one
     clueDict = {
         a1:[[105, 'f', -4, None, None, True, None, None]],
         a3:[[1,'p', 1, None, None, None, None, None]],
@@ -94,7 +100,7 @@ def refresh_clue_dict(clues):
         d1:[[2, 'po', -2, None, None, None, None, None]],
         d2:[[3, 'po', -400, None, None, None, None, None]],
         d4:[[2, 'cA', -6, None, None, None, None, None]]}
-    
+    '''
 
     return clueDict
 
@@ -110,7 +116,7 @@ def display_all_crosses(cross, clues, i):
         mockClues = copy.deepcopy(clues)
 
         
-        if mockClues[i].cont:
+        if type(mockClues[i].cont[0]) == str:
             handle_cont(mockCross, mockClues, mockClues[i].cont, i)
             
         else:
@@ -164,20 +170,27 @@ def display_cross(cross):
             
                 
 def compare_possi(curr, checking, remove):
+    curr = compare_list1_list2(curr, checking, remove)
+    if not remove:
+        curr = compare_list1_list2(checking, curr, remove)
+    return curr
+
+
+def compare_list1_list2(list1, list2, remove):
     i = 0
-    while i<len(curr):
+    while i<len(list1):
         if remove:
-            if curr[i] in checking:
-                curr.pop(i)
+            if list1[i] in list2:
+                list1.pop(i)
             else:
                 i+=1
         else:
-            if curr[i] not in checking:
-                curr.pop(i)
+            if list1[i] not in list2:
+                list1.pop(i)
             else:
                 i+=1
-    curr.sort()
-    return curr
+    
+    return list1
 
 
 def update_digits(clue, cross):
@@ -256,7 +269,12 @@ def no_dupes(mockClues):
 
 
 def is_cont(choiceDict, clueType):
-    return len(choiceDict[clueType]) == 2 and type(choiceDict[clueType][0]) == list
+    try:
+        if choiceDict[clueType][0][0][1]:
+            return True
+    except:
+        return False
+
 
 ###
 
