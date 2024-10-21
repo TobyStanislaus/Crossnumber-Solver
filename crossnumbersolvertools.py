@@ -115,7 +115,7 @@ def refresh_clue_dict(clues):
     return clueDict
 
 ##Comparison/Cross UI
-def display_all_crosses(cross, clues, i):
+def display_all_crosses(cross, clues, exc, i):
     if not check_valid_cross(cross):
         return  
     mockClues = copy.deepcopy(clues)
@@ -127,25 +127,25 @@ def display_all_crosses(cross, clues, i):
 
         
         if type(mockClues[i].cont[0]) == str:
-            handle_cont(mockCross, mockClues, mockClues[i].cont, i)
+            handle_cont(mockCross, mockClues, exc, mockClues[i].cont, i)
             
         else:
             mockClues[i].possi = [val]
-            handle_norm(mockCross, mockClues, i, None)
+            handle_norm(mockCross, mockClues, exc, i, None)
             
-            if check_cross_finished(mockCross) and no_dupes(mockClues):
+            if check_cross_finished(mockCross, exc) and no_dupes(mockClues):
                 display_cross(mockCross)
                 
 
-def handle_norm(mockCross, mockClues, i, j):
+def handle_norm(mockCross, mockClues, exc, i, j):
     mockCross = update_digits(mockClues[i], mockCross)
     if j:
         mockCross = update_digits(mockClues[j], mockCross)
     if i != len(mockClues)-1:
-        display_all_crosses(mockCross, mockClues, i+1)
+        display_all_crosses(mockCross, mockClues, exc, i+1)
 
 
-def handle_cont(mockCross, mockClues, cont, i):
+def handle_cont(mockCross, mockClues, exc, cont, i):
     j = find_clue_index(mockClues, cont[0])
     
     for specClueVal, cluePossi in cont[1:]:
@@ -157,7 +157,7 @@ def handle_cont(mockCross, mockClues, cont, i):
             m2Cross = copy.deepcopy(mockCross)
             m2Clues = copy.deepcopy(mClues)
             m2Clues[i].possi = [val2]
-            handle_norm(m2Cross, m2Clues, i, j) 
+            handle_norm(m2Cross, m2Clues, exc, i, j) 
     
 
 def find_clue_index(clues, clueName):
@@ -256,16 +256,16 @@ def refresh_choice_dict(length, instruction):
 
         'm':give_multiples(length, extra, order, mainVal),
         'f': give_factors(length, extra, order, mainVal, proper, ofItself),
-        '':[-40]
+        
         }
     return choiceDict
 
 
-def check_cross_finished(cross):
+def check_cross_finished(cross, exc):
     finished = True
-    for row in cross:
-        for val in row:
-            if len(val.possi) != 1:
+    for y in range(0, 3):
+        for x in range(0, 3):
+            if len(cross[y][x].possi) != 1 and (x, y) not in exc:
                 finished = False
     return finished
 

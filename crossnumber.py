@@ -17,7 +17,7 @@ class Number():
         self.possi = []
         self.pos = pos
         self.length = len(pos)
-        self.cont = ''
+        self.cont = [0, 0]
 
     def findNumbers(self, cross):
         nums = []
@@ -89,14 +89,11 @@ for clue in clues:
 
 ##All the normal number Stuff, not the difficult clue operation stuff
 cross, clues = number_cruncher(cross, prev, clues)
-cross = possi_cruncher(cross, clues, d4)
-display_cross(cross)
+#cross = possi_cruncher(cross, clues, d4)
 
 
 
 
-
-
-display_all_crosses(cross, clues, i = 0)
+display_all_crosses(cross, clues, exc = set([(2,0), (0,2)]), i = 0)
 
 
