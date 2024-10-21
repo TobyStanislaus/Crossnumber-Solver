@@ -14,27 +14,22 @@ def input_handler(cross, clue, clues):
         choiceDict = refresh_choice_dict(clue.length, instruction)
         mainVal, clueType, extra, remove, order, proper, ofItself, otherClue = instruction
         if clueType in choiceDict:
-            noCont = True
+   
             if len(choiceDict[clueType]) == 2 and type(choiceDict[clueType][0]) == list:
-                #####
-                ####
-                ####
-                ###
-                ##
-                noCont = False
                 cont, possi = choiceDict[clueType]
-                clue.cont = [otherClue.name]+cont
-                clue.possi = possi
-                cross = update_digits(clue, cross)
-                
+                if otherClue:
+                    clue.cont = [otherClue.name]+cont
+                else:
+                    clue.cont = ''
+
             else:
                 possi = choiceDict[clueType]
                 cont = [mainVal, [0, len(possi)]]
 
-            #clue.cont = cont
+
             clueNums += possi
 
-    if clueNums and clueNums[0]!=-40 and noCont:
+    if clueNums and clueNums[0]!=-40:
         clue.possi = compare_possi(clue.possi, clueNums, remove)
         cross = update_digits(clue, cross)
 
@@ -62,17 +57,38 @@ def possi_cruncher(cross, clues, clue):
 
 ##The one you must change each time (currently)
 def refresh_clue_dict(clues):
-    d1, a1, a3, a5, d2, d4 = clues
+    a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue]
-    #Ritangle
+    '''#Ritangle
+    # P
     clueDict = {
     a1:[[1, '', 0, None, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None, None]],
     a5:[[1, '', 0, None, None, None, None, None]],
-    #d1:[[1, '', 0, None, None, None, None, None]],
+    d1:[[1, '', 0, None, None, None, None, None]],
     d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
+    # Q
+    clueDict = {
+    a1:[[1, '', 0, None, None, None, None, None]],
+    a3:[[1, '', 0, None, None, None, None, None]],
+    a5:[[1, '', 0, None, None, None, None, None]],
+    d1:[[1, '', 0, None, None, None, None, None]],
+    d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
+    d2:[[1, '', 0, None, None, None, None, None]],
+    d4:[[1, 'pr', 0, None, None, None, None, None]]}'''
+
+    #2022 - Difficult factor one
+    clueDict = {
+        a1:[[1, 'pr', -2, None, None, None, None, None]],
+        a3:[[a3.possi,'f', 100, False, -1, True, True, None]],
+        a5:[[13, 'm', 0, None, None, None, True, None]],
+        d1:[[4, 'po', 0, None, None, None, None, None]],
+        d2:[[3, 'po', 0, None, None, None, None, None]],
+        d4:[[1, 'pr', 0, True, None, None, None, None],
+            [2, 'po', 0, True, None, None, None, None],
+            [2, 'm', 0, True, None, None, None, None]]}
 
     return clueDict
 
@@ -142,20 +158,26 @@ def display_cross(cross):
             
                 
 def compare_possi(curr, checking, remove):
+    curr = check_list_against_other(curr, checking, remove)
+    #checking = check_list_against_other(checking, curr, remove)
+    return checking
+
+
+def check_list_against_other(list1, list2, remove):
     i = 0
-    while i<len(curr):
+    while i<len(list1):
         if remove:
-            if curr[i] in checking:
-                curr.pop(i)
+            if list1[i] in list2:
+                list1.pop(i)
             else:
                 i+=1
         else:
-            if curr[i] not in checking:
-                curr.pop(i)
+            if list1[i] not in list2:
+                list1.pop(i)
             else:
                 i+=1
-    curr.sort()
-    return curr
+    
+    return list1
 
 
 def update_digits(clue, cross):
