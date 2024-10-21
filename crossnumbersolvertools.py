@@ -2,11 +2,72 @@ from itertools import permutations
 import copy
 import os
 
-##Master function
+'''##The one you must change each time (currently)'''
+def refresh_clue_dict(clues):
+    a1, a3, a5, d1, d2, d4 = clues
+
+
+    #[mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue]
+    
+    #Ritangle P
+    clueDict = {
+    a1:[[1, '', 0, None, None, None, None, None]],
+    a3:[[1, '', 0, None, None, None, None, None]],
+    a5:[[1, '', 0, None, None, None, None, None]],
+    d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
+    d2:[[1, '', 0, None, None, None, None, None]],
+    d4:[[1, 'pr', 0, None, None, None, None, None]]}
+
+    '''#Ritangle Q
+    clueDict = {
+    a1:[[1, 'pr', 0, None, None, None, None, None],
+        [1, 'pa', 0, None, None, None, None, None]],
+    a3:[[1, '', 0, None, None, None, None, None]],
+    a5:[[a5.possi, 'd', 0, None, None, None, None, None]],
+    d1:[[1, '', 0, None, None, None, None, None]],
+    d2:[[1, '', 0, None, None, None, None, None]],
+    d4:[[1, '', 0, None, None, None, None, None]]}
+    '''
+    
+    '''#2022 - Difficult factor one
+    clueDict = {
+        a1:[[1, 'pr', -2, None, None, None, None, None]],
+        a3:[[a3.possi,'f', 100, False, -1, True, True, a3]],
+        a5:[[13, 'm', 0, None, None, None, None, None]],
+        d1:[[4, 'po', 0, None, None, None, None, None]],
+        d2:[[3, 'po', 0, None, None, None, None, None]],
+        d4:[[1, 'pr', 0, True, None, None, None, None],
+            [2, 'po', 0, True, None, None, None, None],
+            [2, 'm', 0, True, None, None, None, None]]}
+    '''
+
+    '''#2023 - Difficult Clue one
+    clueDict = {
+        a1:[[105, 'f', -4, None, None, True, None, None]],
+        a3:[[1,'pa', 1, None, None, None, None, None]],
+        a5:[[1, '', 0, None, None, None, None, None]],
+        d1:[[2, 'po', -2, None, None, None, None, None]],
+        d2:[[3, 'po', -400, None, None, None, None, None]],
+        d4:[[2, 'cA', -6, None, None, None, None, None]]}
+    '''
+
+    return clueDict
+###########################################
+
+
+######################################################################
+##Clue control - does everything concerning simple clue calculations##
+######################################################################
+def number_cruncher(cross, prev, clues):
+    while compare_new_and_old(cross, prev):
+        prev = copy.deepcopy(cross)
+        for clue in clues:
+            clue, cross = input_handler(cross, clue, clues)
+    
+    return cross, clues
+
+
 def input_handler(cross, clue, clues):
-    '''
-    Give it a clue, it will process all its possible numbers and put it on the cross
-    '''
     clue.possi = clue.findNumbers(cross)
 
     clueDict = refresh_clue_dict(clues)
@@ -16,7 +77,6 @@ def input_handler(cross, clue, clues):
 
 
 def handle_instruction(cross, clue, instruction):
-    
     complexOps = set(['m','f'])
     choiceDict = refresh_choice_dict(clue.length, instruction)
     mainVal, clueType, extra, remove, order, proper, ofItself, otherClue = instruction
@@ -43,78 +103,12 @@ def handle_instruction(cross, clue, instruction):
             cross = update_digits(clue, cross)
 
     return cross
+###
 
 
-def number_cruncher(cross, prev, clues):
-    while compare_new_and_old(cross, prev):
-        prev = copy.deepcopy(cross)
-        for clue in clues:
-            clue, cross = input_handler(cross, clue, clues)
-    
-    return cross, clues
-
-
-def possi_cruncher(cross, clues, clue):
-    clueDict = refresh_clue_dict(clues)
-    for instruction in clueDict[clue]:
-        mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue = instruction
-
-        possiCrosses = find_possi_crosses_from_sums(cross, clues, clue, mainVal, extra)
-        cross = add_to_cross(cross, possiCrosses)
-    return cross
-
-'''##The one you must change each time (currently)'''
-def refresh_clue_dict(clues):
-    a1, a3, a5, d1, d2, d4 = clues
-
-
-    #[mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue]
-    
-    #Ritangle P
-    '''clueDict = {
-    a1:[[1, '', 0, None, None, None, None, None]],
-    a3:[[1, '', 0, None, None, None, None, None]],
-    a5:[[1, '', 0, None, None, None, None, None]],
-    d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
-    d2:[[1, '', 0, None, None, None, None, None]],
-    d4:[[1, 'pr', 0, None, None, None, None, None]]}
-    '''
-    '''#Ritangle Q
-    clueDict = {
-    a1:[[1, 'pr', 0, None, None, None, None, None],
-        [1, 'pa', 0, None, None, None, None, None]],
-    a3:[[1, '', 0, None, None, None, None, None]],
-    a5:[[a5.possi, 'd', 0, None, None, None, None, None]],
-    d1:[[1, '', 0, None, None, None, None, None]],
-    d2:[[1, '', 0, None, None, None, None, None]],
-    d4:[[1, '', 0, None, None, None, None, None]]}
-    '''
-    
-    '''#2022 - Difficult factor one
-    clueDict = {
-        a1:[[1, 'pr', -2, None, None, None, None, None]],
-        a3:[[a3.possi,'f', 100, False, -1, True, True, a3]],
-        a5:[[13, 'm', 0, None, None, None, None, None]],
-        d1:[[4, 'po', 0, None, None, None, None, None]],
-        d2:[[3, 'po', 0, None, None, None, None, None]],
-        d4:[[1, 'pr', 0, True, None, None, None, None],
-            [2, 'po', 0, True, None, None, None, None],
-            [2, 'm', 0, True, None, None, None, None]]}
-    '''
-
-    #2023 - Difficult Clue one
-    clueDict = {
-        a1:[[105, 'f', -4, None, None, True, None, None]],
-        a3:[[1,'pa', 1, None, None, None, None, None]],
-        a5:[[1, '', 0, None, None, None, None, None]],
-        d1:[[2, 'po', -2, None, None, None, None, None]],
-        d2:[[3, 'po', -400, None, None, None, None, None]],
-        d4:[[2, 'cA', -6, None, None, None, None, None]]}
-    
-
-    return clueDict
-
-##Comparison/Cross UI
+############
+##Cross UI##
+############
 def display_all_crosses(cross, clues, exc, i):
     if not check_valid_cross(cross):
         return  
@@ -135,7 +129,53 @@ def display_all_crosses(cross, clues, exc, i):
             
             if check_cross_finished(mockCross, exc) and no_dupes(mockClues):
                 display_cross(mockCross)
-                
+
+    
+def display_cross(cross):
+    os.system('cls')
+    for row in cross:
+        printRow = ''
+        for digit in row:
+            if len(digit.possi) == 1:
+                printRow+= digit.possi[0]+' '
+            else:
+                #printRow+=str(digit.possi)+' '
+                printRow+='  '
+        print(printRow)
+      
+
+def check_valid_cross(cross):
+    for row in cross:
+        for digit in row:
+            if digit.possi == []:
+                return False
+    return True
+
+##############
+##COMPARISON##
+##############
+def update_digits(clue, cross):
+    nums = clue.possi
+    numPossi = []
+
+    for i in range(clue.length):
+        numPossi.append([])
+
+    #splitting into digits
+    i = 0
+    for num in nums:
+        for i in range(0, len(num)):
+            if num[i] in numPossi[i]:
+                pass
+            else:
+                numPossi[i].append(num[i])
+
+    i = 0
+    for i in range(clue.length):
+        x, y = clue.pos[i][0], clue.pos[i][1]
+        cross[y][x].possi = compare_possi(cross[y][x].possi, numPossi[i], False)
+    return cross
+
 
 def handle_norm(mockCross, mockClues, exc, i, j):
     mockCross = update_digits(mockClues[i], mockCross)
@@ -165,20 +205,7 @@ def find_clue_index(clues, clueName):
         if clues[j].name == clueName:
             return j
         
-
-def display_cross(cross):
-    os.system('cls')
-    for row in cross:
-        printRow = ''
-        for digit in row:
-            if len(digit.possi) == 1:
-                printRow+= digit.possi[0]+' '
-            else:
-                #printRow+=str(digit.possi)+' '
-                printRow+='  '
-        print(printRow)
-            
-                
+   
 def compare_possi(curr, checking, remove):
     curr = compare_list1_list2(curr, checking, remove)
     if not remove:
@@ -203,46 +230,12 @@ def compare_list1_list2(list1, list2, remove):
     return list1
 
 
-def update_digits(clue, cross):
-    nums = clue.possi
-    numPossi = []
-
-    for i in range(clue.length):
-        numPossi.append([])
-
-    #splitting into digits
-    i = 0
-    for num in nums:
-        for i in range(0, len(num)):
-            if num[i] in numPossi[i]:
-                pass
-            else:
-                numPossi[i].append(num[i])
-
-    i = 0
-    for i in range(clue.length):
-        x, y = clue.pos[i][0], clue.pos[i][1]
-        cross[y][x].possi = compare_possi(cross[y][x].possi, numPossi[i], False)
-    return cross
-
-
 def compare_new_and_old(new, old):
     for i in range(0,3):
         for j in range(0,3):
             if new[i][j].possi != old[i][j].possi:
                 return True
     return False
-
-
-def find_order(numList, order):
-    if not numList or not numList[0]:
-        return numList
-    numList.sort()
-    if order and numList:
-        if order<0:
-            return [numList[order]]
-        return [numList[order-1]]
-    return numList
 
 
 def refresh_choice_dict(length, instruction):
@@ -261,6 +254,20 @@ def refresh_choice_dict(length, instruction):
     return choiceDict
 
 
+def order_clue_list(clues):
+    '''
+    Properly orders the clues for display - Special First
+    '''
+    specOps = []
+    ops = []
+    for clue in clues:
+        if type(clue.cont[0]) == str:
+            specOps.append(clue)
+        else:
+            ops.append(clue)
+    return specOps+ops
+
+##CHECKS##
 def check_cross_finished(cross, exc):
     finished = True
     for y in range(0, 3):
@@ -287,23 +294,20 @@ def is_cont(choiceDict, clueType):
         return False
 
 
-def order_clue_list(clues):
-    '''
-    Properly orders the clues for display - Special First
-    '''
-    specOps = []
-    ops = []
-    for clue in clues:
-        if type(clue.cont[0]) == str:
-            specOps.append(clue)
-        else:
-            ops.append(clue)
-    return specOps+ops
-
-###
+def find_order(numList, order):
+    if not numList or not numList[0]:
+        return numList
+    numList.sort()
+    if order and numList:
+        if order<0:
+            return [numList[order]]
+        return [numList[order-1]]
+    return numList
 
 
-### Fetching Numbers - simple normal numbers calculations
+####################
+##NUM CALCULATIONS##
+####################
 def check_prime(num):
     if num > 1:
         for i in range(2, (num//2)+1):
@@ -393,6 +397,46 @@ def find_digit_sum(length, extra, order, mainVal):
 
 
 
+###MORE DIFFICULT 'CONT' NUM CALCULATIONS###
+
+def handle_lists(func, length, extra, order, nums, proper, ofItself):
+    result = []
+    cont = []
+    for num in nums:
+        partCont = [num]
+        partResult = func(length, extra, order, int(num), proper, ofItself)
+        pCont = [0, len(partResult)]
+        if pCont and partResult:
+            partResult = find_order(partResult, order)
+            result+=partResult
+
+            if cont:
+                shift = cont[-1][1][1]
+                pCont[0]+=shift; pCont[1]+=shift
+            partCont.append(pCont)
+            cont.append(partCont)
+
+    return cont, result
+
+
+def give_multiples(length, extra, order, multi):
+    if type(multi) == list:
+        cont, possi = handle_lists(find_multiples, length, extra, order, multi, proper = None, ofItself= None)
+    else:
+        possi = find_multiples(length, extra, order, multi, proper = None, ofItself= None)
+        cont = [0, len(possi)]
+    return cont, possi
+
+
+def give_factors(length, extra, order, product, proper, ofItself):
+    if type(product) == list:
+        cont, possi = handle_lists(find_factors, length, extra, order, product, proper, ofItself)
+
+    else:
+        possi = find_factors(length, extra, order, product, proper, ofItself)
+        cont = [0, len(possi)]
+    
+    return cont, possi
 
 
 def find_multiples(length, extra, order, multi, proper, ofItself):
@@ -430,52 +474,6 @@ def find_factors(length, extra, order, product, proper, ofItself):
         return result
 
 
-def give_multiples(length, extra, order, multi):
-    if type(multi) == list:
-        cont, possi = handle_lists(find_multiples, length, extra, order, multi, proper = None, ofItself= None)
-    else:
-        possi = find_multiples(length, extra, order, multi, proper = None, ofItself= None)
-        cont = [0, len(possi)]
-    return cont, possi
-
-
-def give_factors(length, extra, order, product, proper, ofItself):
-    if type(product) == list:
-        cont, possi = handle_lists(find_factors, length, extra, order, product, proper, ofItself)
-
-    else:
-        possi = find_factors(length, extra, order, product, proper, ofItself)
-        cont = [0, len(possi)]
-    
-    return cont, possi
-
-
-
-
-
-def handle_lists(func, length, extra, order, nums, proper, ofItself):
-    result = []
-    cont = []
-    for num in nums:
-        partCont = [num]
-        partResult = func(length, extra, order, int(num), proper, ofItself)
-        pCont = [0, len(partResult)]
-        if pCont and partResult:
-            partResult = find_order(partResult, order)
-            result+=partResult
-
-            if cont:
-                shift = cont[-1][1][1]
-                pCont[0]+=shift; pCont[1]+=shift
-            partCont.append(pCont)
-            cont.append(partCont)
-
-    return cont, result
-
-
-
-
-
 def find_bot_top(product, proper):
     topNum = product
     botNum = 2
@@ -483,28 +481,16 @@ def find_bot_top(product, proper):
         topNum+=1
         botNum-=1
     return botNum, topNum
-####
 
-def check_valid_cross(cross):
-    for row in cross:
-        for digit in row:
-            if digit.possi == []:
-                return False
-    return True
+#####
 
 
-def find_combos(coords, newCross):
-    co1, co2 = coords
-    x1, y1 = co1
-    x2, y2 = co2
-    result = []
-    for num1 in newCross[y1][x1].possi:
-        for num2 in newCross[y2][x2].possi:
-            result.append(num1+num2)
-    
-    return result
-##One clue only
-'''
+###############
+###CLUE SUMS###
+###############
+
+##SINGLE CLUE##
+
 def multiplyClue(clue, desiredClue, amount):
     clue.findNumbers()
     desiredClue.findNumbers()
@@ -531,7 +517,18 @@ def clueAdd(resClue, clueCalc, amount):
         if len(val) == resClue.length:
             results.append(val)
     return results
-'''
+
+
+##MULTI CLUES##
+def possi_cruncher(cross, clues, clue):
+    clueDict = refresh_clue_dict(clues)
+    for instruction in clueDict[clue]:
+        mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue = instruction
+
+        possiCrosses = find_possi_crosses_from_sums(cross, clues, clue, mainVal, extra)
+        cross = add_to_cross(cross, possiCrosses)
+    return cross
+
 
 def find_all_possi(perm, mockCross, coords, extra, newClues, currVal, i):
     if i == len(perm):
@@ -585,17 +582,6 @@ def find_all_clue_sums(cross, clues, coords, amount, extra):
     return result
 
 
-def use_new_clues(cross, clues, newClues):
-    for i in range(0,len(newClues)):
-        for j in range(0,len(clues)):
-            if clues[j].name == newClues[i].name:
-                clues[j] = newClues[i]
-    
-    for clue in clues:
-        cross = update_digits(clue, cross)
-    return cross
-
-
 def add_to_cross(cross, newCrosses):
     if newCrosses == []:
         return
@@ -608,14 +594,15 @@ def add_to_cross(cross, newCrosses):
                     cross[y][x].possi.append(newCross[y][x].possi[0])
     
     return cross
-    if newCrosses == []:
-        return
+
+
+def find_combos(coords, newCross):
+    co1, co2 = coords
+    x1, y1 = co1
+    x2, y2 = co2
+    result = []
+    for num1 in newCross[y1][x1].possi:
+        for num2 in newCross[y2][x2].possi:
+            result.append(num1+num2)
     
-    cross = newCrosses[0]
-    for newCross in newCrosses:
-        for y in range(0,3):
-            for x in range(0,3):
-                if newCross[y][x].possi[0] not in cross[y][x].possi:
-                    cross[y][x].possi.append(newCross[y][x].possi[0])
-    
-    return cross
+    return result

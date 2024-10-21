@@ -49,7 +49,11 @@ prev = [[GridDigit(1), GridDigit(1), GridDigit(1)],
          [GridDigit(1), GridDigit(1), GridDigit(1)]]
 
 
-
+cross[0][0].possi.remove('0')
+cross[0][1].possi.remove('0')
+cross[1][1].possi.remove('0')
+cross[1][2].possi.remove('0')
+cross[2][0].possi.remove('0')
 
 ## Initializing all clues
 
@@ -61,16 +65,7 @@ a5 = Number('a5', [(0,2),(1,2),(2,2)])
 d1 = Number('d1', [(0,0),(0,1),(0,2)])
 d2 = Number('d2', [(1,0),(1,1)])
 d4 = Number('d4', [(2,1),(2,2)])
-
-
-cross[0][0].possi.remove('0')
-cross[0][1].possi.remove('0')
-cross[1][1].possi.remove('0')
-cross[1][2].possi.remove('0')
-cross[2][0].possi.remove('0')
 '''
-
-
 
 #Maths Challenge Setup
 a1 = Number('a1', [(0,0),(1,0)])
@@ -82,16 +77,23 @@ d2 = Number('d2', [(1,0),(1,1),(1,2)])
 d4 = Number('d4', [(2,1),(2,2)])
 
 
-
-
 clues = [a1, a3, a5, d1, d2, d4]
 
 for clue in clues:
     clue.possi = clue.findNumbers(cross)
 
+
+
+
+
+
+
+
+
+
 ##All the normal number Stuff, not the difficult clue operation stuff
 cross, clues = number_cruncher(cross, prev, clues)
-cross = possi_cruncher(cross, clues, d4)
+#cross = possi_cruncher(cross, clues, d4)
 
 clues = order_clue_list(clues)
 #(2,0), (0,2)
