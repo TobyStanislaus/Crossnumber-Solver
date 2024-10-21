@@ -62,15 +62,15 @@ def possi_cruncher(cross, clues, clue):
         cross = add_to_cross(cross, possiCrosses)
     return cross
 
-##The one you must change each time (currently)
+'''##The one you must change each time (currently)'''
 def refresh_clue_dict(clues):
-    #a1, a3, a5, d1, d2, d4 = clues
-    d1, a1, a3, a5, d2, d4 = clues
+    a1, a3, a5, d1, d2, d4 = clues
+    #d1, a1, a3, a5, d2, d4 = clues
 
 
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue]
     
-    #Ritangle P
+    '''#Ritangle P
     clueDict = {
     a1:[[1, '', 0, None, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None, None]],
@@ -78,7 +78,17 @@ def refresh_clue_dict(clues):
     d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
-    
+    '''
+    '''#Ritangle Q
+    clueDict = {
+    a1:[[1, 'pr', 0, None, None, None, None, None],
+        [1, 'pa', 0, None, None, None, None, None]],
+    a3:[[1, '', 0, None, None, None, None, None]],
+    a5:[[a5.possi, 'd', 0, None, None, None, None, None]],
+    d1:[[1, '', 0, None, None, None, None, None]],
+    d2:[[1, '', 0, None, None, None, None, None]],
+    d4:[[1, '', 0, None, None, None, None, None]]}
+    '''
     
     '''#2022 - Difficult factor one
     clueDict = {
@@ -92,15 +102,15 @@ def refresh_clue_dict(clues):
             [2, 'm', 0, True, None, None, None, None]]}
     '''
 
-    '''#2023 - Difficult Clue one
+    #2023 - Difficult Clue one
     clueDict = {
         a1:[[105, 'f', -4, None, None, True, None, None]],
-        a3:[[1,'p', 1, None, None, None, None, None]],
+        a3:[[1,'pa', 1, None, None, None, None, None]],
         a5:[[1, '', 0, None, None, None, None, None]],
         d1:[[2, 'po', -2, None, None, None, None, None]],
         d2:[[3, 'po', -400, None, None, None, None, None]],
         d4:[[2, 'cA', -6, None, None, None, None, None]]}
-    '''
+    
 
     return clueDict
 
@@ -241,7 +251,8 @@ def refresh_choice_dict(length, instruction):
         'pr':find_primes(length, extra, order),
         'po':find_powers(length, extra, order, mainVal),
         't':find_triangle(length, extra, order),
-        'p':find_palidrome(length, extra, order),
+        'pa':find_palidrome(length, extra, order),
+        'd':find_digit_sum(length, extra, order, mainVal),
 
         'm':give_multiples(length, extra, order, mainVal),
         'f': give_factors(length, extra, order, mainVal, proper, ofItself),
@@ -349,6 +360,25 @@ def find_palidrome(length, extra, order):
     
     palis = find_order(palis, order)
     return palis
+
+
+def find_digit_sum(length, extra, order, mainVal):
+    if type(mainVal)!=list:
+        return
+    
+    result = []
+    for num in mainVal:
+        total = 0
+        for digit in num:
+            total+=int(digit)
+        
+        if len(str((total+extra)**2)) == length:
+            result.append(total)
+
+    possi = find_order(result, order)
+    return possi
+
+
 
 
 
