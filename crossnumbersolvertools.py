@@ -8,26 +8,33 @@ def input_handler(cross, clue, clues):
     Give it a clue, it will process all its possible numbers and put it on the cross
     '''
     clue.possi = clue.findNumbers(cross)
-    clueNums =[]
+
     clueDict = refresh_clue_dict(clues)
     for instruction in clueDict[clue]:
-        choiceDict = refresh_choice_dict(clue.length, instruction)
-        mainVal, clueType, extra, remove, order, proper, ofItself = instruction
-        if clueType in choiceDict:
-            if len(choiceDict[clueType]) == 2 and type(choiceDict[clueType][0]) == list:
-                cont, possi = choiceDict[clueType]
-            else:
-                possi = choiceDict[clueType]
-                cont = [mainVal, [0, len(possi)]]
+        cross = handle_instruction(cross, clue, instruction)
+    return clue, cross
 
-            #clue.cont = cont
-            clueNums += possi
+
+def handle_instruction(cross, clue, instruction):
+    clueNums = []
+    choiceDict = refresh_choice_dict(clue.length, instruction)
+    mainVal, clueType, extra, remove, order, proper, ofItself = instruction
+    if clueType in choiceDict:
+        if len(choiceDict[clueType]) == 2 and type(choiceDict[clueType][0]) == list:
+            cont, possi = choiceDict[clueType]
+        else:
+            possi = choiceDict[clueType]
+            cont = [mainVal, [0, len(possi)]]
+
+        #clue.cont = cont
+        clueNums += possi
+    
 
     if clueNums and clueNums[0]!=-40:
         clue.possi = compare_possi(clue.possi, clueNums, remove)
         cross = update_digits(clue, cross)
 
-    return clue, cross
+    return cross
 
 
 def number_cruncher(cross, prev, clues):
@@ -61,7 +68,7 @@ def refresh_clue_dict(clues):
     d1:[[1, '', 0, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None]]}
-    
+   
     '''#2022 - Difficult factor one
     clueDict = {
         a1:[[1, 'pr', -2, None, None, None, None]],
@@ -98,7 +105,7 @@ def display_all_crosses(cross, clues, i):
 
         
         if mockClues[i].cont:
-            handleCont(mockCross, mockClues, mockClues[i].cont, i)
+            handle_cont(mockCross, mockClues, mockClues[i].cont, i)
             
         else:
             mockClues[i].possi = [val]
@@ -116,7 +123,7 @@ def handle_norm(mockCross, mockClues, i, j):
         display_all_crosses(mockCross, mockClues, i+1)
 
 
-def handleCont(mockCross, mockClues, cont, i):
+def handle_cont(mockCross, mockClues, cont, i):
     j = find_clue_index(mockClues, cont[0])
     
     for specClueVal, cluePossi in cont[1:]:
@@ -175,6 +182,7 @@ def update_digits(clue, cross):
         numPossi.append([])
 
     #splitting into digits
+    i = 0
     for num in nums:
         for i in range(0, len(num)):
             if num[i] in numPossi[i]:

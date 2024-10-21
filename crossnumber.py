@@ -89,7 +89,7 @@ clues = [a1, a3, a5, d1, d2, d4]
 ##All the normal number Stuff, not the difficult clue operation stuff
 cross, clues = number_cruncher(cross, prev, clues)
 #cross = possi_cruncher(cross, clues, d4)
-
+#display_cross(cross)
 
 
 #### Contingency system
