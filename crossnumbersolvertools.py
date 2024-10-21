@@ -23,17 +23,17 @@ def handle_instruction(cross, clue, instruction):
     if clueType in choiceDict:
         if is_cont(choiceDict, clueType):
             cont, possi = choiceDict[clueType]
+
         else:
             possi = choiceDict[clueType]
             cont = [mainVal, [0, len(possi)]]
 
         #clue.cont = cont
-        clueNums += possi
     
 
-    if clueNums and clueNums[0]!=-40:
-        clue.possi = compare_possi(clue.possi, clueNums, remove)
-        cross = update_digits(clue, cross)
+        if possi and possi[0]!=-40:
+            clue.possi = compare_possi(clue.possi, possi, remove)
+            cross = update_digits(clue, cross)
 
     return cross
 
@@ -51,7 +51,7 @@ def possi_cruncher(cross, clues, clue):
     
     clueDict = refresh_clue_dict(clues)
     for instruction in clueDict[clue]:
-        mainVal, clueType, extra, removeNot, order, proper, ofItself = instruction
+        mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue = instruction
 
         possiCrosses = find_possi_crosses_from_sums(cross, clues, clue, mainVal, extra)
         cross = add_to_cross(cross, possiCrosses)
@@ -59,9 +59,12 @@ def possi_cruncher(cross, clues, clue):
 
 ##The one you must change each time (currently)
 def refresh_clue_dict(clues):
-    d1, a1, a3, a5,  d2, d4 = clues
+    a1, a3, a5, d1, d2, d4 = clues
+    #d1, a1, a3, a5, d2, d4 = clues
+
+
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue]
-    #Ritangle P
+    '''#Ritangle P
     clueDict = {
     a1:[[1, '', 0, None, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None, None]],
@@ -69,29 +72,29 @@ def refresh_clue_dict(clues):
     d1:[[d4.possi, 'm', 0, None, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
-   
+    '''
     
     '''#2022 - Difficult factor one
     clueDict = {
-        a1:[[1, 'pr', -2, None, None, None, None]],
-        a3:[[a3.possi,'f', 100, False, -1, True, True]],
-        a5:[[13, 'm', 0, None, None, None, True]],
-        d1:[[4, 'po', 0, None, None, None, None]],
-        d2:[[3, 'po', 0, None, None, None, None]],
-        d4:[[1, 'pr', 0, True, None, None, None],
-            [2, 'po', 0, True, None, None, None],
-            [2, 'm', 0, True, None, None, None]]}
+        a1:[[1, 'pr', -2, None, None, None, None, None]],
+        a3:[[a3.possi,'f', 100, False, -1, True, True, None]],
+        a5:[[13, 'm', 0, None, None, None, True, None]],
+        d1:[[4, 'po', 0, None, None, None, None, None]],
+        d2:[[3, 'po', 0, None, None, None, None, None]],
+        d4:[[1, 'pr', 0, True, None, None, None, None],
+            [2, 'po', 0, True, None, None, None, None],
+            [2, 'm', 0, True, None, None, None, None]]}
     '''
 
-    '''#2023 - Difficult Clue one
+    #2023 - Difficult Clue one
     clueDict = {
-        a1:[[105, 'f', -4, None, None, True, None]],
-        a3:[[1,'p', 1, None, None, None, None]],
-        a5:[[1, '', 0, None, None, None, None]],
-        d1:[[2, 'po', -2, None, None, None, None]],
-        d2:[[3, 'po', -400, None, None, None, None]],
-        d4:[[2, 'cA', -6, None, None, None, None]]}
-    '''
+        a1:[[105, 'f', -4, None, None, True, None, None]],
+        a3:[[1,'p', 1, None, None, None, None, None]],
+        a5:[[1, '', 0, None, None, None, None, None]],
+        d1:[[2, 'po', -2, None, None, None, None, None]],
+        d2:[[3, 'po', -400, None, None, None, None, None]],
+        d4:[[2, 'cA', -6, None, None, None, None, None]]}
+    
 
     return clueDict
 
