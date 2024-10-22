@@ -57,7 +57,7 @@ cross[2][0].possi.remove('0')
 
 ## Initializing all clues
 
-'''#Ritangle Setup
+#Ritangle Setup
 a1 = Number('a1', [(0,0),(1,0),(2,0)])
 a3 = Number('a3', [(1,1),(2,1)])
 a5 = Number('a5', [(0,2),(1,2),(2,2)])
@@ -65,9 +65,9 @@ a5 = Number('a5', [(0,2),(1,2),(2,2)])
 d1 = Number('d1', [(0,0),(0,1),(0,2)])
 d2 = Number('d2', [(1,0),(1,1)])
 d4 = Number('d4', [(2,1),(2,2)])
-'''
 
-#Maths Challenge Setup
+
+'''#Maths Challenge Setup
 a1 = Number('a1', [(0,0),(1,0)])
 a3 = Number('a3', [(0,1),(1,1),(2,1)])
 a5 = Number('a5', [(1,2),(2,2)])
@@ -75,28 +75,21 @@ a5 = Number('a5', [(1,2),(2,2)])
 d1 = Number('d1', [(0,0),(0,1)])
 d2 = Number('d2', [(1,0),(1,1),(1,2)])
 d4 = Number('d4', [(2,1),(2,2)])
-
+'''
 
 clues = [a1, a3, a5, d1, d2, d4]
 
 for clue in clues:
     clue.possi = clue.findNumbers(cross)
 
-
-
-
-
-
-
-
-
-
 ##All the normal number Stuff, not the difficult clue operation stuff
 cross, clues = number_cruncher(cross, prev, clues)
 #cross = possi_cruncher(cross, clues, d4)
 
+
 clues = order_clue_list(clues)
+
 #(2,0), (0,2)
-display_all_crosses(cross, clues, exc = set([(2,0), (0,2)]), i = 0)
+display_all_crosses(cross, clues, exclude = set([]), i = 0)
 
 
