@@ -15,13 +15,3 @@ is supposed to mean
 dependancy
 
 
-     '''#Ritangle Q
-    clueDict = {
-    a1:[[1, 'pr', 0, None, None, None, None, None],
-        [1, 'pa', 0, None, None, None, None, None]],
-    a3:[[1, '', 0, None, None, None, None, None]],
-    a5:[[a5.possi, 'd', 0, None, None, None, None, None]],
-    d1:[[1, '', 0, None, None, None, None, None]],
-    d2:[[1, '', 0, None, None, None, None, None]],
-    d4:[[1, '', 0, None, None, None, None, None]]}
-    '''

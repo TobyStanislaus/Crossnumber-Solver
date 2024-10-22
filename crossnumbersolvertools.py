@@ -16,9 +16,20 @@ def refresh_clue_dict(clues):
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
     '''
-
     
-    #2022 - Difficult factor one
+    #Ritangle Q
+    #[a5.possi, 'd', 0, None, None, None, None, None]
+    clueDict = {
+    a1:[[1, 'pr', 0, None, None, None, None, None],
+        [1, 'pa', 0, None, None, None, None, None]],
+    a3:[[1, '', 0, None, None, None, None, None]],
+    a5:[[2, 'po', 0, None, None, None, None, None]],
+    d1:[[1, '', 0, None, None, None, None, None]],
+    d2:[[1, '', 0, None, None, None, None, None]],
+    d4:[[1, '', 0, None, None, None, None, None]]}
+    
+    
+    '''#2022 - Difficult factor one
     clueDict = {
         a1:[[1, 'pr', -2, None, None, None, None, None]],
         a3:[[a3.possi,'f', 100, False, -1, True, True, a3]],
@@ -28,7 +39,7 @@ def refresh_clue_dict(clues):
         d4:[[1, 'pr', 0, True, None, None, None, None],
             [2, 'po', 0, True, None, None, None, None],
             [2, 'm', 0, True, None, None, None, None]]}
-    
+    '''
 
     '''#2023 - Difficult Clue one
     clueDict = {
@@ -50,7 +61,7 @@ def refresh_choice_dict(length, instruction):
         'po':find_powers(length, extra, order, mainVal),
         't':find_triangle(length, extra, order),
         'pa':find_palidrome(length, extra, order),
-        'd':find_digit_sum(length, extra, order, mainVal),
+        'dr':find_digit_sum(length, extra, order, mainVal, otherClue),
 
         'm':give_multiples(length, extra, order, mainVal),
         'f': give_factors(length, extra, order, mainVal, proper, ofItself),
@@ -270,6 +281,7 @@ def order_clue_list(clues):
             ops.append(clue)
     return specOps+ops
 
+
 ##CHECKS##
 def check_cross_finished(cross, exclude):
     finished = True
@@ -382,25 +394,9 @@ def find_palidrome(length, extra, order):
     return palis
 
 
-def find_digit_sum(length, extra, order, mainVal):
-    if type(mainVal)!=list:
-        return
-    
-    result = []
-    for num in mainVal:
-        total = 0
-        for digit in num:
-            total+=int(digit)
-        
-        if len(str((total+extra)**2)) == length:
-            result.append(total)
-
-    possi = find_order(result, order)
-    return possi
-
-
-
-###MORE DIFFICULT 'CONT' NUM CALCULATIONS###
+#######################
+##CUSTOM CALCULATIONS##
+#######################
 
 def handle_lists(func, length, extra, order, nums, proper, ofItself):
     result = []
@@ -476,7 +472,6 @@ def find_factors(length, extra, order, product, proper, ofItself):
     else:
         return result
 
-
 def find_bot_top(product, proper):
     topNum = product
     botNum = 2
@@ -484,6 +479,27 @@ def find_bot_top(product, proper):
         topNum+=1
         botNum-=1
     return botNum, topNum
+
+####
+
+def find_digit_sum(length, extra, order, mainVal, otherClue):
+    if type(mainVal)!=list:
+        return
+    
+    result = []
+    for num in mainVal:
+        total = 0
+        for digit in num:
+            total+=int(digit)
+        val = str((total+extra)**2)
+
+        if len(val) == length:
+            print(num, val)
+     
+
+    possi = find_order(result, order)
+    return possi
+
 
 #####
 
