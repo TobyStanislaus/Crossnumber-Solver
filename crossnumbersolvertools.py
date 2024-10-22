@@ -143,8 +143,8 @@ def display_all_crosses(cross, clues, exclude, i):
     if not check_valid_cross(cross):
         return  
     mockClues = copy.deepcopy(clues)
-    mockClues[i].possi = mockClues[i].findNumbers(cross)
-
+    allPossi = mockClues[i].findNumbers(cross)
+    mockClues[i].possi = compare_possi(mockClues[i].possi, allPossi, remove=False)
     for val in mockClues[i].possi:
         mockCross = copy.deepcopy(cross)
         mockClues = copy.deepcopy(clues)
@@ -284,6 +284,11 @@ def order_clue_list(clues):
 
 
 ##CHECKS##
+def check_clues(cross, clues):
+    pass
+
+
+
 def check_cross_finished(cross, exclude):
     finished = True
     for y in range(0, 3):
