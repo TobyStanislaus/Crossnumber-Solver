@@ -7,7 +7,7 @@ def refresh_clue_dict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue]
     
-    #Ritangle P
+    '''#Ritangle P
     clueDict = {
     a1:[[1, '', 0, None, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None, None]],
@@ -15,10 +15,10 @@ def refresh_clue_dict(clues):
     d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
-    
+    '''
 
     
-    '''#2022 - Difficult factor one
+    #2022 - Difficult factor one
     clueDict = {
         a1:[[1, 'pr', -2, None, None, None, None, None]],
         a3:[[a3.possi,'f', 100, False, -1, True, True, a3]],
@@ -28,7 +28,7 @@ def refresh_clue_dict(clues):
         d4:[[1, 'pr', 0, True, None, None, None, None],
             [2, 'po', 0, True, None, None, None, None],
             [2, 'm', 0, True, None, None, None, None]]}
-    '''
+    
 
     '''#2023 - Difficult Clue one
     clueDict = {
@@ -90,7 +90,7 @@ def handle_instruction(cross, clue, instruction):
         clue.possi = compare_possi(clue.possi, possi, remove)
         cross = update_digits(clue, cross)
 
-        clue = generate_cont(clue, otherClue, cont, clueType, mainVal)
+        clue = generate_cont(clue, otherClue, cont, mainVal)
 
 
     return clue, cross
@@ -107,17 +107,17 @@ def execute_instruction(clueType, choiceDict):
     return cont, possi
 
 
-def generate_cont(clue, otherClue, cont, clueType, mainVal):
-    complexOps = set(['m','f'])
-    if clueType in complexOps:
+def generate_cont(clue, otherClue, cont, mainVal):
+    
+    if cont:
+        newCont = [mainVal, [0, len(clue.possi)]]
         if otherClue:
-            cont = [otherClue.name]+cont
-        else:
-            cont = [mainVal, [0, len(clue.possi)]]
+            newCont = [otherClue.name]+cont
 
     else:
-        cont = [mainVal, [0, len(clue.possi)]]
-    clue.cont = cont
+        newCont = [mainVal, [0, len(clue.possi)]]
+
+    clue.cont = newCont
     return clue
 
 
