@@ -7,7 +7,7 @@ def refresh_clue_dict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue]
     
-    #Ritangle P
+    '''#Ritangle P
     clueDict = {
     a1:[[1, '', 0, None, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None, None]],
@@ -15,7 +15,7 @@ def refresh_clue_dict(clues):
     d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
-    
+    '''
 
     
     '''#2022 - Difficult factor one
@@ -28,9 +28,9 @@ def refresh_clue_dict(clues):
         d4:[[1, 'pr', 0, True, None, None, None, None],
             [2, 'po', 0, True, None, None, None, None],
             [2, 'm', 0, True, None, None, None, None]]}
-   '''
+    '''
 
-    '''#2023 - Difficult Clue one
+    #2023 - Difficult Clue one
     clueDict = {
         a1:[[105, 'f', -4, None, None, True, None, None]],
         a3:[[1,'pa', 1, None, None, None, None, None]],
@@ -38,11 +38,25 @@ def refresh_clue_dict(clues):
         d1:[[2, 'po', -2, None, None, None, None, None]],
         d2:[[3, 'po', -400, None, None, None, None, None]],
         d4:[[2, 'cA', -6, None, None, None, None, None]]}
-    '''
+    
 
     return clueDict
 ###########################################
 
+def refresh_choice_dict(length, instruction):
+    mainVal, clueType, extra, remove, order, proper, ofItself, otherClue = instruction
+    choiceDict = {
+        'pr':find_primes(length, extra, order),
+        'po':find_powers(length, extra, order, mainVal),
+        't':find_triangle(length, extra, order),
+        'pa':find_palidrome(length, extra, order),
+        'd':find_digit_sum(length, extra, order, mainVal),
+
+        'm':give_multiples(length, extra, order, mainVal),
+        'f': give_factors(length, extra, order, mainVal, proper, ofItself),
+        
+        }
+    return choiceDict
 
 ######################################################################
 ##Clue control - does everything concerning simple clue calculations##
@@ -62,7 +76,6 @@ def input_handler(cross, clue, clues):
     for instruction in clueDict[clue]:
         clue, cross = handle_instruction(cross, clue, instruction)
 
-
     return clue, cross
 
 
@@ -78,14 +91,9 @@ def handle_instruction(cross, clue, instruction):
         else:
             possi = choiceDict[clueType]
 
+        clue.possi = compare_possi(clue.possi, possi, remove)
+        cross = update_digits(clue, cross)
 
-        
-        if possi and possi[0]!=-40:
-            clue.possi = compare_possi(clue.possi, possi, remove)
-            cross = update_digits(clue, cross)
-
-        
-        
         if clueType in complexOps:
             if otherClue:
                 cont = [otherClue.name]+cont
@@ -232,22 +240,6 @@ def compare_new_and_old(new, old):
             if new[i][j].possi != old[i][j].possi:
                 return True
     return False
-
-
-def refresh_choice_dict(length, instruction):
-    mainVal, clueType, extra, remove, order, proper, ofItself, otherClue = instruction
-    choiceDict = {
-        'pr':find_primes(length, extra, order),
-        'po':find_powers(length, extra, order, mainVal),
-        't':find_triangle(length, extra, order),
-        'pa':find_palidrome(length, extra, order),
-        'd':find_digit_sum(length, extra, order, mainVal),
-
-        'm':give_multiples(length, extra, order, mainVal),
-        'f': give_factors(length, extra, order, mainVal, proper, ofItself),
-        
-        }
-    return choiceDict
 
 
 def order_clue_list(clues):
