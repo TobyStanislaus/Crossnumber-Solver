@@ -7,7 +7,7 @@ def refresh_clue_dict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue]
     
-    '''#Ritangle P
+    #Ritangle P
     clueDict = {
     a1:[[1, '', 0, None, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None, None]],
@@ -15,7 +15,7 @@ def refresh_clue_dict(clues):
     d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
-    '''
+    
 
     
     '''#2022 - Difficult factor one
@@ -30,7 +30,7 @@ def refresh_clue_dict(clues):
             [2, 'm', 0, True, None, None, None, None]]}
     '''
 
-    #2023 - Difficult Clue one
+    '''#2023 - Difficult Clue one
     clueDict = {
         a1:[[105, 'f', -4, None, None, True, None, None]],
         a3:[[1,'pa', 1, None, None, None, None, None]],
@@ -38,7 +38,7 @@ def refresh_clue_dict(clues):
         d1:[[2, 'po', -2, None, None, None, None, None]],
         d2:[[3, 'po', -400, None, None, None, None, None]],
         d4:[[2, 'cA', -6, None, None, None, None, None]]}
-    
+    '''
 
     return clueDict
 ###########################################
@@ -80,32 +80,47 @@ def input_handler(cross, clue, clues):
 
 
 def handle_instruction(cross, clue, instruction):
-    complexOps = set(['m','f'])
+    
     choiceDict = refresh_choice_dict(clue.length, instruction)
     mainVal, clueType, extra, remove, order, proper, ofItself, otherClue = instruction
 
     if clueType in choiceDict:
-        if clueType in complexOps:
-            cont, possi = choiceDict[clueType]
-
-        else:
-            possi = choiceDict[clueType]
+        cont, possi = execute_instruction(clueType, choiceDict)
 
         clue.possi = compare_possi(clue.possi, possi, remove)
         cross = update_digits(clue, cross)
 
-        if clueType in complexOps:
-            if otherClue:
-                cont = [otherClue.name]+cont
-            else:
-                cont = [mainVal, [0, len(clue.possi)]]
-        
+        clue = generate_cont(clue, otherClue, cont, clueType, mainVal)
+
+
+    return clue, cross
+
+
+def execute_instruction(clueType, choiceDict):
+    complexOps = set(['m','f'])
+    if clueType in complexOps:
+        cont, possi = choiceDict[clueType]
+
+    else:
+        possi = choiceDict[clueType]
+        cont = None
+    return cont, possi
+
+
+def generate_cont(clue, otherClue, cont, clueType, mainVal):
+    complexOps = set(['m','f'])
+    if clueType in complexOps:
+        if otherClue:
+            cont = [otherClue.name]+cont
         else:
             cont = [mainVal, [0, len(clue.possi)]]
 
-        clue.cont = cont
+    else:
+        cont = [mainVal, [0, len(clue.possi)]]
+    clue.cont = cont
+    return clue
 
-    return clue, cross
+
 ###
 
 
