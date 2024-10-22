@@ -23,7 +23,7 @@ def refresh_clue_dict(clues):
     a1:[[1, 'pr', 0, None, None, None, None, None],
         [1, 'pa', 0, None, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None, None]],
-    a5:[[2, 'po', 0, None, None, None, None, None]],
+    a5:[[a5.possi, 'q6', 0, None, None, None, None, a3]],
     d1:[[1, '', 0, None, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, '', 0, None, None, None, None, None]]}
@@ -61,7 +61,8 @@ def refresh_choice_dict(length, instruction):
         'po':find_powers(length, extra, order, mainVal),
         't':find_triangle(length, extra, order),
         'pa':find_palidrome(length, extra, order),
-        'dr':find_digit_sum(length, extra, order, mainVal, otherClue),
+
+        'q6':q6(length, mainVal, otherClue),
 
         'm':give_multiples(length, extra, order, mainVal),
         'f': give_factors(length, extra, order, mainVal, proper, ofItself),
@@ -108,7 +109,7 @@ def handle_instruction(cross, clue, instruction):
 
 
 def execute_instruction(clueType, choiceDict):
-    complexOps = set(['m','f'])
+    complexOps = set(['m','f','q6'])
     if clueType in complexOps:
         cont, possi = choiceDict[clueType]
 
@@ -482,24 +483,57 @@ def find_bot_top(product, proper):
 
 ####
 
-def find_digit_sum(length, extra, order, mainVal, otherClue):
+def q6(length, mainVal, otherClue):
     if type(mainVal)!=list:
         return
+    powers = [(i,i**2) for i in range(1, 28)]
+
+    possi = []
+    cont = []
+    for num in otherClue.possi:
+        reversedNum = int(num[::-1])
+        #a3 a5possi
+
+        partPossi = []
+        for (digitSum, power) in powers:
+            if len(str(power+reversedNum)) == length and find_digit_sum(power+reversedNum)**2 == power:
+                partPossi.append(str(power+reversedNum))
+                
+        
+        partCont = [0, len(partPossi)]
+
+        if cont:
+            shift = cont[-1][1][1]
+            partCont[0]+=shift; partCont[1]+=shift
+        
+        if partPossi:
+            cont.append([num, partCont]) 
+            possi+=partPossi
     
-    result = []
-    for num in mainVal:
-        total = 0
-        for digit in num:
-            total+=int(digit)
-        val = str((total+extra)**2)
+   
+    return cont, possi
 
-        if len(val) == length:
-            print(num, val)
-     
 
-    possi = find_order(result, order)
-    return possi
+def find_digit_sum(num):
+    total = 0
+    for digit in str(num):
+        total+=int(digit)
+    return total
 
+
+def generate_digit_sum_dict(length):
+    digitSumDict = {}
+    for i in range(10**(length-1),10**(length)):
+        digitSum = 0
+        for digit in str(i):
+            digitSum+=int(digit)
+        
+        if digitSum in digitSumDict:
+            digitSumDict[digitSum].append(i)
+        else:
+            digitSumDict[digitSum]=[i]
+    return digitSumDict
+        
 
 #####
 

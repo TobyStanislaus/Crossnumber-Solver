@@ -63,7 +63,7 @@ d1 = Number('d1', [(0,0),(0,1),(0,2)])
 d2 = Number('d2', [(1,0),(1,1)])
 d4 = Number('d4', [(2,1),(2,2)])
 
-cross[2][2].possi = ['0']
+
 
 '''#Maths Challenge Setup
 a1 = Number('a1', [(0,0),(1,0)])
