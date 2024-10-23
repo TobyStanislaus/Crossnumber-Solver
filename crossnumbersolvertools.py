@@ -7,17 +7,16 @@ def refresh_clue_dict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue]
     
-    '''#Ritangle P
+    #Ritangle P
     clueDict = {
     a1:[[1, '', 0, None, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None, None]],
     a5:[[1, '', 0, None, None, None, None, None]],
     d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
-    d2:[[1, '', 0, None, None, None, None, None]],
+    d2:[[2, 'q8', 0, None, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
-    '''
     
-    #Ritangle Q
+    '''#Ritangle Q
     clueDict = {
     a1:[[1, 'pr', 0, None, None, None, None, None],
         [1, 'pa', 0, None, None, None, None, None]],
@@ -26,7 +25,7 @@ def refresh_clue_dict(clues):
     d1:[[1, '', 0, None, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, '', 0, None, None, None, None, None]]}
-    
+    '''
     
     '''
     #2022 - Difficult factor one
@@ -64,6 +63,7 @@ def refresh_choice_dict(length, instruction):
         'pa':find_palidrome(length, extra, order),
 
         'q6':q6(length, mainVal, otherClue),
+        'q8':q8(length, extra, order, mainVal),
 
         'm':give_multiples(length, extra, order, mainVal),
         'f': give_factors(length, extra, order, mainVal, proper, ofItself),
@@ -135,7 +135,6 @@ def generate_cont(clue, otherClue, cont, mainVal):
 
 
 ###
-
 
 ############
 ##Cross UI##
@@ -519,6 +518,25 @@ def q6(length, mainVal, otherClue):
    
     return cont, possi
 
+
+def q8(length, extra, order, power):
+    if type(power) is not int:
+        return 
+    
+    powers = []
+    for i in range(1, length):
+        powers += find_powers(i, extra, order, power)
+
+    numDict = generate_digit_sum_dict(length)
+    possi = []
+    for power in powers:
+        if int(power) in numDict:
+            for num in numDict[int(power)]:
+                possi.append(str(num))
+        
+    
+    return possi
+    
 
 def find_digit_sum(num):
     total = 0
