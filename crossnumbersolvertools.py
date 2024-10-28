@@ -7,7 +7,7 @@ def refresh_clue_dict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue]
     
-    #Ritangle P
+    '''#Ritangle P
     clueDict = {
     a1:[[1, '', 0, None, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None, None]],
@@ -15,8 +15,8 @@ def refresh_clue_dict(clues):
     d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
     d2:[[2, 'q8', 0, None, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
-    
-    '''#Ritangle Q
+    '''
+    #Ritangle Q
     clueDict = {
     a1:[[1, 'pr', 0, None, None, None, None, None],
         [1, 'pa', 0, None, None, None, None, None]],
@@ -25,7 +25,7 @@ def refresh_clue_dict(clues):
     d1:[[1, '', 0, None, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, '', 0, None, None, None, None, None]]}
-    '''
+    
     
     '''
     #2022 - Difficult factor one
@@ -152,7 +152,8 @@ def display_all_crosses(cross, clues, exclude, i):
         
         if type(mockClues[i].cont[0]) == str:
             handle_cont(mockCross, mockClues, exclude, mockClues[i].cont, i)
-            
+            break
+
         else:
             mockClues[i].possi = [val]
             handle_norm(mockCross, mockClues, exclude, i, None)
@@ -208,13 +209,13 @@ def update_digits(clue, cross):
     return cross
 
 
-def handle_norm(mockCross, mockClues, exc, i, j):
+def handle_norm(mockCross, mockClues, exclude, i, j):
     mockCross = update_digits(mockClues[i], mockCross)
     if j:
         mockCross = update_digits(mockClues[j], mockCross)
     if i != len(mockClues)-1:
-        display_all_crosses(mockCross, mockClues, exc, i+1)
-
+        display_all_crosses(mockCross, mockClues, exclude, i+1)
+    
 
 def handle_cont(mockCross, mockClues, exc, cont, i):
     j = find_clue_index(mockClues, cont[0])
