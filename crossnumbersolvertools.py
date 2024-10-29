@@ -6,7 +6,7 @@ import os
 def refresh_clue_dict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue]
-    #Tester
+    '''#Tester
     clueDict = {
     a1:[[3, 'cO', 0, None, None, None, op1, a3]],
     a3:[[1, '', 0, None, None, None, None, None]],
@@ -14,7 +14,7 @@ def refresh_clue_dict(clues):
     d1:[[1, '', 0, None, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, '', 0, None, None, None, None, None]]}
-    
+    '''
 
     '''#Ritangle P
     clueDict = {
@@ -37,7 +37,7 @@ def refresh_clue_dict(clues):
     d4:[[1, '', 0, None, None, None, None, None]]}
     '''
     
-    '''#2022 - Difficult factor one
+    #2022 - Difficult factor one
     clueDict = {
         a1:[[1, 'pr', -2, None, None, None, None, None]],
         a3:[[a3.possi,'f', 100, False, -1, True, True, a3]],
@@ -47,7 +47,7 @@ def refresh_clue_dict(clues):
         d4:[[1, 'pr', 0, True, None, None, None, None],
             [2, 'po', 0, True, None, None, None, None],
             [2, 'm', 0, True, None, None, None, None]]}
-    '''
+    
 
     '''#2023 - Difficult Clue one
     clueDict = {
@@ -110,10 +110,10 @@ def handle_instruction(cross, clue, instruction):
     if clueType in choiceDict:
         cont, possi = execute_instruction(clueType, choiceDict)
         
-        print(len(cont))
-        print(len(possi))
-        clue.possi = compare_possi(clue.possi, possi, remove)
-        
+        removed, clue.possi = compare_possi(clue.possi, possi, remove)
+
+        cont = clean_cont(cont, removed)
+
         cross = update_digits(clue, cross)
 
         clue = generate_cont(clue, otherClue, cont, mainVal)
@@ -136,10 +136,47 @@ def execute_instruction(clueType, choiceDict):
 def generate_cont(clue, otherClue, cont, mainVal):
     newCont = [mainVal, [0, len(clue.possi)]]
     if cont and otherClue:
+        cont = make_cont(cont)
         newCont = [otherClue.name]+cont
 
     clue.cont = newCont
     return clue
+
+
+def clean_cont(cont, removed):
+    if not cont:
+        return
+    
+    i = 0
+    while i< len(cont) and removed:
+        if i == removed[0]:
+            removed.pop(0)
+            cont = find_right_cont_bit(cont, i)
+            if cont[i][1] == 0:
+                cont.pop(i)
+            
+        else:
+            i+=1
+    return cont
+
+
+def find_right_cont_bit(cont, i):
+    for j in range(0, len(cont)):
+        val = cont[j][1]
+        i-=val
+        if i <= 0:
+            cont[j][1]-=1
+            return cont
+
+
+def make_cont(cont):
+    low = 0
+    newCont = []
+    for val, length in cont:
+        newCont.append([val, [low,low+length]])
+        low += length
+    return newCont
+ 
 
 ###
 
@@ -151,7 +188,7 @@ def display_all_crosses(cross, clues, exclude, i):
         return  
     mockClues = copy.deepcopy(clues)
     allPossi = mockClues[i].findNumbers(cross)
-    mockClues[i].possi = compare_possi(mockClues[i].possi, allPossi, remove=False)
+    removed, mockClues[i].possi = compare_possi(mockClues[i].possi, allPossi, remove=False)
     for val in mockClues[i].possi:
         mockCross = copy.deepcopy(cross)
         mockClues = copy.deepcopy(clues)
@@ -205,7 +242,7 @@ def update_digits(clue, cross):
     i = 0
     for i in range(clue.length):
         x, y = clue.pos[i][0], clue.pos[i][1]
-        cross[y][x].possi = compare_possi(cross[y][x].possi, numPossi[i], False)
+        removed, cross[y][x].possi = compare_possi(cross[y][x].possi, numPossi[i], False)
     return cross
 
 
@@ -239,27 +276,32 @@ def find_clue_index(clues, clueName):
         
    
 def compare_possi(curr, checking, remove):
-    curr = compare_list1_list2(curr, checking, remove)
+    removed, curr = compare_list1_list2(curr, checking, remove, False)
     if not remove:
-        curr = compare_list1_list2(checking, curr, remove)
-    return curr
+        removed, curr = compare_list1_list2(checking, curr, remove, True)
+    return removed, curr
 
 
-def compare_list1_list2(list1, list2, remove):
+def compare_list1_list2(list1, list2, remove, counts):
+    removed = []
     i = 0
     while i<len(list1):
         if remove:
             if list1[i] in list2:
                 list1.pop(i)
+                removed.append(i)
             else:
                 i+=1
         else:
             if list1[i] not in list2:
+                if counts:
+                    removed.append(i)
+
                 list1.pop(i)
             else:
                 i+=1
     
-    return list1
+    return removed, list1
 
 
 def compare_new_and_old(new, old):
@@ -430,18 +472,11 @@ def handle_lists(func, length, extra, order, nums, proper, ofItself):
     result = []
     cont = []
     for num in nums:
-        partCont = [int(num)]
         partResult = func(length, extra, order, int(num), proper, ofItself)
-        pCont = [0, len(partResult)]
-        if pCont and partResult:
-            partResult = find_order(partResult, order)
-            result+=partResult
+        partCont = [num, len(partResult)]
+        result+=partResult
 
-            if cont:
-                shift = cont[-1][1][1]
-                pCont[0]+=shift; pCont[1]+=shift
-            partCont.append(pCont)
-            cont.append(partCont)
+        cont.append(partCont)
 
     return cont, result
 
@@ -511,8 +546,9 @@ def find_bot_top(product, proper):
 ####
 
 def q6(length, mainVal, otherClue):
-    if type(mainVal)!=list:
+    if type(mainVal)!=list or not otherClue:
         return
+    
     powers = [(i,i**2) for i in range(1, 28)]
 
     possi = []
@@ -526,15 +562,8 @@ def q6(length, mainVal, otherClue):
             if len(str(power+reversedNum)) == length and find_digit_sum(power+reversedNum)**2 == power:
                 partPossi.append(str(power+reversedNum))
                 
-        
-        partCont = [0, len(partPossi)]
-
-        if cont:
-            shift = cont[-1][1][1]
-            partCont[0]+=shift; partCont[1]+=shift
-        
         if partPossi:
-            cont.append([num, partCont]) 
+            cont.append([num, len(partPossi)]) 
             possi+=partPossi
     
    
@@ -591,17 +620,16 @@ def generate_digit_sum_dict(length):
 ##SINGLE CLUE##
 
 def clue_operation(length, otherClue, amount, ops):
-    if not otherClue:
+    if not otherClue or isinstance(ops, (bool, int, float, str, list, dict, tuple)):
         return
     cluePossi = []
     cont = []
 
     for possiNum in otherClue.possi:
         num = ops(possiNum, amount)
-        origLength = len(cluePossi)
         if num.is_integer() and len(str(int(num))) == length:  
             cluePossi.append(str(int(num)))
-            cont.append([possiNum, [origLength, len(cluePossi)]])
+            cont.append([possiNum, 1])
     
     return cont, cluePossi
 
