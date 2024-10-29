@@ -7,7 +7,7 @@ def refresh_clue_dict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue]
     
-    '''#Ritangle P
+    #Ritangle P
     clueDict = {
     a1:[[1, '', 0, None, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None, None]],
@@ -15,8 +15,8 @@ def refresh_clue_dict(clues):
     d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
     d2:[[2, 'q8', 0, None, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
-    '''
-    #Ritangle Q
+
+    '''#Ritangle Q
     clueDict = {
     a1:[[1, 'pr', 0, None, None, None, None, None],
         [1, 'pa', 0, None, None, None, None, None]],
@@ -25,7 +25,7 @@ def refresh_clue_dict(clues):
     d1:[[1, '', 0, None, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, '', 0, None, None, None, None, None]]}
-    
+    '''
     
     '''
     #2022 - Difficult factor one
@@ -158,7 +158,7 @@ def display_all_crosses(cross, clues, exclude, i):
             mockClues[i].possi = [val]
             handle_norm(mockCross, mockClues, exclude, i, None)
             
-            if check_cross_finished(mockCross, exclude) and no_dupes(mockClues):
+            if i == 5 and check_cross_finished(mockCross, exclude) and no_dupes(mockClues):
                 display_cross(mockCross)
 
     
@@ -222,7 +222,7 @@ def handle_cont(mockCross, mockClues, exc, cont, i):
     
     for specClueVal, cluePossi in cont[1:]:
         mClues = copy.deepcopy(mockClues)
-        mClues[j].possi = [specClueVal]
+        mClues[j].possi = [str(specClueVal)]
         mClues[i].possi = mClues[i].possi[cluePossi[0]:cluePossi[1]]
         
         for val2 in mClues[i].possi:
@@ -285,9 +285,6 @@ def order_clue_list(clues):
 
 
 ##CHECKS##
-def check_clues(cross, clues):
-    pass
-
 
 
 def check_cross_finished(cross, exclude):
