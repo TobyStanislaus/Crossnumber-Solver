@@ -7,7 +7,7 @@ def refresh_clue_dict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue]
     
-    #Ritangle P
+    '''#Ritangle P
     clueDict = {
     a1:[[1, '', 0, None, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None, None]],
@@ -15,8 +15,8 @@ def refresh_clue_dict(clues):
     d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
     d2:[[2, 'q8', 0, None, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
-
-    '''#Ritangle Q
+    '''
+    #Ritangle Q
     clueDict = {
     a1:[[1, 'pr', 0, None, None, None, None, None],
         [1, 'pa', 0, None, None, None, None, None]],
@@ -25,7 +25,7 @@ def refresh_clue_dict(clues):
     d1:[[1, '', 0, None, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, '', 0, None, None, None, None, None]]}
-    '''
+    
     
     '''
     #2022 - Difficult factor one
@@ -281,7 +281,25 @@ def order_clue_list(clues):
             specOps.append(clue)
         else:
             ops.append(clue)
-    return specOps+ops
+    reOrderedOps = order_by_possi_length(ops)
+    return specOps+reOrderedOps
+
+
+def order_by_possi_length(ops):
+    my_list = []
+    clueDictLength = {}
+    reOrderedOps = []
+
+    for i in range(0, len(ops)):
+        clueDictLength[i] = ops[i]
+        my_list.append((i, len(ops[i].possi)))
+        
+    
+    sorted_list = sorted(my_list, key=lambda x: x[1])
+    
+    for i, amount in sorted_list:
+        reOrderedOps.append(clueDictLength[i])
+    return reOrderedOps
 
 
 ##CHECKS##
