@@ -6,7 +6,16 @@ import os
 def refresh_clue_dict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue]
+    #Tester
+    clueDict = {
+    a1:[[3, 'cO', 0, None, None, None, op1, a3]],
+    a3:[[1, '', 0, None, None, None, None, None]],
+    a5:[[1, '', 0, None, None, None, None, None]],
+    d1:[[1, '', 0, None, None, None, None, None]],
+    d2:[[1, '', 0, None, None, None, None, None]],
+    d4:[[1, '', 0, None, None, None, None, None]]}
     
+
     '''#Ritangle P
     clueDict = {
     a1:[[1, '', 0, None, None, None, None, None]],
@@ -16,7 +25,8 @@ def refresh_clue_dict(clues):
     d2:[[2, 'q8', 0, None, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
     '''
-    #Ritangle Q
+
+    '''#Ritangle Q
     clueDict = {
     a1:[[1, 'pr', 0, None, None, None, None, None],
         [1, 'pa', 0, None, None, None, None, None]],
@@ -25,10 +35,9 @@ def refresh_clue_dict(clues):
     d1:[[1, '', 0, None, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, '', 0, None, None, None, None, None]]}
-    
-    
     '''
-    #2022 - Difficult factor one
+    
+    '''#2022 - Difficult factor one
     clueDict = {
         a1:[[1, 'pr', -2, None, None, None, None, None]],
         a3:[[a3.possi,'f', 100, False, -1, True, True, a3]],
@@ -38,7 +47,6 @@ def refresh_clue_dict(clues):
         d4:[[1, 'pr', 0, True, None, None, None, None],
             [2, 'po', 0, True, None, None, None, None],
             [2, 'm', 0, True, None, None, None, None]]}
-    
     '''
 
     '''#2023 - Difficult Clue one
@@ -56,18 +64,20 @@ def refresh_clue_dict(clues):
 
 def refresh_choice_dict(length, instruction):
     mainVal, clueType, extra, remove, order, proper, ofItself, otherClue = instruction
+    
     choiceDict = {
         'pr':find_primes(length, extra, order),
         'po':find_powers(length, extra, order, mainVal),
         't':find_triangle(length, extra, order),
         'pa':find_palidrome(length, extra, order),
-
+    
         'q6':q6(length, mainVal, otherClue),
         'q8':q8(length, extra, order, mainVal),
 
         'm':give_multiples(length, extra, order, mainVal),
         'f': give_factors(length, extra, order, mainVal, proper, ofItself),
         
+        'cO':clue_operation(length, otherClue, mainVal, ofItself)
         }
     return choiceDict
 
@@ -99,8 +109,11 @@ def handle_instruction(cross, clue, instruction):
 
     if clueType in choiceDict:
         cont, possi = execute_instruction(clueType, choiceDict)
-
+        
+        print(len(cont))
+        print(len(possi))
         clue.possi = compare_possi(clue.possi, possi, remove)
+        
         cross = update_digits(clue, cross)
 
         clue = generate_cont(clue, otherClue, cont, mainVal)
@@ -110,7 +123,7 @@ def handle_instruction(cross, clue, instruction):
 
 
 def execute_instruction(clueType, choiceDict):
-    complexOps = set(['m','f','q6'])
+    complexOps = set(['m','f','q6', 'cO'])
     if clueType in complexOps:
         cont, possi = choiceDict[clueType]
 
@@ -121,18 +134,12 @@ def execute_instruction(clueType, choiceDict):
 
 
 def generate_cont(clue, otherClue, cont, mainVal):
-    
-    if cont:
-        newCont = [mainVal, [0, len(clue.possi)]]
-        if otherClue:
-            newCont = [otherClue.name]+cont
-
-    else:
-        newCont = [mainVal, [0, len(clue.possi)]]
+    newCont = [mainVal, [0, len(clue.possi)]]
+    if cont and otherClue:
+        newCont = [otherClue.name]+cont
 
     clue.cont = newCont
     return clue
-
 
 ###
 
@@ -174,13 +181,6 @@ def display_cross(cross):
                 printRow+='  '
         print(printRow)
       
-
-def check_valid_cross(cross):
-    for row in cross:
-        for digit in row:
-            if digit.possi == []:
-                return False
-    return True
 
 ##############
 ##COMPARISON##
@@ -303,6 +303,12 @@ def order_by_possi_length(ops):
 
 
 ##CHECKS##
+def check_valid_cross(cross):
+    for row in cross:
+        for digit in row:
+            if digit.possi == []:
+                return False
+    return True
 
 
 def check_cross_finished(cross, exclude):
@@ -584,21 +590,34 @@ def generate_digit_sum_dict(length):
 
 ##SINGLE CLUE##
 
-def multiply_clue(clue, desiredClue, amount):
-    clue.findNumbers()
-    desiredClue.findNumbers()
+def clue_operation(length, otherClue, amount, ops):
+    if not otherClue:
+        return
     cluePossi = []
-    desiredPossi = []
+    cont = []
+
+    for possiNum in otherClue.possi:
+        num = ops(possiNum, amount)
+        origLength = len(cluePossi)
+        if num.is_integer() and len(str(int(num))) == length:  
+            cluePossi.append(str(int(num)))
+            cont.append([possiNum, [origLength, len(cluePossi)]])
     
-    for possiNum in desiredClue.possi:
-        num = float(possiNum) * amount  
-        if num.is_integer() and len(str(int(num))) == clue.length:  
-            cluePossi.append(int(num))
-            desiredPossi.append(int(possiNum))
-    
-    clue.possi = cluePossi
-    desiredClue.possi = desiredPossi
-    return clue, desiredClue
+    return cont, cluePossi
+
+
+def op1(possiNum, amount):
+    return float(possiNum) * amount
+
+
+
+
+
+
+
+
+
+
 
 
 def clue_add(resClue, clueCalc, amount):
@@ -609,6 +628,50 @@ def clue_add(resClue, clueCalc, amount):
         if len(val) == resClue.length:
             results.append(val)
     return results
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ##MULTI CLUES##
