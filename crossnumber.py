@@ -82,7 +82,7 @@ for clue in clues:
 
 
 cross, clues = number_cruncher(cross, prev, clues)
-#cross = possi_cruncher(cross, clues, d4)
+cross = possi_cruncher(cross, clues, d4)
 
 clues = order_clue_list(clues)
 

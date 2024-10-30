@@ -37,7 +37,7 @@ def refresh_clue_dict(clues):
     d4:[[1, '', 0, None, None, None, None, None]]}
     '''
     
-    #2022 - Difficult factor one
+    '''#2022 - Difficult factor one
     clueDict = {
         a1:[[1, 'pr', -2, None, None, None, None, None]],
         a3:[[a3.possi,'f', 100, False, -1, True, True, a3]],
@@ -47,9 +47,9 @@ def refresh_clue_dict(clues):
         d4:[[1, 'pr', 0, True, None, None, None, None],
             [2, 'po', 0, True, None, None, None, None],
             [2, 'm', 0, True, None, None, None, None]]}
-    
+    '''
 
-    '''#2023 - Difficult Clue one
+    #2023 - Difficult Clue one
     clueDict = {
         a1:[[105, 'f', -4, None, None, True, None, None]],
         a3:[[1,'pa', 1, None, None, None, None, None]],
@@ -57,7 +57,7 @@ def refresh_clue_dict(clues):
         d1:[[2, 'po', -2, None, None, None, None, None]],
         d2:[[3, 'po', -400, None, None, None, None, None]],
         d4:[[2, 'cA', -6, None, None, None, None, None]]}
-    '''
+    
 
     return clueDict
 ###########################################
@@ -116,7 +116,7 @@ def handle_instruction(cross, clue, instruction):
 
         cross = update_digits(clue, cross)
 
-        clue = generate_cont(clue, otherClue, cont, mainVal)
+        clue = generate_cont(clue, otherClue, cont)
 
 
     return clue, cross
@@ -133,8 +133,8 @@ def execute_instruction(clueType, choiceDict):
     return cont, possi
 
 
-def generate_cont(clue, otherClue, cont, mainVal):
-    newCont = [mainVal, [0, len(clue.possi)]]
+def generate_cont(clue, otherClue, cont):
+    newCont = [0, len(clue.possi)]
     if cont and otherClue:
         cont = make_cont(cont)
         newCont = [otherClue.name]+cont
@@ -486,7 +486,7 @@ def give_multiples(length, extra, order, multi):
         cont, possi = handle_lists(find_multiples, length, extra, order, multi, proper = None, ofItself= None)
     else:
         possi = find_multiples(length, extra, order, multi, proper = None, ofItself= None)
-        cont = [0, len(possi)]
+        cont = None
     return cont, possi
 
 
@@ -496,7 +496,7 @@ def give_factors(length, extra, order, product, proper, ofItself):
 
     else:
         possi = find_factors(length, extra, order, product, proper, ofItself)
-        cont = [0, len(possi)]
+        cont = None
     
     return cont, possi
 
