@@ -6,7 +6,7 @@ import os
 def refresh_clue_dict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue]
-    '''#Tester
+    #Tester
     clueDict = {
     a1:[[3, 'cO', 0, None, None, None, op1, a3]],
     a3:[[1, '', 0, None, None, None, None, None]],
@@ -14,7 +14,7 @@ def refresh_clue_dict(clues):
     d1:[[1, '', 0, None, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, '', 0, None, None, None, None, None]]}
-    '''
+    
 
     '''#Ritangle P
     clueDict = {
@@ -49,7 +49,7 @@ def refresh_clue_dict(clues):
             [2, 'm', 0, True, None, None, None, None]]}
     '''
 
-    #2023 - Difficult Clue one
+    '''#2023 - Difficult Clue one
     clueDict = {
         a1:[[105, 'f', -4, None, None, True, None, None]],
         a3:[[1,'pa', 1, None, None, None, None, None]],
@@ -57,7 +57,7 @@ def refresh_clue_dict(clues):
         d1:[[2, 'po', -2, None, None, None, None, None]],
         d2:[[3, 'po', -400, None, None, None, None, None]],
         d4:[[2, 'cA', -6, None, None, None, None, None]]}
-    
+    '''
 
     return clueDict
 ###########################################
@@ -137,7 +137,7 @@ def generate_cont(clue, otherClue, cont):
     newCont = [0, len(clue.possi)]
     if cont and otherClue:
         cont = make_cont(cont)
-        newCont = [otherClue.name]+cont
+        newCont = cont
 
     clue.cont = newCont
     return clue
@@ -629,7 +629,7 @@ def clue_operation(length, otherClue, amount, ops):
         num = ops(possiNum, amount)
         if num.is_integer() and len(str(int(num))) == length:  
             cluePossi.append(str(int(num)))
-            cont.append([possiNum, 1])
+            cont.append([[otherClue.name, possiNum], 1])
     
     return cont, cluePossi
 
@@ -713,17 +713,16 @@ def possi_cruncher(cross, clues, clue):
     return cross
 
 
-def find_all_possi(perm, mockCross, coords, extra, newClues, currVal, i):
-    if i == len(perm):
-        targetNums = []
-        
-        if check_valid_cross(mockCross):
-            targetNums = find_combos(coords, mockCross)
+def find_all_possi(perm, mockCross, coords, extra, newClues, cont, i):
+    possiNums = check_cross_finished_is_valid(perm, mockCross, coords, extra, cont, i)
 
-        if str(currVal + extra) in targetNums:
-            return [(str(currVal + extra), mockCross)]
-        return []
-    
+    if possiNums == False:
+        possiNums = explore_possibility(perm, mockCross, coords, extra, newClues, cont, i)
+
+    return possiNums
+
+
+def explore_possibility(perm, mockCross, coords, extra, newClues, cont, i):
     possiNums = []
     for val in perm[i].possi:
         decidingPerm = copy.deepcopy(perm[i])
@@ -732,10 +731,31 @@ def find_all_possi(perm, mockCross, coords, extra, newClues, currVal, i):
 
         changedCross = update_digits(decidingPerm, changedCross)
 
-        possiNums+=find_all_possi(perm, changedCross, coords, extra, newClues+[decidingPerm], int(val)+currVal, i+1)
-        
+        possiNums+=find_all_possi(perm, changedCross, coords, extra, newClues+[decidingPerm], cont+[int(val)], i+1)
 
     return possiNums
+
+
+def check_cross_finished_is_valid(perm, mockCross, coords, extra, cont, i):
+    if i == len(perm):
+        targetNums = []
+        
+        if check_valid_cross(mockCross):
+            targetNums = find_combos(coords, mockCross)
+
+        if str(sum(cont) + extra) in targetNums:
+
+            return [str(sum(cont) + extra), cont]
+        return []
+    return False
+
+
+
+
+
+
+
+
 
 
 def find_possi_crosses_from_sums(cross, clues, clue, amount, extra):
@@ -752,17 +772,20 @@ def find_possi_crosses_from_sums(cross, clues, clue, amount, extra):
         
 
 def find_all_clue_sums(cross, clues, coords, amount, extra):
-    result = []
+    possi = []
+    cont = []
+
     allLists = permutations(clues, amount)
     for perm in list(allLists):
         mockCross = copy.deepcopy(cross)
-        res = find_all_possi(perm, mockCross, 
-                       coords, extra=extra, 
-                       newClues=[], currVal=0, i=0)
-    
-        result+=res
+        res = find_all_possi(perm, mockCross, coords, extra=extra, newClues=[], cont=[], i=0)
 
-    return result
+        if res:
+            possi.append(res[0])
+
+            cont.append(res[1])
+
+    #return result
 
 
 def add_to_cross(cross, newCrosses):
