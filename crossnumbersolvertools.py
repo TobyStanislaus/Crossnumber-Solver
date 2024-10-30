@@ -6,7 +6,7 @@ import os
 def refresh_clue_dict(clues):
     a1, a3, a5, d1, d2, d4 = clues
     #[mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue]
-    #Tester
+    '''#Tester
     clueDict = {
     a1:[[3, 'cO', 0, None, None, None, op1, a3]],
     a3:[[1, '', 0, None, None, None, None, None]],
@@ -14,7 +14,7 @@ def refresh_clue_dict(clues):
     d1:[[1, '', 0, None, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, '', 0, None, None, None, None, None]]}
-    
+    '''
 
     '''#Ritangle P
     clueDict = {
@@ -26,7 +26,7 @@ def refresh_clue_dict(clues):
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
     '''
 
-    '''#Ritangle Q
+    #Ritangle Q
     clueDict = {
     a1:[[1, 'pr', 0, None, None, None, None, None],
         [1, 'pa', 0, None, None, None, None, None]],
@@ -35,7 +35,7 @@ def refresh_clue_dict(clues):
     d1:[[1, '', 0, None, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, '', 0, None, None, None, None, None]]}
-    '''
+    
     
     '''#2022 - Difficult factor one
     clueDict = {
@@ -74,8 +74,9 @@ def refresh_choice_dict(length, instruction):
         'q6':q6(length, mainVal, otherClue),
         'q8':q8(length, extra, order, mainVal),
 
-        'm':give_multiples(length, extra, order, mainVal),
-        'f': give_factors(length, extra, order, mainVal, proper, ofItself),
+        'm':give_multiples_or_factors(length, extra, order, mainVal, proper, ofItself, find_multiples, otherClue),
+
+        'f': give_multiples_or_factors(length, extra, order, mainVal, proper, ofItself, find_factors, otherClue),
         
         'cO':clue_operation(length, otherClue, mainVal, ofItself)
         }
@@ -133,12 +134,13 @@ def execute_instruction(clueType, choiceDict):
     return cont, possi
 
 
+
+####CONTS####
 def generate_cont(clue, otherClue, cont):
     newCont = [0, len(clue.possi)]
     if cont and otherClue:
         cont = make_cont(cont)
         newCont = cont
-
     clue.cont = newCont
     return clue
 
@@ -194,7 +196,7 @@ def display_all_crosses(cross, clues, exclude, i):
         mockClues = copy.deepcopy(clues)
 
         
-        if type(mockClues[i].cont[0]) == str:
+        if type(mockClues[i].cont[0]) == list:
             handle_cont(mockCross, mockClues, exclude, mockClues[i].cont, i)
             break
 
@@ -255,9 +257,10 @@ def handle_norm(mockCross, mockClues, exclude, i, j):
     
 
 def handle_cont(mockCross, mockClues, exc, cont, i):
-    j = find_clue_index(mockClues, cont[0])
-    
-    for specClueVal, cluePossi in cont[1:]:
+    for clueInfo, cluePossi in cont:
+        clueName, specClueVal = clueInfo
+        j = find_clue_index(mockClues, clueName)
+
         mClues = copy.deepcopy(mockClues)
         mClues[j].possi = [str(specClueVal)]
         mClues[i].possi = mClues[i].possi[cluePossi[0]:cluePossi[1]]
@@ -319,7 +322,7 @@ def order_clue_list(clues):
     specOps = []
     ops = []
     for clue in clues:
-        if type(clue.cont[0]) == str:
+        if type(clue.cont[0]) == list:
             specOps.append(clue)
         else:
             ops.append(clue)
@@ -468,12 +471,12 @@ def find_palidrome(length, extra, order):
 ##CUSTOM CALCULATIONS##
 #######################
 
-def handle_lists(func, length, extra, order, nums, proper, ofItself):
+def handle_lists(func, length, extra, order, nums, proper, ofItself, otherClue):
     result = []
     cont = []
     for num in nums:
         partResult = func(length, extra, order, int(num), proper, ofItself)
-        partCont = [num, len(partResult)]
+        partCont = [[otherClue.name, num], len(partResult)]
         result+=partResult
 
         cont.append(partCont)
@@ -481,21 +484,13 @@ def handle_lists(func, length, extra, order, nums, proper, ofItself):
     return cont, result
 
 
-def give_multiples(length, extra, order, multi):
-    if type(multi) == list:
-        cont, possi = handle_lists(find_multiples, length, extra, order, multi, proper = None, ofItself= None)
-    else:
-        possi = find_multiples(length, extra, order, multi, proper = None, ofItself= None)
-        cont = None
-    return cont, possi
+def give_multiples_or_factors(length, extra, order, product, proper, ofItself, func, otherClue):
 
-
-def give_factors(length, extra, order, product, proper, ofItself):
     if type(product) == list:
-        cont, possi = handle_lists(find_factors, length, extra, order, product, proper, ofItself)
+        cont, possi = handle_lists(func, length, extra, order, product, proper, ofItself, otherClue)
 
     else:
-        possi = find_factors(length, extra, order, product, proper, ofItself)
+        possi = func(length, extra, order, product, proper, ofItself)
         cont = None
     
     return cont, possi
@@ -563,7 +558,7 @@ def q6(length, mainVal, otherClue):
                 partPossi.append(str(power+reversedNum))
                 
         if partPossi:
-            cont.append([num, len(partPossi)]) 
+            cont.append([[otherClue.name, num], len(partPossi)]) 
             possi+=partPossi
     
    
@@ -620,7 +615,7 @@ def generate_digit_sum_dict(length):
 ##SINGLE CLUE##
 
 def clue_operation(length, otherClue, amount, ops):
-    if not otherClue or isinstance(ops, (bool, int, float, str, list, dict, tuple)):
+    if not otherClue or isinstance(ops, (bool, int, float, str, list, dict, tuple)) or not ops:
         return
     cluePossi = []
     cont = []
