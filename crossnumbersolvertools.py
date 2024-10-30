@@ -26,7 +26,7 @@ def refresh_clue_dict(clues):
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
     '''
 
-    #Ritangle Q
+    '''#Ritangle Q
     clueDict = {
     a1:[[1, 'pr', 0, None, None, None, None, None],
         [1, 'pa', 0, None, None, None, None, None]],
@@ -35,7 +35,7 @@ def refresh_clue_dict(clues):
     d1:[[1, '', 0, None, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, '', 0, None, None, None, None, None]]}
-    
+    '''
     
     '''#2022 - Difficult factor one
     clueDict = {
@@ -49,7 +49,7 @@ def refresh_clue_dict(clues):
             [2, 'm', 0, True, None, None, None, None]]}
     '''
 
-    '''#2023 - Difficult Clue one
+    #2023 - Difficult Clue one
     clueDict = {
         a1:[[105, 'f', -4, None, None, True, None, None]],
         a3:[[1,'pa', 1, None, None, None, None, None]],
@@ -57,7 +57,7 @@ def refresh_clue_dict(clues):
         d1:[[2, 'po', -2, None, None, None, None, None]],
         d2:[[3, 'po', -400, None, None, None, None, None]],
         d4:[[2, 'cA', -6, None, None, None, None, None]]}
-    '''
+    
 
     return clueDict
 ###########################################
@@ -144,6 +144,28 @@ def generate_cont(clue, otherClue, cont):
     clue.cont = newCont
     return clue
 
+def make_cont(cont):
+    newCont = [[] for i in range(0, len(cont))]
+
+    i = 0
+    while i<len(cont[0]):
+        pcont = make_one_cont(cont, i)
+        newCont = conjoin_lists(newCont, pcont)
+        i+=1
+    return newCont
+
+
+
+
+def make_one_cont(cont, i):
+    low = 0
+    newCont = []
+    for otherCluePossis in cont:
+        val, length = otherCluePossis[i]
+        newCont.append([val, [low,low+length]])
+        low += length
+    return newCont
+
 
 def clean_cont(cont, removed):
     if not cont:
@@ -153,8 +175,8 @@ def clean_cont(cont, removed):
     while i< len(cont) and removed:
         if i == removed[0]:
             removed.pop(0)
-            cont = find_right_cont_bit(cont, i)
-            if cont[i][1] == 0:
+            cont = find_right_cont_bit(cont, i, 0)
+            if cont[i][0][1] == 0:
                 cont.pop(i)
             
         else:
@@ -162,23 +184,20 @@ def clean_cont(cont, removed):
     return cont
 
 
-def find_right_cont_bit(cont, i):
+def find_right_cont_bit(cont, i, a):
     for j in range(0, len(cont)):
-        val = cont[j][1]
+        val = cont[j][a][1]
         i-=val
         if i <= 0:
-            cont[j][1]-=1
+            cont[j][a][1]-=1
             return cont
 
 
-def make_cont(cont):
-    low = 0
-    newCont = []
-    for val, length in cont:
-        newCont.append([val, [low,low+length]])
-        low += length
-    return newCont
- 
+def conjoin_lists(list1, list2):
+    for i in range(0, len(list1)):
+        list1[i].append(list2[i])
+    return list1
+
 
 ###
 
@@ -197,7 +216,8 @@ def display_all_crosses(cross, clues, exclude, i):
 
         
         if type(mockClues[i].cont[0]) == list:
-            handle_cont(mockCross, mockClues, exclude, mockClues[i].cont, i)
+            for otherCluePossi in mockClues[i].cont:
+                handle_one_cont(mockCross, mockClues, exclude, otherCluePossi, i)
             break
 
         else:
@@ -256,7 +276,7 @@ def handle_norm(mockCross, mockClues, exclude, i, j):
         display_all_crosses(mockCross, mockClues, exclude, i+1)
     
 
-def handle_cont(mockCross, mockClues, exc, cont, i):
+def handle_one_cont(mockCross, mockClues, exc, cont, i):
     for clueInfo, cluePossi in cont:
         clueName, specClueVal = clueInfo
         j = find_clue_index(mockClues, clueName)
@@ -476,10 +496,9 @@ def handle_lists(func, length, extra, order, nums, proper, ofItself, otherClue):
     cont = []
     for num in nums:
         partResult = func(length, extra, order, int(num), proper, ofItself)
-        partCont = [[otherClue.name, num], len(partResult)]
-        result+=partResult
-
+        partCont = [[[otherClue.name, num], len(partResult)]]
         cont.append(partCont)
+        result+=partResult
 
     return cont, result
 
@@ -558,7 +577,7 @@ def q6(length, mainVal, otherClue):
                 partPossi.append(str(power+reversedNum))
                 
         if partPossi:
-            cont.append([[otherClue.name, num], len(partPossi)]) 
+            cont.append([[[otherClue.name, num], len(partPossi)]]) 
             possi+=partPossi
     
    
@@ -631,54 +650,6 @@ def clue_operation(length, otherClue, amount, ops):
 
 def op1(possiNum, amount):
     return float(possiNum) * amount
-
-
-
-
-
-
-
-
-
-
-
-
-def clue_add(resClue, clueCalc, amount):
-    results = []
-    clueCalc.findNumbers()
-    for num in clueCalc.possi:
-        val = str(int(num)+amount)
-        if len(val) == resClue.length:
-            results.append(val)
-    return results
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
