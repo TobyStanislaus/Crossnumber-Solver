@@ -56,13 +56,13 @@ def refresh_clue_dict(clues):
         a5:[[1, '', 0, None, None, None, None, None]],
         d1:[[2, 'po', -2, None, None, None, None, None]],
         d2:[[3, 'po', -400, None, None, None, None, None]],
-        d4:[[2, 'cA', -6, None, None, None, None, None]]}
+        d4:[[2, 'mC', -6, None, None, None, None, None]]}
     
 
     return clueDict
 ###########################################
 
-def refresh_choice_dict(length, instruction):
+def refresh_choice_dict(cross, clues, clue, length, instruction):
     mainVal, clueType, extra, remove, order, proper, ofItself, otherClue = instruction
     
     choiceDict = {
@@ -98,14 +98,14 @@ def input_handler(cross, clue, clues):
 
     clueDict = refresh_clue_dict(clues)
     for instruction in clueDict[clue]:
-        clue, cross = handle_instruction(cross, clue, instruction)
+        clue, cross = handle_instruction(cross, clues, clue, instruction)
 
     return clue, cross
 
 
-def handle_instruction(cross, clue, instruction):
+def handle_instruction(cross, clues, clue, instruction):
     
-    choiceDict = refresh_choice_dict(clue.length, instruction)
+    choiceDict = refresh_choice_dict(cross, clues, clue, clue.length, instruction)
     mainVal, clueType, extra, remove, order, proper, ofItself, otherClue = instruction
 
     if clueType in choiceDict:
@@ -654,21 +654,12 @@ def op1(possiNum, amount):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ##MULTI CLUES##
+
+
+
+
+
 def possi_cruncher(cross, clues, clue):
     clueDict = refresh_clue_dict(clues)
     for instruction in clueDict[clue]:
@@ -679,25 +670,49 @@ def possi_cruncher(cross, clues, clue):
     return cross
 
 
+
+
+
+
+
+
+
+
+
+
+def find_possi_crosses_from_sums(cross, clues, clue, amount, extra):
+    possi, cont = find_all_clue_sums(cross, clues, clue.pos, amount, extra)
+
+    return possi, cont
+        
+
+def find_all_clue_sums(cross, clues, coords, amount, extra):
+    possi = []
+    cont = []
+
+    allLists = permutations(clues, amount)
+    for perm in list(allLists):
+        mockCross = copy.deepcopy(cross)
+        res = find_all_possi(perm, mockCross, coords, extra=extra, newClues=[], cont=[], i=0)
+
+        if res:
+            possi.append(res[0])
+            multiCont = []
+            for i in range(0, len(perm)):
+                multiCont.append([perm[i].name, res[1][i]])
+            
+            cont.append([multiCont]+[1])
+
+    return possi, cont
+
+
+
+
 def find_all_possi(perm, mockCross, coords, extra, newClues, cont, i):
     possiNums = check_cross_finished_is_valid(perm, mockCross, coords, extra, cont, i)
 
     if possiNums == False:
         possiNums = explore_possibility(perm, mockCross, coords, extra, newClues, cont, i)
-
-    return possiNums
-
-
-def explore_possibility(perm, mockCross, coords, extra, newClues, cont, i):
-    possiNums = []
-    for val in perm[i].possi:
-        decidingPerm = copy.deepcopy(perm[i])
-        decidingPerm.possi = [val]
-        changedCross = copy.deepcopy(mockCross)
-
-        changedCross = update_digits(decidingPerm, changedCross)
-
-        possiNums+=find_all_possi(perm, changedCross, coords, extra, newClues+[decidingPerm], cont+[int(val)], i+1)
 
     return possiNums
 
@@ -716,42 +731,19 @@ def check_cross_finished_is_valid(perm, mockCross, coords, extra, cont, i):
     return False
 
 
+def explore_possibility(perm, mockCross, coords, extra, newClues, cont, i):
+    possiNums = []
+    for val in perm[i].possi:
+        decidingPerm = copy.deepcopy(perm[i])
+        decidingPerm.possi = [val]
+        changedCross = copy.deepcopy(mockCross)
 
+        changedCross = update_digits(decidingPerm, changedCross)
 
+        possiNums+=find_all_possi(perm, changedCross, coords, extra, newClues+[decidingPerm], cont+[int(val)], i+1)
 
+    return possiNums
 
-
-
-
-
-def find_possi_crosses_from_sums(cross, clues, clue, amount, extra):
-    clueSums = find_all_clue_sums(cross, clues, clue.pos, amount, extra)
-
-    possiCrosses = []
-
-    for possi in clueSums:
-        clue.possi = [possi[0]]
-        possiCross = update_digits(clue, possi[1])
-        possiCrosses.append(possiCross)
-        
-    return possiCrosses
-        
-
-def find_all_clue_sums(cross, clues, coords, amount, extra):
-    possi = []
-    cont = []
-
-    allLists = permutations(clues, amount)
-    for perm in list(allLists):
-        mockCross = copy.deepcopy(cross)
-        res = find_all_possi(perm, mockCross, coords, extra=extra, newClues=[], cont=[], i=0)
-
-        if res:
-            possi.append(res[0])
-
-            cont.append(res[1])
-
-    #return result
 
 
 def add_to_cross(cross, newCrosses):
