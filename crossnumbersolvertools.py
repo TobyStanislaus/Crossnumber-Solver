@@ -155,8 +155,6 @@ def make_cont(cont):
     return newCont
 
 
-
-
 def make_one_cont(cont, i):
     low = 0
     newCont = []
@@ -665,25 +663,18 @@ def possi_cruncher(cross, clues, clue):
     for instruction in clueDict[clue]:
         mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue = instruction
 
-        possiCrosses = find_possi_crosses_from_sums(cross, clues, clue, mainVal, extra)
-        cross = add_to_cross(cross, possiCrosses)
+        possiCrosses = find_all_clue_sums(cross, clues, clue.pos, mainVal, extra)
+
     return cross
-
-
-
-
-
-
-
-
-
-
-
-
 def find_possi_crosses_from_sums(cross, clues, clue, amount, extra):
     possi, cont = find_all_clue_sums(cross, clues, clue.pos, amount, extra)
 
     return possi, cont
+        
+
+
+
+
         
 
 def find_all_clue_sums(cross, clues, coords, amount, extra):
@@ -704,6 +695,7 @@ def find_all_clue_sums(cross, clues, coords, amount, extra):
             cont.append([multiCont]+[1])
 
     return possi, cont
+
 
 
 

@@ -85,6 +85,8 @@ for clue in clues:
 
 cross, clues = number_cruncher(cross, prev, clues)
 #cross = possi_cruncher(cross, clues, d4)
+possi, cont = find_all_clue_sums(cross, clues, d4.pos, 2, -6)
+
 
 clues, after = order_clue_list(clues)
 
