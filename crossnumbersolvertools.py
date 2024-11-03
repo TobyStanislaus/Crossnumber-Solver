@@ -16,7 +16,7 @@ def refresh_clue_dict(clues):
     d4:[[1, '', 0, None, None, None, None, None]]}
     '''
 
-    '''#Ritangle P
+    #Ritangle P
     clueDict = {
     a1:[[1, '', 0, None, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None, None]],
@@ -24,7 +24,7 @@ def refresh_clue_dict(clues):
     d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
     d2:[[2, 'q8', 0, None, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
-    '''
+   
 
     '''#Ritangle Q
     clueDict = {
@@ -49,15 +49,15 @@ def refresh_clue_dict(clues):
             [2, 'm', 0, True, None, None, None, None]]}
     '''
 
-    #2023 - Difficult Clue one
+    '''#2023 - Difficult Clue one
     clueDict = {
         a1:[[105, 'f', -4, None, None, True, None, None]],
         a3:[[1,'pa', 1, None, None, None, None, None]],
         a5:[[1, '', 0, None, None, None, None, None]],
         d1:[[2, 'po', -2, None, None, None, None, None]],
         d2:[[3, 'po', -400, None, None, None, None, None]],
-        d4:[[2, 'mC', -6, None, None, None, None, None]]}
-    
+        d4:[[2, 'mC', -6, None, None, None, None, 'MultiClue']]}
+    '''
 
     return clueDict
 ###########################################
@@ -78,7 +78,8 @@ def refresh_choice_dict(cross, clues, clue, length, instruction):
 
         'f': give_multiples_or_factors(length, extra, order, mainVal, proper, ofItself, find_factors, otherClue),
         
-        'cO':clue_operation(length, otherClue, mainVal, ofItself)
+        'cO':clue_operation(length, otherClue, mainVal, ofItself),
+        'mC':find_all_clue_sums(cross, clues, clue.pos, mainVal, extra, otherClue)
         }
     return choiceDict
 
@@ -124,7 +125,7 @@ def handle_instruction(cross, clues, clue, instruction):
 
 
 def execute_instruction(clueType, choiceDict):
-    complexOps = set(['m','f','q6', 'cO'])
+    complexOps = set(['m','f','q6', 'cO', 'mC'])
     if clueType in complexOps:
         cont, possi = choiceDict[clueType]
 
@@ -677,7 +678,9 @@ def find_possi_crosses_from_sums(cross, clues, clue, amount, extra):
 
         
 
-def find_all_clue_sums(cross, clues, coords, amount, extra):
+def find_all_clue_sums(cross, clues, coords, amount, extra, otherClue):
+    if otherClue != 'MultiClue':
+        return
     possi = []
     cont = []
 
@@ -694,7 +697,7 @@ def find_all_clue_sums(cross, clues, coords, amount, extra):
             
             cont.append([multiCont]+[1])
 
-    return possi, cont
+    return cont, possi
 
 
 
