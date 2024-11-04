@@ -83,12 +83,10 @@ for clue in clues:
 
 
 
-cross, clues = number_cruncher(cross, prev, clues)
-#cross = possi_cruncher(cross, clues, d4)
-#possi, cont = find_all_clue_sums(cross, clues, d4.pos, 2, -6)
+cross, clues = number_cruncher(cross, prev, clues, firstGo=True)
 
 
-#clues, after = order_clue_list(clues)
+clues= order_clue_list(clues)
 
 #(2,0), (0,2)
 display_all_crosses(cross, clues, exclude = set([(2,0), (0,2)]), i = 0)

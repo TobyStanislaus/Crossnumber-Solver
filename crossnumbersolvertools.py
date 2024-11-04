@@ -16,7 +16,7 @@ def refresh_clue_dict(clues):
     d4:[[1, '', 0, None, None, None, None, None]]}
     '''
 
-    #Ritangle P
+    '''#Ritangle P
     clueDict = {
     a1:[[1, '', 0, None, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None, None]],
@@ -24,7 +24,7 @@ def refresh_clue_dict(clues):
     d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
     d2:[[2, 'q8', 0, None, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
-   
+    '''
 
     '''#Ritangle Q
     clueDict = {
@@ -49,7 +49,7 @@ def refresh_clue_dict(clues):
             [2, 'm', 0, True, None, None, None, None]]}
     '''
 
-    '''#2023 - Difficult Clue one
+    #2023 - Difficult Clue one
     clueDict = {
         a1:[[105, 'f', -4, None, None, True, None, None]],
         a3:[[1,'pa', 1, None, None, None, None, None]],
@@ -57,7 +57,7 @@ def refresh_clue_dict(clues):
         d1:[[2, 'po', -2, None, None, None, None, None]],
         d2:[[3, 'po', -400, None, None, None, None, None]],
         d4:[[2, 'mC', -6, None, None, None, None, 'MultiClue']]}
-    '''
+    
 
     return clueDict
 ###########################################
@@ -86,12 +86,32 @@ def refresh_choice_dict(cross, clues, clue, length, instruction):
 ######################################################################
 ##Clue control - does everything concerning simple clue calculations##
 ######################################################################
-def number_cruncher(cross, prev, clues):
+def number_cruncher(cross, prev, clues, firstGo):
+    prev2 = copy.deepcopy(prev)
+
     while compare_new_and_old(cross, prev):
         prev = copy.deepcopy(cross)
         for clue in clues:
-            clue, cross = input_handler(cross, clue, clues)
+            clue, cross = handle_order(cross, clues, clue, firstGo)
+
+
+    if firstGo:
+        cross, clues = number_cruncher(cross, prev2, clues, firstGo=False)
+
     return cross, clues
+
+
+def handle_order(cross, clues, clue, firstGo):
+    lastOps = set(['mC'])
+    clueDict = refresh_clue_dict(clues)
+
+    if firstGo:
+        if clueDict[clue][0][1] not in lastOps:
+            clue, cross = input_handler(cross, clue, clues)
+    else:
+        if clueDict[clue][0][1] in lastOps:
+            clue, cross = input_handler(cross, clue, clues)
+    return clue, cross
 
 
 def input_handler(cross, clue, clues):
@@ -695,7 +715,7 @@ def find_all_clue_sums(cross, clues, coords, amount, extra, otherClue):
             for i in range(0, len(perm)):
                 multiCont.append([perm[i].name, res[1][i]])
             
-            cont.append([multiCont]+[1])
+            cont.append(multiCont+[1])
 
     return cont, possi
 
