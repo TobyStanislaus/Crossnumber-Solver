@@ -16,15 +16,15 @@ def refresh_clue_dict(clues):
     d4:[[1, '', 0, None, None, None, None, None]]}
     '''
 
-    '''#Ritangle P
+    #Ritangle P
     clueDict = {
-    a1:[[1, '', 0, None, None, None, None, None]],
+    a1:[[2, 'po', 0, None, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None, None]],
     a5:[[1, '', 0, None, None, None, None, None]],
     d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
     d2:[[2, 'q8', 0, None, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
-    '''
+    
 
     '''#Ritangle Q
     clueDict = {
@@ -49,7 +49,7 @@ def refresh_clue_dict(clues):
             [2, 'm', 0, True, None, None, None, None]]}
     '''
 
-    #2023 - Difficult Clue one
+    '''#2023 - Difficult Clue one
     clueDict = {
         a1:[[105, 'f', -4, None, None, True, None, None]],
         a3:[[1,'pa', 1, None, None, None, None, None]],
@@ -57,7 +57,7 @@ def refresh_clue_dict(clues):
         d1:[[2, 'po', -2, None, None, None, None, None]],
         d2:[[3, 'po', -400, None, None, None, None, None]],
         d4:[[2, 'mC', -6, None, None, None, None, 'MultiClue']]}
-    
+    '''
 
     return clueDict
 ###########################################
@@ -168,20 +168,19 @@ def generate_cont(clue, otherClue, cont):
 def make_cont(cont):
     newCont = [[] for i in range(0, len(cont))]
 
-    i = 0
-    while i<len(cont[0]):
-        pcont = make_one_cont(cont, i)
-        newCont = conjoin_lists(newCont, pcont)
-        i+=1
+
+    pcont = make_one_cont(cont)
+    newCont = conjoin_lists(newCont, pcont)
+
     return newCont
 
 
-def make_one_cont(cont, i):
+def make_one_cont(cont):
     low = 0
     newCont = []
     for otherCluePossis in cont:
-        val, length = otherCluePossis[i]
-        newCont.append([val, [low,low+length]])
+        otherClueInfo, length = otherCluePossis
+        newCont.append([otherClueInfo, [low,low+length]])
         low += length
     return newCont
 
@@ -194,8 +193,8 @@ def clean_cont(cont, removed):
     while i< len(cont) and removed:
         if i == removed[0]:
             removed.pop(0)
-            cont = find_right_cont_bit(cont, i, 0)
-            if cont[i][0][1] == 0:
+            cont = find_right_cont_bit(cont, i)
+            if cont[i][1] == 0:
                 cont.pop(i)
             
         else:
@@ -203,12 +202,12 @@ def clean_cont(cont, removed):
     return cont
 
 
-def find_right_cont_bit(cont, i, a):
+def find_right_cont_bit(cont, i):
     for j in range(0, len(cont)):
-        val = cont[j][a][1]
+        val = cont[j][1]
         i-=val
         if i <= 0:
-            cont[j][a][1]-=1
+            cont[j][1]-=1
             return cont
 
 
@@ -296,20 +295,26 @@ def handle_norm(mockCross, mockClues, exclude, i, j):
     
 
 def handle_one_cont(mockCross, mockClues, exc, cont, i):
-    for clueInfo, cluePossi in cont:
-        clueName, specClueVal = clueInfo
-        j = find_clue_index(mockClues, clueName)
-
-        mClues = copy.deepcopy(mockClues)
-        mClues[j].possi = [str(specClueVal)]
-        mClues[i].possi = mClues[i].possi[cluePossi[0]:cluePossi[1]]
-        
-        for val2 in mClues[i].possi:
-            m2Cross = copy.deepcopy(mockCross)
-            m2Clues = copy.deepcopy(mClues)
-            m2Clues[i].possi = [val2]
-            handle_norm(m2Cross, m2Clues, exc, i, j) 
+    for cluesInfo, cluePossi in cont:
+        for clueCont in cluesInfo:
+            handle_each_clue_cont(mockCross, mockClues, exc, i, clueCont, cluePossi)
     
+
+def handle_each_clue_cont(mockCross, mockClues, exc, i, clueCont, cluePossi):
+    clueName, specClueVal = clueCont
+    j = find_clue_index(mockClues, clueName)
+
+    mClues = copy.deepcopy(mockClues)
+    mClues[j].possi = [str(specClueVal)]
+    mClues[i].possi = mClues[i].possi[cluePossi[0]:cluePossi[1]]
+    
+    for val2 in mClues[i].possi:
+        m2Cross = copy.deepcopy(mockCross)
+        m2Clues = copy.deepcopy(mClues)
+        m2Clues[i].possi = [val2]
+        handle_norm(m2Cross, m2Clues, exc, i, j) 
+    
+
 
 def find_clue_index(clues, clueName):
     for j in range(0,len(clues)):
@@ -515,7 +520,7 @@ def handle_lists(func, length, extra, order, nums, proper, ofItself, otherClue):
     cont = []
     for num in nums:
         partResult = func(length, extra, order, int(num), proper, ofItself)
-        partCont = [[[otherClue.name, num], len(partResult)]]
+        partCont = [[[otherClue.name, num]], len(partResult)]
         cont.append(partCont)
         result+=partResult
 
@@ -596,7 +601,7 @@ def q6(length, mainVal, otherClue):
                 partPossi.append(str(power+reversedNum))
                 
         if partPossi:
-            cont.append([[[otherClue.name, num], len(partPossi)]]) 
+            cont.append([[[otherClue.name, num]], len(partPossi)]) 
             possi+=partPossi
     
    
@@ -662,7 +667,7 @@ def clue_operation(length, otherClue, amount, ops):
         num = ops(possiNum, amount)
         if num.is_integer() and len(str(int(num))) == length:  
             cluePossi.append(str(int(num)))
-            cont.append([[otherClue.name, possiNum], 1])
+            cont.append([[[otherClue.name, possiNum]], 1])
     
     return cont, cluePossi
 
@@ -675,28 +680,6 @@ def op1(possiNum, amount):
 
 ##MULTI CLUES##
 
-
-
-
-
-def possi_cruncher(cross, clues, clue):
-    clueDict = refresh_clue_dict(clues)
-    for instruction in clueDict[clue]:
-        mainVal, clueType, extra, removeNot, order, proper, ofItself, otherClue = instruction
-
-        possiCrosses = find_all_clue_sums(cross, clues, clue.pos, mainVal, extra)
-
-    return cross
-def find_possi_crosses_from_sums(cross, clues, clue, amount, extra):
-    possi, cont = find_all_clue_sums(cross, clues, clue.pos, amount, extra)
-
-    return possi, cont
-        
-
-
-
-
-        
 
 def find_all_clue_sums(cross, clues, coords, amount, extra, otherClue):
     if otherClue != 'MultiClue':
@@ -715,11 +698,9 @@ def find_all_clue_sums(cross, clues, coords, amount, extra, otherClue):
             for i in range(0, len(perm)):
                 multiCont.append([perm[i].name, res[1][i]])
             
-            cont.append(multiCont+[1])
+            cont.append([multiCont, 1])
 
     return cont, possi
-
-
 
 
 
@@ -758,21 +739,6 @@ def explore_possibility(perm, mockCross, coords, extra, newClues, cont, i):
         possiNums+=find_all_possi(perm, changedCross, coords, extra, newClues+[decidingPerm], cont+[int(val)], i+1)
 
     return possiNums
-
-
-
-def add_to_cross(cross, newCrosses):
-    if newCrosses == []:
-        return
-    
-    cross = newCrosses[0]
-    for newCross in newCrosses:
-        for y in range(0,3):
-            for x in range(0,3):
-                if newCross[y][x].possi[0] not in cross[y][x].possi:
-                    cross[y][x].possi.append(newCross[y][x].possi[0])
-    
-    return cross
 
 
 def find_combos(coords, newCross):
