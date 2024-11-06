@@ -16,7 +16,7 @@ def refresh_clue_dict(clues):
     d4:[[1, '', 0, None, None, None, None, None]]}
     '''
 
-    #Ritangle P
+    '''#Ritangle P
     clueDict = {
     a1:[[2, 'po', 0, None, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None, None]],
@@ -24,18 +24,18 @@ def refresh_clue_dict(clues):
     d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
     d2:[[2, 'q8', 0, None, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
-    
+    '''
 
-    '''#Ritangle Q
+    #Ritangle Q
     clueDict = {
     a1:[[1, 'pr', 0, None, None, None, None, None],
         [1, 'pa', 0, None, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None, None]],
     a5:[[a5.possi, 'q6', 0, None, None, None, None, a3]],
-    d1:[[1, '', 0, None, None, None, None, None]],
+    d1:[[1, 'q14', 0, None, None, None, None, a1]],
     d2:[[1, '', 0, None, None, None, None, None]],
-    d4:[[1, '', 0, None, None, None, None, None]]}
-    '''
+    d4:[[3, 'po', 0, None, None, None, None, None]]}
+    
     
     '''#2022 - Difficult factor one
     clueDict = {
@@ -73,6 +73,7 @@ def refresh_choice_dict(cross, clues, clue, length, instruction):
     
         'q6':q6(length, mainVal, otherClue),
         'q8':q8(length, extra, order, mainVal),
+        'q14':q14(length, otherClue),
 
         'm':give_multiples_or_factors(length, extra, order, mainVal, proper, ofItself, find_multiples, otherClue),
 
@@ -647,6 +648,30 @@ def generate_digit_sum_dict(length):
             digitSumDict[digitSum]=[i]
     return digitSumDict
         
+
+def q14(length, otherClue):
+    if not otherClue:
+        return
+    os.system('cls')
+    possi = []
+    cont = []
+    
+    for i in range(0, len(otherClue.possi)):
+        a1Val = int(otherClue.possi[i])
+
+
+        for d1Val in range(0, a1Val):
+            digitSum = find_digit_sum(d1Val)
+            if d1Val == (a1Val - digitSum):
+                partPossi = [d1Val]
+                possi+= partPossi
+
+                cont.append([[[otherClue.name, num]], len(partPossi)]) 
+                print(a1Val, d1Val)
+
+    
+    return []
+
 
 #####
 
