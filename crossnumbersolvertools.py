@@ -26,7 +26,7 @@ def refresh_clue_dict(clues):
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
     '''
 
-    '''#Ritangle Q
+    #Ritangle Q
     clueDict = {
     a1:[[1, 'pr', 0, None, None, None, None, None],
         [1, 'pa', 0, None, None, None, None, None]],
@@ -35,7 +35,7 @@ def refresh_clue_dict(clues):
     d1:[[1, 'q14', 0, None, None, None, None, a1]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[3, 'po', 0, None, None, None, None, None]]}
-    '''
+    
     
     '''#2022 - Difficult factor one
     clueDict = {
@@ -49,7 +49,7 @@ def refresh_clue_dict(clues):
             [2, 'm', 0, True, None, None, None, None]]}
     '''
 
-    #2023 - Difficult Clue one
+    '''#2023 - Difficult Clue one
     clueDict = {
         a1:[[105, 'f', -4, None, None, True, None, None]],
         a3:[[1,'pa', 1, None, None, None, None, None]],
@@ -57,7 +57,7 @@ def refresh_clue_dict(clues):
         d1:[[2, 'po', -2, None, None, None, None, None]],
         d2:[[3, 'po', -400, None, None, None, None, None]],
         d4:[[2, 'mC', -6, None, None, None, None, 'MultiClue']]}
-    
+    '''
 
     return clueDict
 ###########################################
@@ -539,7 +539,7 @@ def q6(length, mainVal, otherClue):
     powers = [(i,i**2) for i in range(1, 28)]
 
     possi = []
-    cont = []
+    
     for num in otherClue.possi:
         reversedNum = int(num[1][::-1])
         #a3 a5possi
@@ -549,12 +549,10 @@ def q6(length, mainVal, otherClue):
             if len(str(power+reversedNum)) == length and find_digit_sum(power+reversedNum)**2 == power:
                 partPossi.append(str(power+reversedNum))
                 
-        if partPossi:
-            cont.append([[[otherClue.name, num[1]]], len(partPossi)]) 
-            possi+=partPossi
-    
-   
-    return cont, possi
+        for possiNum in partPossi:
+            possi.append([[[otherClue.name, num[1]]], possiNum])
+
+    return possi
 
 
 def q8(length, extra, order, power):
@@ -601,7 +599,6 @@ def q14(length, otherClue):
     if not otherClue or type(otherClue) == str:
         return
 
-    cont = []
     possi = []
     
     for i in range(0, len(otherClue.possi)):
@@ -611,12 +608,11 @@ def q14(length, otherClue):
         for d1Val in range(0, a1Val):
             digitSum = find_digit_sum(d1Val)
             if d1Val == (a1Val - digitSum):
-                partPossi = [d1Val]
-                otherClueVal = a1Val
-                #cont, possi = make_precont(possi, cont, otherClue, otherClueVal, partPossi)
-                
+                if len(str(d1Val)) == length and len(str(a1Val)) == otherClue.length:
+                    possi.append([[[otherClue.name, str(a1Val)]],str(d1Val)])
 
-    return cont, possi
+            
+    return possi
 
 
 
