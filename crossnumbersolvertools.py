@@ -26,7 +26,7 @@ def refresh_clue_dict(clues):
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
     '''
 
-    #Ritangle Q
+    '''#Ritangle Q
     clueDict = {
     a1:[[1, 'pr', 0, None, None, None, None, None],
         [1, 'pa', 0, None, None, None, None, None]],
@@ -35,9 +35,9 @@ def refresh_clue_dict(clues):
     d1:[[1, 'q14', 0, None, None, None, None, a1]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[3, 'po', 0, None, None, None, None, None]]}
+    '''
     
-    
-    '''#2022 - Difficult factor one
+    #2022 - Difficult factor one
     clueDict = {
         a1:[[1, 'pr', -2, None, None, None, None, None]],
         a3:[[a3.possi,'f', 100, False, -1, True, True, a3]],
@@ -47,7 +47,7 @@ def refresh_clue_dict(clues):
         d4:[[1, 'pr', 0, True, None, None, None, None],
             [2, 'po', 0, True, None, None, None, None],
             [2, 'm', 0, True, None, None, None, None]]}
-    '''
+   
 
     '''#2023 - Difficult Clue one
     clueDict = {
@@ -130,15 +130,13 @@ def handle_instruction(cross, clues, clue, instruction):
     mainVal, clueType, extra, remove, order, proper, ofItself, otherClue = instruction
 
     if clueType in choiceDict:
-        cont, possi = execute_instruction(clueType, choiceDict)
+        possi = execute_instruction(clueType, choiceDict)
         
         removed, clue.possi = compare_possi(clue.possi, possi, remove)
 
-        cont = clean_cont(cont, removed)
-
         cross = update_digits(clue, cross)
 
-        clue = generate_cont(clue, otherClue, cont)
+
 
 
     return clue, cross
@@ -147,12 +145,12 @@ def handle_instruction(cross, clues, clue, instruction):
 def execute_instruction(clueType, choiceDict):
     complexOps = set(['m','f','q6', 'q14', 'cO', 'mC'])
     if clueType in complexOps:
-        cont, possi = choiceDict[clueType]
+        possi = choiceDict[clueType]
 
     else:
         possi = choiceDict[clueType]
-        cont = None
-    return cont, possi
+        
+    return possi
 
 
 
@@ -265,11 +263,9 @@ def display_cross(cross):
 ##COMPARISON##
 ##############
 def update_digits(clue, cross):
-    nums = clue.possi
-    numPossi = []
+    nums = [num[1] for num in clue.possi]
+    numPossi = [[] for lengthI in range(0, clue.length)]
 
-    for i in range(clue.length):
-        numPossi.append([])
 
     #splitting into digits
     i = 0
@@ -285,6 +281,7 @@ def update_digits(clue, cross):
     for i in range(clue.length):
         x, y = clue.pos[i][0], clue.pos[i][1]
         removed, cross[y][x].possi = compare_possi(cross[y][x].possi, numPossi[i], False)
+        cross[y][x].possi.sort()
     return cross
 
 
@@ -331,26 +328,33 @@ def compare_possi(curr, checking, remove):
     return removed, curr
 
 
-def compare_list1_list2(list1, list2, remove, counts):
+def compare_list1_list2(possi1, possi2, remove, counts):
     removed = []
     i = 0
-    while i<len(list1):
+    if possi2 and type(possi2[0]) == list:
+        possi2 = set([val[1] for val in possi2])
+
+    while i<len(possi1):
+        val = possi1[i]
+        if possi1 and type(possi1[0]) == list:
+            val = possi1[i][1]
+
         if remove:
-            if list1[i] in list2:
-                list1.pop(i)
+            if val in possi2:
+                possi1.pop(i)
                 removed.append(i)
             else:
                 i+=1
         else:
-            if list1[i] not in list2:
+            if val not in possi2:
                 if counts:
                     removed.append(i)
 
-                list1.pop(i)
+                possi1.pop(i)
             else:
                 i+=1
     
-    return removed, list1
+    return removed, possi1
 
 
 def compare_new_and_old(new, old):
@@ -414,9 +418,9 @@ def check_cross_finished(cross, exclude):
 def no_dupes(mockClues):
     answers = set(mockClues)
     for mockClue in mockClues:
-        if mockClue.possi[0] in answers:
+        if mockClue.possi[0][1] in answers:
             return False
-        answers.add(mockClue.possi[0])
+        answers.add(mockClue.possi[0][1])
     return True
 
 
@@ -459,7 +463,9 @@ def find_primes(length, extra, order):
         if check_prime(i):
             primes.append(str(val))
     primes = find_order(primes, order)
-    return primes
+
+    possi = make_possi(primes, dependants=[])
+    return possi
 
 
 def find_powers(length, extra, order, power):
@@ -477,8 +483,10 @@ def find_powers(length, extra, order, power):
             if powerLength == length and val>0:
                 result.append(str(val))
         n+=1
+    
     result = find_order(result, order)
-    return result
+    possi = make_possi(result, dependants=[])
+    return possi
 
      
 def find_triangle(length, extra, order):
@@ -497,7 +505,8 @@ def find_triangle(length, extra, order):
         adding += 1
 
     result = find_order(result, order)
-    return result
+    possi = make_possi(result, dependants=[])
+    return possi
 
 
 def find_palidrome(length, extra, order):
@@ -510,35 +519,39 @@ def find_palidrome(length, extra, order):
             palis.append(str(val+extra))
     
     palis = find_order(palis, order)
-    return palis
+    possi = make_possi(palis, dependants=[])
+    return possi
 
 
+def make_possi(result, dependants):
+    return [[dependants, val] for val in result]
+    
 #######################
 ##CUSTOM CALCULATIONS##
 #######################
 
 def handle_lists(func, length, extra, order, nums, proper, ofItself, otherClue):
     result = []
-    cont = []
-    for num in nums:
-        partResult = func(length, extra, order, int(num), proper, ofItself)
-        partCont = [[[otherClue.name, num]], len(partResult)]
-        cont.append(partCont)
-        result+=partResult
 
-    return cont, result
+    for num in nums:
+
+        partResult = func(length, extra, order, int(num[1]) , proper, ofItself)
+        if partResult:
+            result += partResult
+
+    return result
 
 
 def give_multiples_or_factors(length, extra, order, product, proper, ofItself, func, otherClue):
 
     if type(product) == list:
-        cont, possi = handle_lists(func, length, extra, order, product, proper, ofItself, otherClue)
+        possi = handle_lists(func, length, extra, order, product, proper, ofItself, otherClue)
 
     else:
         possi = func(length, extra, order, product, proper, ofItself)
-        cont = None
+        
     
-    return cont, possi
+    return possi
 
 
 def find_multiples(length, extra, order, multi, proper, ofItself):
@@ -556,6 +569,7 @@ def find_multiples(length, extra, order, multi, proper, ofItself):
         n+=1
 
     possi = find_order(result, order)
+    possi = make_possi(result, dependants=[])
     return possi
 
 
@@ -568,12 +582,13 @@ def find_factors(length, extra, order, product, proper, ofItself):
             result.append(str(i+extra))
     
     result = find_order(result, order)
+    possi = make_possi(result, dependants=[])
     if ofItself:
-        if result == [str(product)]:
-            return result
+        if possi and possi[0][1] == str(product):
+            return possi
         return []
     else:
-        return result
+        return possi
 
 def find_bot_top(product, proper):
     topNum = product
@@ -594,7 +609,7 @@ def q6(length, mainVal, otherClue):
     possi = []
     cont = []
     for num in otherClue.possi:
-        reversedNum = int(num[::-1])
+        reversedNum = int(num[1][::-1])
         #a3 a5possi
 
         partPossi = []
@@ -603,7 +618,7 @@ def q6(length, mainVal, otherClue):
                 partPossi.append(str(power+reversedNum))
                 
         if partPossi:
-            cont.append([[[otherClue.name, num]], len(partPossi)]) 
+            cont.append([[[otherClue.name, num[1]]], len(partPossi)]) 
             possi+=partPossi
     
    
@@ -620,7 +635,7 @@ def q8(length, extra, order, power):
 
     numDict = generate_digit_sum_dict(length)
     possi = []
-    for power in powers:
+    for dependant, power in powers:
         if int(power) in numDict:
             for num in numDict[int(power)]:
                 possi.append(str(num))
@@ -658,7 +673,7 @@ def q14(length, otherClue):
     possi = []
     
     for i in range(0, len(otherClue.possi)):
-        a1Val = int(otherClue.possi[i])
+        a1Val = int(otherClue.possi[i][1])
 
 
         for d1Val in range(0, a1Val):
