@@ -132,7 +132,7 @@ def handle_instruction(cross, clues, clue, instruction):
     if clueType in choiceDict:
         possi = execute_instruction(clueType, choiceDict)
         
-        removed, clue.possi = compare_possi(clue.possi, possi, remove)
+        clue.possi = compare_possi(clue.possi, possi, remove)
 
         cross = update_digits(clue, cross)
 
@@ -227,7 +227,7 @@ def display_all_crosses(cross, clues, exclude, i):
         return  
     mockClues = copy.deepcopy(clues)
     allPossi = mockClues[i].findNumbers(cross)
-    removed, mockClues[i].possi = compare_possi(allPossi, mockClues[i].possi, remove=False)
+    mockClues[i].possi = compare_possi(allPossi, mockClues[i].possi, remove=False)
     for val in mockClues[i].possi:
         mockCross = copy.deepcopy(cross)
         mockClues = copy.deepcopy(clues)
@@ -247,10 +247,6 @@ def display_all_crosses(cross, clues, exclude, i):
             display_cross(mockCross)
 
 
-
-
-
-    
 def display_cross(cross):
     os.system('cls')
     for row in cross:
@@ -285,7 +281,7 @@ def update_digits(clue, cross):
     i = 0
     for i in range(clue.length):
         x, y = clue.pos[i][0], clue.pos[i][1]
-        removed, cross[y][x].possi = compare_possi(cross[y][x].possi, numPossi[i], False)
+        cross[y][x].possi = compare_possi(cross[y][x].possi, numPossi[i], False)
         cross[y][x].possi.sort()
     return cross
 
@@ -327,14 +323,14 @@ def find_clue_index(clues, clueName):
         
    
 def compare_possi(curr, checking, remove):
-    removed, curr = compare_list1_list2(curr, checking, remove, False)
+    curr = compare_list1_list2(curr, checking, remove)
     if not remove:
-        removed, curr = compare_list1_list2(checking, curr, remove, True)
-    return removed, curr
+        curr = compare_list1_list2(checking, curr, remove)
+    return curr
 
 
-def compare_list1_list2(possi1, possi2, remove, counts):
-    removed = []
+def compare_list1_list2(possi1, possi2, remove):
+    
     i = 0
     if possi2 and type(possi2[0]) == list:
         possi2 = set([val[1] for val in possi2])
@@ -347,19 +343,18 @@ def compare_list1_list2(possi1, possi2, remove, counts):
         if remove:
             if val in possi2:
                 possi1.pop(i)
-                removed.append(i)
+                
             else:
                 i+=1
         else:
             if val not in possi2:
-                if counts:
-                    removed.append(i)
+
 
                 possi1.pop(i)
             else:
                 i+=1
     
-    return removed, possi1
+    return possi1
 
 
 def compare_new_and_old(new, old):
