@@ -37,7 +37,7 @@ def refresh_clue_dict(clues):
     d4:[[3, 'po', 0, None, None, None, None, None]]}
     '''
     
-    #2022 - Difficult factor one
+    '''#2022 - Difficult factor one
     clueDict = {
         a1:[[1, 'pr', -2, None, None, None, None, None]],
         a3:[[a3.possi,'f', 100, False, -1, True, True, a3]],
@@ -47,9 +47,9 @@ def refresh_clue_dict(clues):
         d4:[[1, 'pr', 0, True, None, None, None, None],
             [2, 'po', 0, True, None, None, None, None],
             [2, 'm', 0, True, None, None, None, None]]}
-   
+    '''
 
-    '''#2023 - Difficult Clue one
+    #2023 - Difficult Clue one
     clueDict = {
         a1:[[105, 'f', -4, None, None, True, None, None]],
         a3:[[1,'pa', 1, None, None, None, None, None]],
@@ -57,7 +57,7 @@ def refresh_clue_dict(clues):
         d1:[[2, 'po', -2, None, None, None, None, None]],
         d2:[[3, 'po', -400, None, None, None, None, None]],
         d4:[[2, 'mC', -6, None, None, None, None, 'MultiClue']]}
-    '''
+    
 
     return clueDict
 ###########################################
@@ -227,23 +227,28 @@ def display_all_crosses(cross, clues, exclude, i):
         return  
     mockClues = copy.deepcopy(clues)
     allPossi = mockClues[i].findNumbers(cross)
-    removed, mockClues[i].possi = compare_possi(mockClues[i].possi, allPossi, remove=False)
+    removed, mockClues[i].possi = compare_possi(allPossi, mockClues[i].possi, remove=False)
     for val in mockClues[i].possi:
         mockCross = copy.deepcopy(cross)
         mockClues = copy.deepcopy(clues)
-
-        
-        if type(mockClues[i].cont[0]) == list:
-            for otherCluePossi in mockClues[i].cont:
-                handle_one_cont(mockCross, mockClues, exclude, otherCluePossi, i)
+     
+        if val[0]:
+            handle_one_cont(mockCross, mockClues, exclude, val, i)
             break
 
-        else:
-            mockClues[i].possi = [val]
-            handle_norm(mockCross, mockClues, exclude, i, None)
-            
-            if i == 5 and check_cross_finished(mockCross, exclude) and no_dupes(mockClues):
-                display_cross(mockCross)
+   
+        
+
+        mockClues[i].possi = [[[], val[1]]]
+        
+        handle_norm(mockCross, mockClues, exclude, i, None)
+        
+        if i == 5 and check_cross_finished(mockCross, exclude) and no_dupes(mockClues):
+            display_cross(mockCross)
+
+
+
+
 
     
 def display_cross(cross):
@@ -293,24 +298,24 @@ def handle_norm(mockCross, mockClues, exclude, i, j):
         display_all_crosses(mockCross, mockClues, exclude, i+1)
     
 
-def handle_one_cont(mockCross, mockClues, exc, cont, i):
-    for cluesInfo, cluePossi in cont:
-        for clueCont in cluesInfo:
-            handle_each_clue_cont(mockCross, mockClues, exc, i, clueCont, cluePossi)
+def handle_one_cont(mockCross, mockClues, exc, onePossi, i):
+
+    for clueCont in onePossi[0]:
+        handle_each_clue_cont(mockCross, mockClues, exc, i, clueCont)
     
 
-def handle_each_clue_cont(mockCross, mockClues, exc, i, clueCont, cluePossi):
+def handle_each_clue_cont(mockCross, mockClues, exc, i, clueCont):
     clueName, specClueVal = clueCont
     j = find_clue_index(mockClues, clueName)
 
     mClues = copy.deepcopy(mockClues)
-    mClues[j].possi = [str(specClueVal)]
-    mClues[i].possi = mClues[i].possi[cluePossi[0]:cluePossi[1]]
+    mClues[j].possi = [[[], specClueVal]]
     
-    for val2 in mClues[i].possi:
+    
+    for dependants, val2 in mClues[i].possi:
         m2Cross = copy.deepcopy(mockCross)
         m2Clues = copy.deepcopy(mClues)
-        m2Clues[i].possi = [val2]
+        m2Clues[i].possi = [[[], val2]]
         handle_norm(m2Cross, m2Clues, exc, i, j) 
     
 
@@ -369,15 +374,18 @@ def order_clue_list(clues):
     '''
     Properly orders the clues for display - Special First
     '''
-    specOps = []
-    ops = []
+    dependantClues = []
+    normalOperations = []
     for clue in clues:
-        if type(clue.cont[0]) == list:
-            specOps.append(clue)
+        if clue.possi and clue.possi[0][0] :
+            dependantClues.append(clue)
         else:
-            ops.append(clue)
-    reOrderedOps = order_by_possi_length(ops)
-    return specOps+reOrderedOps
+            normalOperations.append(clue)
+
+    reOrderedDependantClues = order_by_possi_length(dependantClues)
+    reOrderedOps = order_by_possi_length(normalOperations)
+
+    return reOrderedDependantClues+reOrderedOps
 
 
 def order_by_possi_length(ops):
@@ -666,7 +674,7 @@ def generate_digit_sum_dict(length):
         
 
 def q14(length, otherClue):
-    if not otherClue:
+    if not otherClue or type(otherClue) == str:
         return
 
     cont = []
@@ -737,55 +745,40 @@ def find_all_clue_sums(cross, clues, coords, amount, extra, otherClue):
     allLists = permutations(clues, amount)
     for perm in list(allLists):
         mockCross = copy.deepcopy(cross)
-        res = find_all_possi(perm, mockCross, coords, extra=extra, newClues=[], cont=[], i=0)
+        res = find_all_possi(perm, mockCross, coords, extra=extra, newClues=[], dependants=[], i=0)
 
         if res:
-            possi.append(res[0])
-            multiCont = []
+            allDependantsInfo = []
             for i in range(0, len(perm)):
-                multiCont.append([perm[i].name, res[1][i]])
+                allDependantsInfo.append([perm[i].name, str(res[1][i])])
             
-            cont.append([multiCont, 1])
+            possi.append([allDependantsInfo, res[0]])
 
-    return cont, possi
+    return possi
 
 
 
-def find_all_possi(perm, mockCross, coords, extra, newClues, cont, i):
-    possiNums = check_cross_finished_is_valid(perm, mockCross, coords, extra, cont, i)
+def find_all_possi(perm, mockCross, coords, extra, newClues, dependants, i):
+    possiNums = check_cross_finished_is_valid(perm, mockCross, coords, extra, dependants, i)
 
     if possiNums == False:
-        possiNums = explore_possibility(perm, mockCross, coords, extra, newClues, cont, i)
+        possiNums = explore_possibility(perm, mockCross, coords, extra, newClues, dependants, i)
 
     return possiNums
 
 
-def check_cross_finished_is_valid(perm, mockCross, coords, extra, cont, i):
+def check_cross_finished_is_valid(perm, mockCross, coords, extra, dependants, i):
     if i == len(perm):
         targetNums = []
         
         if check_valid_cross(mockCross):
             targetNums = find_combos(coords, mockCross)
 
-        if str(sum(cont) + extra) in targetNums:
+        if str(sum(dependants) + extra) in targetNums:
 
-            return [str(sum(cont) + extra), cont]
+            return [str(sum(dependants) + extra), dependants]
         return []
     return False
-
-
-def explore_possibility(perm, mockCross, coords, extra, newClues, cont, i):
-    possiNums = []
-    for val in perm[i].possi:
-        decidingPerm = copy.deepcopy(perm[i])
-        decidingPerm.possi = [val]
-        changedCross = copy.deepcopy(mockCross)
-
-        changedCross = update_digits(decidingPerm, changedCross)
-
-        possiNums+=find_all_possi(perm, changedCross, coords, extra, newClues+[decidingPerm], cont+[int(val)], i+1)
-
-    return possiNums
 
 
 def find_combos(coords, newCross):
@@ -798,3 +791,19 @@ def find_combos(coords, newCross):
             result.append(num1+num2)
     
     return result
+
+
+def explore_possibility(perm, mockCross, coords, extra, newClues, dependants, i):
+    possiNums = []
+    for val in perm[i].possi:
+        decidingPerm = copy.deepcopy(perm[i])
+        decidingPerm.possi = [val]
+        changedCross = copy.deepcopy(mockCross)
+
+        changedCross = update_digits(decidingPerm, changedCross)
+
+        possiNums+=find_all_possi(perm, changedCross, coords, extra, newClues+[decidingPerm], dependants+[int(val[1])], i+1)
+
+    return possiNums
+
+
