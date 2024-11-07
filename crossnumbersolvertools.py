@@ -126,7 +126,6 @@ def input_handler(cross, clue, clues):
 
 
 def handle_instruction(cross, clues, clue, instruction):
-    
     choiceDict = refresh_choice_dict(cross, clues, clue, clue.length, instruction)
     mainVal, clueType, extra, remove, order, proper, ofItself, otherClue = instruction
 
@@ -146,7 +145,7 @@ def handle_instruction(cross, clues, clue, instruction):
 
 
 def execute_instruction(clueType, choiceDict):
-    complexOps = set(['m','f','q6', 'cO', 'mC'])
+    complexOps = set(['m','f','q6', 'q14', 'cO', 'mC'])
     if clueType in complexOps:
         cont, possi = choiceDict[clueType]
 
@@ -203,13 +202,15 @@ def clean_cont(cont, removed):
     return cont
 
 
-def find_right_cont_bit(cont, i):
+def find_right_cont_bit(cont, a):
     for j in range(0, len(cont)):
-        val = cont[j][1]
-        i-=val
-        if i <= 0:
+        if a <= 0:
             cont[j][1]-=1
             return cont
+        
+        val = cont[j][1]
+        a-=val
+
 
 
 def conjoin_lists(list1, list2):
@@ -652,9 +653,9 @@ def generate_digit_sum_dict(length):
 def q14(length, otherClue):
     if not otherClue:
         return
-    os.system('cls')
-    possi = []
+
     cont = []
+    possi = []
     
     for i in range(0, len(otherClue.possi)):
         a1Val = int(otherClue.possi[i])
@@ -664,16 +665,22 @@ def q14(length, otherClue):
             digitSum = find_digit_sum(d1Val)
             if d1Val == (a1Val - digitSum):
                 partPossi = [d1Val]
-                possi+= partPossi
+                otherClueVal = a1Val
+                cont, possi = make_precont(possi, cont, otherClue, otherClueVal, partPossi)
+                
 
-                cont.append([[[otherClue.name, num]], len(partPossi)]) 
-                print(a1Val, d1Val)
+    return cont, possi
 
+
+##CONT WORK##
+
+def make_precont(possi, cont, otherClue, otherClueVal, partPossi):
+    possi += partPossi
+    possi = [str(num) for num in possi]
     
-    return []
-
-
-#####
+    cont.append([[[otherClue.name, otherClueVal]], len(partPossi)]) 
+    
+    return cont, possi
 
 
 ###############
