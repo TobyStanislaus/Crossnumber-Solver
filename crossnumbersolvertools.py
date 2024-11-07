@@ -153,70 +153,6 @@ def execute_instruction(clueType, choiceDict):
     return possi
 
 
-
-####CONTS####
-def generate_cont(clue, otherClue, cont):
-    newCont = [0, len(clue.possi)]
-    if cont and otherClue:
-        cont = make_cont(cont)
-        newCont = cont
-    clue.cont = newCont
-    return clue
-
-def make_cont(cont):
-    newCont = [[] for i in range(0, len(cont))]
-
-
-    pcont = make_one_cont(cont)
-    newCont = conjoin_lists(newCont, pcont)
-
-    return newCont
-
-
-def make_one_cont(cont):
-    low = 0
-    newCont = []
-    for otherCluePossis in cont:
-        otherClueInfo, length = otherCluePossis
-        newCont.append([otherClueInfo, [low,low+length]])
-        low += length
-    return newCont
-
-
-def clean_cont(cont, removed):
-    if not cont:
-        return
-    
-    i = 0
-    while i< len(cont) and removed:
-        if i == removed[0]:
-            removed.pop(0)
-            cont = find_right_cont_bit(cont, i)
-            if cont[i][1] == 0:
-                cont.pop(i)
-            
-        else:
-            i+=1
-    return cont
-
-
-def find_right_cont_bit(cont, a):
-    for j in range(0, len(cont)):
-        if a <= 0:
-            cont[j][1]-=1
-            return cont
-        
-        val = cont[j][1]
-        a-=val
-
-
-
-def conjoin_lists(list1, list2):
-    for i in range(0, len(list1)):
-        list1[i].append(list2[i])
-    return list1
-
-
 ###
 
 ############
@@ -426,13 +362,6 @@ def no_dupes(mockClues):
         answers.add(mockClue.possi[0][1])
     return True
 
-
-def is_cont(choiceDict, clueType):
-    try:
-        if choiceDict[clueType][0][0][1]:
-            return True
-    except:
-        return False
 
 
 def find_order(numList, order):
@@ -684,21 +613,11 @@ def q14(length, otherClue):
             if d1Val == (a1Val - digitSum):
                 partPossi = [d1Val]
                 otherClueVal = a1Val
-                cont, possi = make_precont(possi, cont, otherClue, otherClueVal, partPossi)
+                #cont, possi = make_precont(possi, cont, otherClue, otherClueVal, partPossi)
                 
 
     return cont, possi
 
-
-##CONT WORK##
-
-def make_precont(possi, cont, otherClue, otherClueVal, partPossi):
-    possi += partPossi
-    possi = [str(num) for num in possi]
-    
-    cont.append([[[otherClue.name, otherClueVal]], len(partPossi)]) 
-    
-    return cont, possi
 
 
 ###############
@@ -735,7 +654,6 @@ def find_all_clue_sums(cross, clues, coords, amount, extra, otherClue):
     if otherClue != 'MultiClue':
         return
     possi = []
-    cont = []
 
     allLists = permutations(clues, amount)
     for perm in list(allLists):

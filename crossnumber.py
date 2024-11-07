@@ -15,7 +15,6 @@ class Number():
         self.possi = []
         self.pos = pos
         self.length = len(pos)
-        self.cont = [0, 0]
 
     def findNumbers(self, cross):
         nums = []
