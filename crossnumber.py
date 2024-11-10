@@ -80,12 +80,12 @@ for clue in clues:
     clue.possi = clue.findNumbers(cross)
 
 
-cross, clues = number_cruncher(cross, prev, clues, firstGo=True)
+cross, clues, crossName = number_cruncher(cross, prev, clues, firstGo=True)
 
 
 clues = order_clue_list(clues)
 
 #(2,0), (0,2)
-display_all_crosses(cross, clues, exclude = set([]), i = 0)
+display_all_crosses(cross, clues, exclude = [crossName, set([])], i = 0)
 
 
