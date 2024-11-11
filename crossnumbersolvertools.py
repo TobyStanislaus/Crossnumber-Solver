@@ -51,7 +51,7 @@ def refresh_clue_dict(clues):
     d4:[[1, '', 0, None, None, None, None, None]]}
     '''
 
-    #Ritangle S
+    '''#Ritangle S
     crossName = 'S'
     clueDict = {
     a1:[[1, '', 0, None, None, None, None, None]],
@@ -60,7 +60,7 @@ def refresh_clue_dict(clues):
     d1:[[1, 'q13', 0, None, None, None, add, [a3, a1]]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, '', 0, None, None, None, None, None]]}
-    
+    '''
 
     '''#2022 - Difficult factor one
     crossName = 'Kangaroo 2022'
@@ -73,9 +73,9 @@ def refresh_clue_dict(clues):
         d4:[[1, 'pr', 0, True, None, None, None, None],
             [2, 'po', 0, True, None, None, None, None],
             [2, 'm', 0, True, None, None, None, None]]}
-    '''
+   '''
 
-    '''#2023 - Difficult Clue one
+    #2023 - Difficult Clue one
     crossName = 'Kangaroo 2023'
     clueDict = {
         a1:[[105, 'f', -4, None, None, True, None, None]],
@@ -84,7 +84,7 @@ def refresh_clue_dict(clues):
         d1:[[2, 'po', -2, None, None, None, None, None]],
         d2:[[3, 'po', -400, None, None, None, None, None]],
         d4:[[2, 'mC', -6, None, None, None, None, 'MultiClue']]}
-    '''
+   
 
     return clueDict, crossName
 ###########################################
@@ -108,7 +108,7 @@ def refresh_choice_dict(cross, clues, clue, length, instruction):
 
         'f': give_multiples_or_factors(length, extra, order, mainVal, proper, ofItself, find_factors, otherClue),
         
-        'cO':clue_operation(length, otherClue, mainVal, ofItself),
+        #'cO':clue_operation(length, otherClue, mainVal, ofItself),
         'mC':find_all_clue_sums(cross, clues, clue.pos, mainVal, extra, otherClue)
         }
     return choiceDict
@@ -117,22 +117,22 @@ def refresh_choice_dict(cross, clues, clue, length, instruction):
 ##Clue control - does everything concerning simple clue calculations##
 ######################################################################
 def number_cruncher(cross, prev, clues, firstGo):
-    prev2 = copy.deepcopy(prev)
-
+    
+    prev2 = copy.deepcopy(cross)
     while compare_new_and_old(cross, prev):
         prev = copy.deepcopy(cross)
         for clue in clues:
             clue, cross, crossName = handle_order(cross, clues, clue, firstGo)
 
-
     if firstGo:
         cross, clues, crossName = number_cruncher(cross, prev2, clues, firstGo=False)
+        
 
     return cross, clues, crossName
 
 
 def handle_order(cross, clues, clue, firstGo):
-    lastOps = set(['mC'])
+    lastOps = set(['mC', 'q11', 'q13'])
     clueDict, crossName = refresh_clue_dict(clues)
 
     if firstGo:
@@ -659,7 +659,7 @@ def q8(length, extra, order, power):
 
 
 def q6(length, mainVal, otherClue, operation):
-    if type(mainVal)!=list or not otherClue:
+    if type(mainVal)!=list or not otherClue or type(operation) == bool:
         return
     
     powers = [(i,i**2) for i in range(1, 28)]
