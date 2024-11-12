@@ -17,7 +17,7 @@ def refresh_clue_dict(clues):
     d4:[[1, '', 0, None, None, None, None, None]]}
     '''
 
-    #Ritangle P
+    '''#Ritangle P
     crossName = 'P'
     clueDict = {
     a1:[[2, 'po', 0, None, None, None, None, None]],
@@ -26,9 +26,9 @@ def refresh_clue_dict(clues):
     d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
     d2:[[2, 'q8', 0, None, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
-    
+    '''
 
-    '''#Ritangle Q
+    #Ritangle Q
     crossName = 'Q'
     clueDict = {
     a1:[[1, 'pr', 0, None, None, None, None, None],
@@ -38,7 +38,7 @@ def refresh_clue_dict(clues):
     d1:[[1, 'q14', 0, None, None, None, None, a1]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[3, 'po', 0, None, None, None, None, None]]}
-    '''
+    
 
     '''#Ritangle R
     crossName = 'R'
@@ -185,7 +185,7 @@ def display_all_crosses(cross, clues, exclude, i):
         mockClues = copy.deepcopy(clues)
      
         if val[0]:
-            handle_one_dependant(mockCross, mockClues, exclude, val, i)
+            handle_one_dependant(mockCross, mockClues, exclude, i)
             break
 
         mockClues[i].possi = [[[], val[1]]]
@@ -210,6 +210,7 @@ def display_cross(cross, exclude):
                 #printRow+=str(digit.possi)+' '
                 printRow+='  '
         print(printRow)
+    return
       
 
 ##############
@@ -246,25 +247,34 @@ def handle_norm(mockCross, mockClues, exclude, i, j):
         display_all_crosses(mockCross, mockClues, exclude, i+1)
     
 
-def handle_one_dependant(mockCross, mockClues, exc, onePossi, i):
-    for clueDependant in onePossi[0]:
-        mockCross, mockClues = handle_each_clue_dependant(mockCross, mockClues, exc, i, clueDependant)
-        if not mockCross:
-            return
-    
-    for dependants, val2 in mockClues[i].possi:
-        m2Cross = copy.deepcopy(mockCross)
-        m2Clues = copy.deepcopy(mockClues)
+def handle_one_dependant(mockCross, mockClues, exc, i):
+    for onePossi in mockClues[i].possi:
+        m3Cross = copy.deepcopy(mockCross)
+        m3Clues = copy.deepcopy(mockClues)
+        for clueDependant in onePossi[0]:
+            m3Cross, m3Clues = handle_each_clue_dependant(m3Cross, m3Clues, exc, i, clueDependant)
+            if not m3Cross:
+                break
+
+        if not m3Cross:
+                continue
+        
+        val2 = onePossi[1]
+
+        m2Cross = copy.deepcopy(m3Cross)
+        m2Clues = copy.deepcopy(m3Clues)
 
         allPossi = m2Clues[i].findNumbers(m2Cross)
         m2Clues[i].possi = compare_possi(allPossi, m2Clues[i].possi, remove=False)
-        if val2 not in [num[1] for num in mockClues[i].possi]:
-            return
+        if val2 not in [num[1] for num in m2Clues[i].possi]:
+            continue
         m2Clues[i].possi = [[[], val2]]
 
         m2Cross = update_digits(m2Clues[i], m2Cross)
-        handle_norm(m2Cross, m2Clues, exc, i, j = None) 
-    
+        handle_norm(m2Cross, m2Clues, exc, i, j = None)
+        print()
+
+
 
 def handle_each_clue_dependant(mockCross, mockClues, exc, i, clueDependant):
     clueName, specClueVal = clueDependant
@@ -279,7 +289,7 @@ def handle_each_clue_dependant(mockCross, mockClues, exc, i, clueDependant):
     mClues[j].possi = [[[], specClueVal]]
     mockCross = update_digits(mClues[j], mockCross)
     
-    return mockCross, mockClues
+    return mockCross, mClues
 
 
 
@@ -509,8 +519,9 @@ def handle_lists(func, length, extra, order, nums, proper, ofItself, otherClue):
     for num in nums:
 
         partResult = func(length, extra, order, int(num[1]) , proper, ofItself)
+        pResult = [[[[otherClue.name, num[1]]], possiNum] for dep, possiNum in partResult]
         if partResult:
-            result += partResult
+            result += pResult
 
     return result
 
@@ -654,12 +665,12 @@ def q8(length, extra, order, power):
             for num in numDict[int(power)]:
                 possi.append(str(num))
         
-    
+    possi = make_possi(possi, dependants=[])
     return possi
 
 
 def q6(length, mainVal, otherClue, operation):
-    if type(mainVal)!=list or not otherClue or type(operation) == bool:
+    if type(mainVal)!=list or not otherClue or not callable(operation):
         return
     
     powers = [(i,i**2) for i in range(1, 28)]

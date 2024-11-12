@@ -1,3 +1,12 @@
+for i in range(10):
+    if i == 5:
+        print("Skipping iteration", i)
+        continue  # Skip this iteration when i == 5
+    print("Processing iteration", i)
+
+
+
+
 powers = [(i,i**2) for i in range(1, 28)]
         
 
