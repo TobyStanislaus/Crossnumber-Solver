@@ -28,7 +28,7 @@ def refresh_clue_dict(clues):
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
     '''
 
-    #Ritangle Q
+    '''#Ritangle Q
     crossName = 'Q'
     clueDict = {
     a1:[[1, 'pr', 0, None, None, None, None, None],
@@ -38,18 +38,19 @@ def refresh_clue_dict(clues):
     d1:[[1, 'q14', 0, None, None, None, None, a1]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[3, 'po', 0, None, None, None, None, None]]}
-    
+    '''
 
-    '''#Ritangle R
+    #Ritangle R [1, 'cds', 0, None, None, None, add, d2]
+    #[1, 'q11', 0, None, None, None, multiply, [a1, d1]]
     crossName = 'R'
     clueDict = {
-    a1:[[1, 'q11', 0, None, None, None, multiply, [a1, d1]]],
+    a1:[[1, '', 0, None, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None, None]],
     a5:[[1, '', 0, None, None, None, None, None]],
     d1:[[1, '', 0, None, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None, None]],
-    d4:[[1, '', 0, None, None, None, None, None]]}
-    '''
+    d4:[[1, 'q16b', 0, None, None, None, None, a5]]}
+ 
 
     '''#Ritangle S
     crossName = 'S'
@@ -58,8 +59,8 @@ def refresh_clue_dict(clues):
     a3:[[1, '', 0, None, None, None, None, None]],
     a5:[[1, '', 0, None, None, None, None, None]],
     d1:[[1, 'q13', 0, None, None, None, add, [a3, a1]]],
-    d2:[[1, '', 0, None, None, None, None, None]],
-    d4:[[1, '', 0, None, None, None, None, None]]}
+    d2:[[1, 'q16a', 0, None, None, None, None, d4]],
+    d4:[[1, 't', 0, None, None, None, None, None]]}
     '''
 
     '''#2022 - Difficult factor one
@@ -97,13 +98,16 @@ def refresh_choice_dict(cross, clues, clue, length, instruction):
         'po':find_powers(length, extra, order, mainVal),
         't':find_triangle(length, extra, order),
         'pa':find_palidrome(length, extra, order),
-    
-        'q6':q6(length, mainVal, otherClue, ofItself),
-        'q8':q8(length, extra, order, mainVal),
-        'q11':q11(length, otherClue, ofItself, dependants=[], total = 0, i=0),
-        'q13':q13(length, otherClue),
+        
+        'q16b':q16b(length, otherClue),
+        'q16a':q16a(length, otherClue),
         'q14':q14(length, otherClue),
+        'q13':q13(length, otherClue),
+        'q11':q11(length, otherClue, ofItself, dependants=[], total = 0, i=0),
+        'q8':q8(length, extra, order, mainVal),
+        'q6':q6(length, mainVal, otherClue, ofItself),
 
+        'cds':cds(length, otherClue, ofItself),
         'm':give_multiples_or_factors(length, extra, order, mainVal, proper, ofItself, find_multiples, otherClue),
 
         'f': give_multiples_or_factors(length, extra, order, mainVal, proper, ofItself, find_factors, otherClue),
@@ -133,7 +137,7 @@ def number_cruncher(cross, prev, clues, firstGo):
 
 
 def handle_order(cross, clues, clue, firstGo):
-    lastOps = set(['mC', 'q11', 'q13'])
+    lastOps = set(['mC', 'cds', 'q11', 'q13'])
     clueDict, crossName = refresh_clue_dict(clues)
 
     if firstGo:
@@ -272,7 +276,6 @@ def handle_one_dependant(mockCross, mockClues, exc, i):
 
         m2Cross = update_digits(m2Clues[i], m2Cross)
         handle_norm(m2Cross, m2Clues, exc, i, j = None)
-        print()
 
 
 
@@ -347,6 +350,7 @@ def order_clue_list(clues):
     dependantClues = []
     normalOperations = []
     for clue in clues:
+        clue.possi = sorted(clue.possi, key=lambda x:x[1])
         if clue.possi and clue.possi[0][0] :
             dependantClues.append(clue)
         else:
@@ -507,7 +511,7 @@ def find_palidrome(length, extra, order):
 
 
 def make_possi(result, dependants):
-    return [[dependants, val] for val in result]
+    return [[dependants, str(val)] for val in result]
     
 #######################
 ##CUSTOM CALCULATIONS##
@@ -583,6 +587,48 @@ def find_bot_top(product, proper):
     return botNum, topNum
 
 ####
+def q16b(length, otherClue):
+    if not otherClue or type(otherClue)==list:
+        return
+    
+    possi=[]
+    listSNums = find_powers(length=2,extra=0,order=None, power=2)
+    listSNums += find_powers(length=3,extra=0,order=None, power=2)
+
+    squareNums = [int(num) for dep, num in listSNums]
+
+    for dep, otherClueNum in otherClue.possi:
+
+        for squareNum in squareNums:
+            possiNum = int(otherClueNum) - squareNum
+            if possiNum>0 and len(str(possiNum)) == length:
+                dependants = [[otherClue.name, otherClueNum]]
+                possi.append([dependants, str(possiNum)])
+        
+    return possi
+
+
+
+def q16a(length, otherClue):
+    if not otherClue or type(otherClue)==list:
+        return
+    
+    possi=[]
+    listTNums = find_triangle(length=2,extra=0,order=None)
+    listTNums += find_triangle(length=3,extra=0,order=None)
+
+    triangleNums = [int(num) for dep, num in listTNums]
+
+    for dep, otherClueNum in otherClue.possi:
+
+        for triangleNum in triangleNums:
+            possiNum = triangleNum - int(otherClueNum)
+            if possiNum>0 and len(str(possiNum)) == length:
+                dependants = [[otherClue.name, otherClueNum]]
+                possi.append([dependants, str(possiNum)])
+        
+    return possi
+
 
 def q14(length, otherClue):
     if not otherClue or isinstance(otherClue, (bool, int, float, str, list, dict, tuple)) :
@@ -689,6 +735,25 @@ def q6(length, mainVal, otherClue, operation):
         for possiNum in partPossi:
             possi.append([[[otherClue.name, num[1]]], possiNum])
 
+    return possi
+
+
+def cds(length, otherClue, operation):
+    if not otherClue or type(otherClue)==list or not callable(operation):
+        return 
+    
+    possi = []
+    otherNums = list(set([num for dependant,num in otherClue.possi]))
+    otherNums.sort()
+    
+    digit_sum_dict = generate_digit_sum_dict(length)
+
+    for otherClueNum in otherNums:
+        digitSum = find_digit_sum(otherClueNum, operation)
+        for possiNum in digit_sum_dict[digitSum]:
+            possi.append([[[otherClue.name, otherClueNum]], str(possiNum)])
+    
+        
     return possi
 
 
