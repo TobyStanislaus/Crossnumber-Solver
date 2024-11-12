@@ -17,7 +17,7 @@ def refresh_clue_dict(clues):
     d4:[[1, '', 0, None, None, None, None, None]]}
     '''
 
-    '''#Ritangle P
+    #Ritangle P
     crossName = 'P'
     clueDict = {
     a1:[[2, 'po', 0, None, None, None, None, None]],
@@ -26,7 +26,7 @@ def refresh_clue_dict(clues):
     d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
     d2:[[2, 'q8', 0, None, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
-    '''
+    
 
     '''#Ritangle Q
     crossName = 'Q'
@@ -73,9 +73,9 @@ def refresh_clue_dict(clues):
         d4:[[1, 'pr', 0, True, None, None, None, None],
             [2, 'po', 0, True, None, None, None, None],
             [2, 'm', 0, True, None, None, None, None]]}
-   '''
+    '''
 
-    #2023 - Difficult Clue one
+    '''#2023 - Difficult Clue one
     crossName = 'Kangaroo 2023'
     clueDict = {
         a1:[[105, 'f', -4, None, None, True, None, None]],
@@ -84,7 +84,7 @@ def refresh_clue_dict(clues):
         d1:[[2, 'po', -2, None, None, None, None, None]],
         d2:[[3, 'po', -400, None, None, None, None, None]],
         d4:[[2, 'mC', -6, None, None, None, None, 'MultiClue']]}
-   
+    '''
 
     return clueDict, crossName
 ###########################################
@@ -117,18 +117,19 @@ def refresh_choice_dict(cross, clues, clue, length, instruction):
 ##Clue control - does everything concerning simple clue calculations##
 ######################################################################
 def number_cruncher(cross, prev, clues, firstGo):
-    
-    prev2 = copy.deepcopy(cross)
+    cName = ''
+    prev2 = copy.deepcopy(prev)
     while compare_new_and_old(cross, prev):
         prev = copy.deepcopy(cross)
         for clue in clues:
             clue, cross, crossName = handle_order(cross, clues, clue, firstGo)
+            cName = crossName
 
     if firstGo:
         cross, clues, crossName = number_cruncher(cross, prev2, clues, firstGo=False)
         
 
-    return cross, clues, crossName
+    return cross, clues, cName
 
 
 def handle_order(cross, clues, clue, firstGo):
@@ -137,10 +138,10 @@ def handle_order(cross, clues, clue, firstGo):
 
     if firstGo:
         if clueDict[clue][0][1] not in lastOps:
-            clue, cross, crossName = input_handler(cross, clue, clues)
+            clue, cross = input_handler(cross, clue, clues)
     else:
         if clueDict[clue][0][1] in lastOps:
-            clue, cross, crossName = input_handler(cross, clue, clues)
+            clue, cross = input_handler(cross, clue, clues)
     return clue, cross, crossName
 
 
@@ -151,7 +152,7 @@ def input_handler(cross, clue, clues):
     for instruction in clueDict[clue]:
         clue, cross = handle_instruction(cross, clues, clue, instruction)
 
-    return clue, cross, crossName
+    return clue, cross
 
 
 def handle_instruction(cross, clues, clue, instruction):
@@ -274,7 +275,6 @@ def handle_each_clue_dependant(mockCross, mockClues, exc, i, clueDependant):
     allPossi = mClues[j].findNumbers(mockCross)
     mClues[j].possi = compare_possi(allPossi, mClues[j].possi, remove=False)
     if specClueVal not in [num[1] for num in mClues[j].possi]:
-        
         return None, None
     mClues[j].possi = [[[], specClueVal]]
     mockCross = update_digits(mClues[j], mockCross)
