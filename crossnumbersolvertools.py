@@ -28,7 +28,7 @@ def refresh_clue_dict(clues):
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
     '''
 
-    '''#Ritangle Q
+    #Ritangle Q
     crossName = 'Q'
     clueDict = {
     a1:[[1, 'pr', 0, None, None, None, None, None],
@@ -38,9 +38,9 @@ def refresh_clue_dict(clues):
     d1:[[1, 'q14', 0, None, None, None, None, a1]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[3, 'po', 0, None, None, None, None, None]]}
-    '''
+   
 
-    #Ritangle R [1, 'cds', 0, None, None, None, add, d2]
+    '''#Ritangle R [1, 'cds', 0, None, None, None, add, d2]
     #[1, 'q11', 0, None, None, None, multiply, [a1, d1]]
     crossName = 'R'
     clueDict = {
@@ -50,7 +50,7 @@ def refresh_clue_dict(clues):
     d1:[[1, '', 0, None, None, None, None, None]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[1, 'q16b', 0, None, None, None, None, a5]]}
- 
+     '''
 
     '''#Ritangle S
     crossName = 'S'
