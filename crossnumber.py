@@ -85,8 +85,8 @@ for clue in clues:
 
 cross, clues, crossName = number_cruncher(cross, prev, clues, firstGo=True)
 
-
-clues = order_clue_list(clues)
+order = []
+clues = order_clue_list(clues, order)
 
 #(2,0), (0,2)
 display_all_crosses(cross, clues, exclude = [crossName, set([])], i = 0)

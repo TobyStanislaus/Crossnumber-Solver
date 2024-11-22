@@ -17,7 +17,7 @@ def refresh_clue_dict(clues):
     d4:[[1, '', 0, None, None, None, None, None]]}
     '''
 
-    '''#Ritangle P
+    #Ritangle P
     crossName = 'P'
     clueDict = {
     a1:[[2, 'po', 0, None, None, None, None, None]],
@@ -26,9 +26,9 @@ def refresh_clue_dict(clues):
     d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
     d2:[[2, 'q8', 0, None, None, None, None, None]],
     d4:[[1, 'pr', 0, None, None, None, None, None]]}
-    '''
+    
 
-    #Ritangle Q
+    '''#Ritangle Q
     crossName = 'Q'
     clueDict = {
     a1:[[1, 'pr', 0, None, None, None, None, None],
@@ -38,19 +38,18 @@ def refresh_clue_dict(clues):
     d1:[[1, 'q14', 0, None, None, None, None, a1]],
     d2:[[1, '', 0, None, None, None, None, None]],
     d4:[[3, 'po', 0, None, None, None, None, None]]}
-   
+    '''
 
-    '''#Ritangle R [1, 'cds', 0, None, None, None, add, d2]
-    #[1, 'q11', 0, None, None, None, multiply, [a1, d1]]
+    '''#Ritangle R
     crossName = 'R'
     clueDict = {
     a1:[[1, '', 0, None, None, None, None, None]],
-    a3:[[1, '', 0, None, None, None, None, None]],
+    a3:[[1, 'q19a', 0, None, None, None, None, d4]],
     a5:[[1, '', 0, None, None, None, None, None]],
-    d1:[[1, '', 0, None, None, None, None, None]],
-    d2:[[1, '', 0, None, None, None, None, None]],
+    d1:[[1, 'cds', 0, None, None, None, add, d2]],
+    d2:[[1, 'q11', 0, None, None, None, multiply, [a1, d1]]],
     d4:[[1, 'q16b', 0, None, None, None, None, a5]]}
-     '''
+    '''
 
     '''#Ritangle S
     crossName = 'S'
@@ -99,6 +98,7 @@ def refresh_choice_dict(cross, clues, clue, length, instruction):
         't':find_triangle(length, extra, order),
         'pa':find_palidrome(length, extra, order),
         
+        'q19a':q19a(length, otherClue),
         'q16b':q16b(length, otherClue),
         'q16a':q16a(length, otherClue),
         'q14':q14(length, otherClue),
@@ -179,7 +179,7 @@ def handle_instruction(cross, clues, clue, instruction):
 ##Cross UI##
 ############
 def display_all_crosses(cross, clues, exclude, i):
-    if not check_valid_cross(cross) or not no_dupes(clues):
+    if not check_cross_position(cross) or not check_valid_cross(cross) or not no_dupes(clues):
         return  
     mockClues = copy.deepcopy(clues)
     allPossi = mockClues[i].findNumbers(cross)
@@ -196,7 +196,7 @@ def display_all_crosses(cross, clues, exclude, i):
         
         handle_norm(mockCross, mockClues, exclude, i, None)
         
-        if i == 5 and check_cross_finished(mockCross, exclude) and no_dupes(mockClues):
+        if i == 5 and check_cross_finished(mockCross, exclude) and no_dupes(mockClues) and check_cross_position(mockCross):
             display_cross(mockCross, exclude)
 
 
@@ -211,9 +211,23 @@ def display_cross(cross, exclude):
             if len(digit.possi) == 1:
                 printRow+= digit.possi[0]+' '
             else:
-                #printRow+=str(digit.possi)+' '
                 printRow+='  '
         print(printRow)
+
+        #f = open("crosses.txt", "a")
+        #f.write(printRow+'\n')
+        #f.close()
+    coords = str(cross[0][0].possi[0])+str(cross[0][1].possi[0])+', '
+
+    coords+= str(cross[0][2].possi[0])+str(cross[1][2].possi[0])+", N, "
+    
+    coords+=str(cross[2][2].possi[0])+str(cross[2][1].possi[0])+', '
+
+    coords+= str(cross[2][0].possi[0])+str(cross[1][0].possi[0])+', W'
+    f = open("crosses.txt", "a")
+    f.write(coords+'\n')
+    print(coords)
+    f.close()
     return
       
 
@@ -256,7 +270,7 @@ def handle_one_dependant(mockCross, mockClues, exc, i):
         m3Cross = copy.deepcopy(mockCross)
         m3Clues = copy.deepcopy(mockClues)
         for clueDependant in onePossi[0]:
-            m3Cross, m3Clues = handle_each_clue_dependant(m3Cross, m3Clues, exc, i, clueDependant)
+            m3Cross, m3Clues = handle_each_clue_dependant(m3Cross, m3Clues, clueDependant)
             if not m3Cross:
                 break
 
@@ -279,8 +293,9 @@ def handle_one_dependant(mockCross, mockClues, exc, i):
 
 
 
-def handle_each_clue_dependant(mockCross, mockClues, exc, i, clueDependant):
+def handle_each_clue_dependant(mockCross, mockClues, clueDependant):
     clueName, specClueVal = clueDependant
+    
     j = find_clue_index(mockClues, clueName)
 
     mClues = copy.deepcopy(mockClues)
@@ -343,7 +358,7 @@ def compare_new_and_old(new, old):
     return False
 
 
-def order_clue_list(clues):
+def order_clue_list(clues, order):
     '''
     Properly orders the clues for display - Special First
     '''
@@ -380,6 +395,32 @@ def order_by_possi_length(ops):
 
 
 ##CHECKS##
+def check_cross_position(cross):
+    #degrees check
+    if len(cross[0][0].possi) == 1 and len(cross[0][1].possi) == 1:
+        northPos = int(cross[0][0].possi[0]+cross[0][1].possi[0])
+        if northPos not in range(25, 50):
+            return False
+    
+    if len(cross[2][1].possi) == 1 and len(cross[2][2].possi) == 1:
+        westPos = int(cross[2][1].possi[0]+cross[2][2].possi[0])
+        if westPos not in range(66, 100):
+            return False
+        
+    #minutes check
+    if len(cross[0][2].possi) == 1 and len(cross[1][2].possi) == 1:
+        northMins = int(cross[0][2].possi[0]+cross[1][2].possi[0])
+        if northMins not in range(0, 61):
+            return False
+    
+    if len(cross[2][0].possi) == 1 and len(cross[1][0].possi) == 1:
+        southMins = int(cross[2][0].possi[0]+cross[1][0].possi[0])
+        if southMins not in range(0, 61):
+            return False
+    
+    return True
+    
+
 def check_valid_cross(cross):
     for row in cross:
         for digit in row:
@@ -587,8 +628,25 @@ def find_bot_top(product, proper):
     return botNum, topNum
 
 ####
+def q19a(length, otherClue):
+    if not otherClue or isinstance(otherClue, (bool, int, float, str, list, dict, tuple)) :
+        return
+
+    possi = []
+    
+    for i in range(0, len(otherClue.possi)):
+        d4Val = int(otherClue.possi[i][1])
+
+        digitSum = find_digit_sum(d4Val, add)
+        a3Val = (d4Val - digitSum)
+        if len(str(a3Val)) == length and len(str(d4Val)) == otherClue.length:
+            possi.append([[[otherClue.name, str(d4Val)]], str(a3Val)])
+
+    return possi
+
+
 def q16b(length, otherClue):
-    if not otherClue or type(otherClue)==list:
+    if not otherClue or type(otherClue)==list or type(otherClue) == str:
         return
     
     possi=[]
@@ -610,7 +668,7 @@ def q16b(length, otherClue):
 
 
 def q16a(length, otherClue):
-    if not otherClue or type(otherClue)==list:
+    if not otherClue or type(otherClue)==list or type(otherClue) == str:
         return
     
     possi=[]
@@ -790,27 +848,6 @@ def multiply(total, num):
 ###############
 ###CLUE SUMS###
 ###############
-
-##SINGLE CLUE##
-
-def clue_operation(length, otherClue, amount, ops):
-    if not otherClue or not ops or isinstance(ops, (bool, int, float, str, list, dict, tuple)) or type(otherClue) == list:
-        return
-    cluePossi = []
-    cont = []
-
-    for possiNum in otherClue.possi:
-        num = ops(possiNum, amount)
-        if num.is_integer() and len(str(int(num))) == length:  
-            cluePossi.append(str(int(num)))
-            cont.append([[[otherClue.name, possiNum]], 1])
-    
-    return cont, cluePossi
-
-
-def op1(possiNum, amount):
-    return float(possiNum) * amount
-
 
 
 
