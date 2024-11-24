@@ -23,9 +23,9 @@ def refresh_clue_dict(clues):
     a1:[[2, 'po', 0, None, None, None, None, None]],
     a3:[[1, '', 0, None, None, None, None, None]],
     a5:[[1, '', 0, None, None, None, None, None]],
-    d1:[[d4.possi, 'm', 0, None, None, None, None, d4]],
+    d1:[[1, '', 0, None, None, None, None, None]],
     d2:[[2, 'q8', 0, None, None, None, None, None]],
-    d4:[[1, 'pr', 0, None, None, None, None, None]]}
+    d4:[[1, 't', 0, None, None, None, None, None],]}
     
 
     '''#Ritangle Q
@@ -179,7 +179,8 @@ def handle_instruction(cross, clues, clue, instruction):
 ##Cross UI##
 ############
 def display_all_crosses(cross, clues, exclude, i):
-    if not check_cross_position(cross) or not check_valid_cross(cross) or not no_dupes(clues):
+    # not check_cross_position(cross) or 
+    if not check_valid_cross(cross) or not no_dupes(clues):
         return  
     mockClues = copy.deepcopy(clues)
     allPossi = mockClues[i].findNumbers(cross)
@@ -195,8 +196,8 @@ def display_all_crosses(cross, clues, exclude, i):
         mockClues[i].possi = [[[], val[1]]]
         
         handle_norm(mockCross, mockClues, exclude, i, None)
-        
-        if i == 5 and check_cross_finished(mockCross, exclude) and no_dupes(mockClues) and check_cross_position(mockCross):
+        #and check_cross_position(mockCross)
+        if i == 5 and check_cross_finished(mockCross, exclude) and no_dupes(mockClues) and q21(mockCross, mockClues):
             display_cross(mockCross, exclude)
 
 
@@ -214,9 +215,6 @@ def display_cross(cross, exclude):
                 printRow+='  '
         print(printRow)
 
-        #f = open("crosses.txt", "a")
-        #f.write(printRow+'\n')
-        #f.close()
     coords = str(cross[0][0].possi[0])+str(cross[0][1].possi[0])+', '
 
     coords+= str(cross[0][2].possi[0])+str(cross[1][2].possi[0])+", N, "
@@ -627,7 +625,23 @@ def find_bot_top(product, proper):
         botNum-=1
     return botNum, topNum
 
+
+def cross_sum(cross):
+    total = 0
+    for row in cross:
+        for digit in row:
+            total+=int(digit.possi[0])
+    return total
 ####
+def q21(cross, clues):
+    j = find_clue_index(clues, 'a5')
+    clue = clues[j]
+    if int(clue.possi[0][1]) % cross_sum(cross) == 0:
+        return True
+    return False
+    
+
+
 def q19a(length, otherClue):
     if not otherClue or isinstance(otherClue, (bool, int, float, str, list, dict, tuple)) :
         return

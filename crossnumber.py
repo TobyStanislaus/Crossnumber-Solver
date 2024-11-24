@@ -44,6 +44,8 @@ prev = [[GridDigit(1), GridDigit(1), GridDigit(1)],
          [GridDigit(1), GridDigit(1), GridDigit(1)],
          [GridDigit(1), GridDigit(1), GridDigit(1)]]
 
+#clearing files
+open('crosses.txt', 'w').close()
 
 cross[0][0].possi.remove('0')
 cross[0][1].possi.remove('0')
@@ -52,7 +54,7 @@ cross[1][2].possi.remove('0')
 cross[2][0].possi.remove('0')
 
 # Ritangle Q
-cross[1][1].possi = ['1', '2', '3', '4']
+cross[1][1].possi = [ '2', '3', '4']
 
 ## Initializing all clues
 
